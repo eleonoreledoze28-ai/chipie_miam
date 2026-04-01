@@ -1,0 +1,131 @@
+import { useState, useMemo } from 'react'
+import { useJournal } from '../../hooks/useJournal'
+import { VEGETAUX } from '../../data/vegetaux'
+import AddEntryModal from '../../components/AddEntryModal/AddEntryModal'
+import { todayStr, addDays, formatDateFr, getWeekDays, formatDateShort } from '../../utils/dates'
+import styles from './JournalPage.module.css'
+
+const vegetauxMap = new Map(VEGETAUX.map((v) => [v.id, v]))
+
+export default function JournalPage() {
+  const { entries, addEntry, removeEntry, getEntriesForDate, getEntriesForWeek, getUniqueVegetauxCount } = useJournal()
+  const [selectedDate, setSelectedDate] = useState(todayStr())
+  const [showModal, setShowModal] = useState(false)
+
+  const weekDays = useMemo(() => getWeekDays(selectedDate), [selectedDate])
+  const dayEntries = useMemo(() => getEntriesForDate(selectedDate), [selectedDate, entries])
+  const weekEntries = useMemo(() => getEntriesForWeek(selectedDate), [selectedDate, entries])
+  const uniqueCount = getUniqueVegetauxCount(weekEntries)
+
+  // Alerts
+  const fruitsThisWeek = weekEntries.filter((e) => {
+    const v = vegetauxMap.get(e.vegetalId)
+    return v?.categorie === 'fruits'
+  }).length
+
+  const alerts: string[] = []
+  if (fruitsThisWeek > 7) alerts.push(`⚠️ ${fruitsThisWeek} fruits cette semaine — attention au sucre !`)
+  if (weekEntries.length > 5 && uniqueCount < 3) alerts.push('🥬 Pensez à varier les végétaux !')
+
+  const handleAdd = (vegetalId: string, quantite: string, notes: string) => {
+    addEntry({ vegetalId, date: selectedDate, quantite, notes })
+  }
+
+  return (
+    <div className={styles.page}>
+      {/* Week selector */}
+      <div className={styles.weekNav}>
+        <button className={styles.weekBtn} onClick={() => setSelectedDate(addDays(selectedDate, -7))}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+            <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+        </button>
+        <div className={styles.weekDays}>
+          {weekDays.map((day) => {
+            const isToday = day === todayStr()
+            const isSelected = day === selectedDate
+            const hasEntries = entries.some((e) => e.date === day)
+            return (
+              <button
+                key={day}
+                className={`${styles.dayBtn} ${isSelected ? styles.daySelected : ''} ${isToday ? styles.dayToday : ''}`}
+                onClick={() => setSelectedDate(day)}
+              >
+                <span className={styles.dayLabel}>{formatDateShort(day).split(' ')[0]}</span>
+                <span className={styles.dayNum}>{new Date(day + 'T00:00:00').getDate()}</span>
+                {hasEntries && <span className={styles.dayDot} />}
+              </button>
+            )
+          })}
+        </div>
+        <button className={styles.weekBtn} onClick={() => setSelectedDate(addDays(selectedDate, 7))}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Date title */}
+      <div className={styles.dateHeader}>
+        <h2 className={styles.dateTitle}>{formatDateFr(selectedDate)}</h2>
+        <div className={styles.weekSummary}>
+          <span>{uniqueCount} végétal{uniqueCount > 1 ? 'ux' : ''} différent{uniqueCount > 1 ? 's' : ''} cette semaine</span>
+        </div>
+      </div>
+
+      {/* Alerts */}
+      {alerts.map((alert, i) => (
+        <div key={i} className={styles.alert}>{alert}</div>
+      ))}
+
+      {/* Entries */}
+      <div className={styles.entries}>
+        {dayEntries.length === 0 ? (
+          <div className={styles.empty}>
+            <span className={styles.emptyIcon}>📝</span>
+            <p>Aucun aliment enregistré ce jour</p>
+          </div>
+        ) : (
+          dayEntries.map((entry) => {
+            const veg = vegetauxMap.get(entry.vegetalId)
+            if (!veg) return null
+            return (
+              <div key={entry.id} className={styles.entry}>
+                <img src={veg.image} alt="" className={styles.entryImg} />
+                <div className={styles.entryInfo}>
+                  <span className={styles.entryName}>{veg.nom}</span>
+                  <span className={styles.entryQty}>{entry.quantite}</span>
+                  {entry.notes && <span className={styles.entryNotes}>{entry.notes}</span>}
+                </div>
+                <button
+                  className={styles.deleteBtn}
+                  onClick={() => removeEntry(entry.id)}
+                  aria-label="Supprimer"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18">
+                    <path d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                  </svg>
+                </button>
+              </div>
+            )
+          })
+        )}
+      </div>
+
+      {/* FAB */}
+      <button className={styles.fab} onClick={() => setShowModal(true)}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="28" height="28">
+          <path d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+      </button>
+
+      {showModal && (
+        <AddEntryModal
+          date={formatDateFr(selectedDate)}
+          onAdd={handleAdd}
+          onClose={() => setShowModal(false)}
+        />
+      )}
+    </div>
+  )
+}

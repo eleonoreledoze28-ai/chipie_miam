@@ -1,0 +1,55 @@
+/* === Navigation basse — dark premium + glow violet actif === */
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: var(--nav-height);
+  padding-bottom: var(--safe-bottom);
+  background: #0E0F14;
+  border-top: 1px solid var(--border-subtle);
+  z-index: 200;
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 22px;
+  color: var(--text-muted);
+  transition: color 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+/* Active tab — violet glow */
+.tab.active {
+  color: var(--accent-violet-bright);
+}
+
+.tab.active .icon {
+  filter: drop-shadow(0 0 8px rgba(176, 124, 255, 0.6));
+}
+
+.tab.active .label {
+  text-shadow: 0 0 10px rgba(176, 124, 255, 0.5);
+}
+
+.icon {
+  width: 22px;
+  height: 22px;
+  transition: filter 200ms ease;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}

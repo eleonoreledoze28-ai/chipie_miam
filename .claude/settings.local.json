@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(python3 -c \":*)",
+      "Bash(grep -v \"^//\")",
+      "Bash(python -c \"import requests; print\\(''requests OK''\\)\")",
+      "Bash(npx tsc:*)",
+      "Bash(py --version)",
+      "Bash(npm run:*)",
+      "Bash(py:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where python:*)",
+      "Bash(where py:*)",
+      "Bash(python /tmp/remap_images.py)",
+      "Bash(node -e \"console.log\\(''ok''\\)\")",
+      "Bash(node remap_images.mjs)"
+    ]
+  }
+}

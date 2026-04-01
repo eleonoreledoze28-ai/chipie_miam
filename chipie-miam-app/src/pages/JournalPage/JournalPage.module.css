@@ -1,0 +1,210 @@
+.page {
+  padding-bottom: 80px;
+}
+
+/* Week navigation */
+.weekNav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 8px 4px;
+}
+
+.weekBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  color: var(--text-muted);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.weekDays {
+  display: flex;
+  flex: 1;
+  gap: 2px;
+}
+
+.dayBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: background 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+.dayLabel {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+.dayNum {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.daySelected {
+  background: var(--accent-orange-dim);
+}
+
+.daySelected .dayNum {
+  color: var(--accent-orange);
+}
+
+.daySelected .dayLabel {
+  color: var(--accent-orange);
+}
+
+.dayToday .dayNum {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dayDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent-orange);
+  position: absolute;
+  bottom: 3px;
+}
+
+/* Date header */
+.dateHeader {
+  padding: 12px 16px 8px;
+}
+
+.dateTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.weekSummary {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Alerts */
+.alert {
+  margin: 4px 16px;
+  padding: 10px 14px;
+  background: var(--accent-orange-dim);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--accent-orange);
+  font-weight: 500;
+}
+
+/* Entries */
+.entries {
+  padding: 8px 0;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 20px;
+  color: var(--text-muted);
+  gap: 8px;
+}
+
+.emptyIcon {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+.empty p {
+  font-size: 0.85rem;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.entryImg {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.entryInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.entryName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.entryQty {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.entryNotes {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 1px;
+}
+
+.deleteBtn {
+  color: var(--text-muted);
+  padding: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.deleteBtn:active {
+  color: var(--accent-red);
+}
+
+/* FAB */
+.fab {
+  position: fixed;
+  bottom: calc(var(--nav-height) + var(--safe-bottom) + 16px);
+  right: calc(50% - 230px);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent-orange);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(232, 148, 58, 0.4);
+  z-index: 100;
+  transition: transform 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fab:active {
+  transform: scale(0.92);
+}
+
+@media (max-width: 500px) {
+  .fab {
+    right: 20px;
+  }
+}

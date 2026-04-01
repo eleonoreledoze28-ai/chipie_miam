@@ -1,0 +1,194 @@
+/* === Vegetal card — capsule soft-glass === */
+
+.cardWrap {
+  margin: 3px 10px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 33, 42, 0.85) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: box-shadow 180ms ease, border-color 180ms ease;
+  text-align: left;
+}
+
+.cardGiven {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 8px rgba(76, 217, 100, 0.15);
+}
+
+/* Bouton "ajouter au journal" + compteur */
+.addBtn {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-color);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 150ms ease;
+  color: var(--text-muted);
+}
+
+.addBtn:active {
+  transform: scale(0.9);
+}
+
+.addBtn.addBtnActive {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+  color: #000;
+}
+
+.countBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Thumbnail */
+.thumbWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1.5px solid var(--accent-orange-border);
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.thumbWrap:hover .editOverlay {
+  opacity: 1;
+}
+
+.editOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: white;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  pointer-events: none;
+}
+
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: var(--bg-card);
+}
+
+/* Label area */
+.labelArea {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 0;
+}
+
+.label {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+.note {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* "Plus d'infos" button */
+.moreBtn {
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--accent-orange);
+  padding: 5px 8px;
+  border: 1px solid rgba(240, 165, 58, 0.3);
+  border-radius: var(--radius-sm);
+  background: rgba(240, 165, 58, 0.08);
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+.moreBtn:active {
+  background: rgba(240, 165, 58, 0.2);
+}
+
+/* Image URL edit row */
+.imageEditRow {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 0 2px;
+  animation: slideDown 150ms ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.imageInput {
+  flex: 1;
+  font-size: 0.75rem;
+  padding: 6px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  min-width: 0;
+}
+
+.imageInput::placeholder {
+  color: var(--text-muted);
+}
+
+.imageOk {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-green);
+  padding: 6px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--accent-green);
+  border-radius: var(--radius-sm);
+}
+
+.imageCancel {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 6px 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}

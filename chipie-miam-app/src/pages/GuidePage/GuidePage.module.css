@@ -1,0 +1,60 @@
+.page {
+  padding-bottom: 8px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  gap: 12px;
+}
+
+.emptyIcon {
+  font-size: 2.5rem;
+  opacity: 0.5;
+}
+
+.empty p {
+  font-size: 0.9rem;
+}
+
+/* Flat list (non-category sort) */
+.flatList {
+  padding: 4px 0;
+}
+
+.flatItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: calc(100% - 20px);
+  margin: 3px 10px;
+  padding: 7px 12px;
+  text-align: left;
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 33, 42, 0.85) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flatItem:active {
+  box-shadow: var(--glow-violet);
+}
+
+.flatImg {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1.5px solid var(--accent-orange-border);
+}
+
+.flatName {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}

@@ -1,0 +1,37 @@
+/* === Section catégorie — titre orange capitales italiques === */
+
+.section {
+  margin-bottom: 2px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px 4px;
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.name {
+  font-size: 0.74rem;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.7px;
+  color: var(--accent-orange);
+}
+
+.sousTitre {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.emoji {
+  font-size: 0.95rem;
+}
+
+.list {
+  padding: 2px 0 6px;
+}
