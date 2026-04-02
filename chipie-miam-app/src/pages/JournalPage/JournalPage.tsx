@@ -3,20 +3,40 @@ import { useJournal } from '../../hooks/useJournal'
 import { VEGETAUX } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
 import AddEntryModal from '../../components/AddEntryModal/AddEntryModal'
-import { todayStr, addDays, formatDateFr, getWeekDays, formatDateShort } from '../../utils/dates'
+import {
+  todayStr, addDays, addMonths,
+  formatDateFr, formatMonthFr,
+  getWeekDays, getMonthDays, formatDateShort,
+} from '../../utils/dates'
 import styles from './JournalPage.module.css'
 
+type ViewMode = 'day' | 'week' | 'month'
+
 const vegetauxMap = new Map(VEGETAUX.map((v) => [v.id, v]))
+
+const JOURS_HEADER = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 export default function JournalPage() {
   const { entries, addEntry, removeEntry, getEntriesForDate, getEntriesForWeek, getUniqueVegetauxCount } = useJournal()
   const [selectedDate, setSelectedDate] = useState(todayStr())
   const [showModal, setShowModal] = useState(false)
+  const [view, setView] = useState<ViewMode>('week')
 
   const weekDays = useMemo(() => getWeekDays(selectedDate), [selectedDate])
+  const monthDays = useMemo(() => getMonthDays(selectedDate), [selectedDate])
   const dayEntries = useMemo(() => getEntriesForDate(selectedDate), [selectedDate, entries])
   const weekEntries = useMemo(() => getEntriesForWeek(selectedDate), [selectedDate, entries])
   const uniqueCount = getUniqueVegetauxCount(weekEntries)
+
+  // Current month for month view
+  const selectedMonth = selectedDate.slice(0, 7) // YYYY-MM
+
+  // Set of dates with entries for indicators
+  const datesWithEntries = useMemo(() => {
+    const set = new Set<string>()
+    entries.forEach((e) => set.add(e.date))
+    return set
+  }, [entries])
 
   // Alerts
   const fruitsThisWeek = weekEntries.filter((e) => {
@@ -32,39 +52,126 @@ export default function JournalPage() {
     addEntry({ vegetalId, date: selectedDate, quantite, notes })
   }
 
+  // Navigation helpers
+  const navPrev = () => {
+    if (view === 'day') setSelectedDate(addDays(selectedDate, -1))
+    else if (view === 'week') setSelectedDate(addDays(selectedDate, -7))
+    else setSelectedDate(addMonths(selectedDate, -1))
+  }
+  const navNext = () => {
+    if (view === 'day') setSelectedDate(addDays(selectedDate, 1))
+    else if (view === 'week') setSelectedDate(addDays(selectedDate, 7))
+    else setSelectedDate(addMonths(selectedDate, 1))
+  }
+
+  // Navigation title
+  const navTitle = view === 'month' ? formatMonthFr(selectedDate) : null
+
   return (
     <div className={styles.page}>
-      {/* Week selector */}
-      <div className={styles.weekNav}>
-        <button className={styles.weekBtn} onClick={() => setSelectedDate(addDays(selectedDate, -7))}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
-            <path d="M15.75 19.5 8.25 12l7.5-7.5" />
-          </svg>
-        </button>
-        <div className={styles.weekDays}>
-          {weekDays.map((day) => {
-            const isToday = day === todayStr()
-            const isSelected = day === selectedDate
-            const hasEntries = entries.some((e) => e.date === day)
-            return (
-              <button
-                key={day}
-                className={`${styles.dayBtn} ${isSelected ? styles.daySelected : ''} ${isToday ? styles.dayToday : ''}`}
-                onClick={() => setSelectedDate(day)}
-              >
-                <span className={styles.dayLabel}>{formatDateShort(day).split(' ')[0]}</span>
-                <span className={styles.dayNum}>{new Date(day + 'T00:00:00').getDate()}</span>
-                {hasEntries && <span className={styles.dayDot} />}
-              </button>
-            )
-          })}
-        </div>
-        <button className={styles.weekBtn} onClick={() => setSelectedDate(addDays(selectedDate, 7))}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
-            <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-          </svg>
-        </button>
+      {/* View selector */}
+      <div className={styles.viewSelector}>
+        {(['day', 'week', 'month'] as const).map((v) => (
+          <button
+            key={v}
+            className={`${styles.viewBtn} ${view === v ? styles.viewBtnActive : ''}`}
+            onClick={() => setView(v)}
+          >
+            {v === 'day' ? 'Jour' : v === 'week' ? 'Semaine' : 'Mois'}
+          </button>
+        ))}
       </div>
+
+      {/* Day view */}
+      {view === 'day' && (
+        <div className={styles.dayNav}>
+          <button className={styles.weekBtn} onClick={navPrev}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+              <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+          <span className={styles.dayNavTitle}>{formatDateFr(selectedDate)}</span>
+          <button className={styles.weekBtn} onClick={navNext}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+              <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {/* Week view */}
+      {view === 'week' && (
+        <div className={styles.weekNav}>
+          <button className={styles.weekBtn} onClick={navPrev}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+              <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+          <div className={styles.weekDays}>
+            {weekDays.map((day) => {
+              const isToday = day === todayStr()
+              const isSelected = day === selectedDate
+              const hasEntries = datesWithEntries.has(day)
+              return (
+                <button
+                  key={day}
+                  className={`${styles.dayBtn} ${isSelected ? styles.daySelected : ''} ${isToday ? styles.dayToday : ''}`}
+                  onClick={() => setSelectedDate(day)}
+                >
+                  <span className={styles.dayLabel}>{formatDateShort(day).split(' ')[0]}</span>
+                  <span className={styles.dayNum}>{new Date(day + 'T00:00:00').getDate()}</span>
+                  {hasEntries && <span className={styles.dayDot} />}
+                </button>
+              )
+            })}
+          </div>
+          <button className={styles.weekBtn} onClick={navNext}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+              <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {/* Month view */}
+      {view === 'month' && (
+        <>
+          <div className={styles.monthNav}>
+            <button className={styles.weekBtn} onClick={navPrev}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+                <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+            <span className={styles.monthTitle}>{navTitle}</span>
+            <button className={styles.weekBtn} onClick={navNext}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </div>
+          <div className={styles.monthGrid}>
+            {JOURS_HEADER.map((j, i) => (
+              <span key={i} className={styles.monthDayHeader}>{j}</span>
+            ))}
+            {monthDays.map((day) => {
+              const isToday = day === todayStr()
+              const isSelected = day === selectedDate
+              const isCurrentMonth = day.slice(0, 7) === selectedMonth
+              const hasEntries = datesWithEntries.has(day)
+              return (
+                <button
+                  key={day}
+                  className={`${styles.monthDay} ${isSelected ? styles.monthDaySelected : ''} ${isToday ? styles.monthDayToday : ''} ${!isCurrentMonth ? styles.monthDayOutside : ''}`}
+                  onClick={() => setSelectedDate(day)}
+                >
+                  <span>{new Date(day + 'T00:00:00').getDate()}</span>
+                  {hasEntries && <span className={styles.monthDot} />}
+                </button>
+              )
+            })}
+          </div>
+        </>
+      )}
 
       {/* Date title */}
       <div className={styles.dateHeader}>

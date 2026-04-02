@@ -67,6 +67,19 @@ export function useJournal() {
     [entries],
   )
 
+  const getEntriesForMonth = useCallback(
+    (dateInMonth: string) => {
+      const d = new Date(dateInMonth + 'T00:00:00')
+      const year = d.getFullYear()
+      const month = d.getMonth()
+      const startStr = `${year}-${String(month + 1).padStart(2, '0')}-01`
+      const lastDay = new Date(year, month + 1, 0).getDate()
+      const endStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
+      return entries.filter((e) => e.date >= startStr && e.date <= endStr)
+    },
+    [entries],
+  )
+
   const getUniqueVegetauxCount = useCallback(
     (dateRange: JournalEntry[]) => {
       return new Set(dateRange.map((e) => e.vegetalId)).size
@@ -92,6 +105,7 @@ export function useJournal() {
     removeEntry,
     getEntriesForDate,
     getEntriesForWeek,
+    getEntriesForMonth,
     getUniqueVegetauxCount,
     getCategoryBreakdown,
   }
