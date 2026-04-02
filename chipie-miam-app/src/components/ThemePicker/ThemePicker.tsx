@@ -4,7 +4,8 @@ import styles from './ThemePicker.module.css'
 const THEMES: { id: ThemeId; label: string; left: string; right: string }[] = [
   { id: 'dark', label: 'Sombre', left: '#0A0B0F', right: '#F0A53A' },
   { id: 'lavender', label: 'Lavande', left: '#B29EB1', right: '#CED6B6' },
-  { id: 'aqua', label: 'Aqua', left: '#C7EBFA', right: '#3AA9D9' },
+  { id: 'aqua', label: 'Aqua', left: '#D6F0FA', right: '#49A9D6' },
+  { id: 'aqua-dark', label: 'Ocean', left: '#071A26', right: '#62C3EB' },
 ]
 
 interface Props {
