@@ -16,7 +16,7 @@
   align-items: center;
   gap: 8px;
   flex: 1;
-  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 33, 42, 0.8) 100%);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-gradient) 100%);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-pill);
   padding: 9px 14px;
@@ -58,7 +58,7 @@
   width: 36px;
   height: 36px;
   flex-shrink: 0;
-  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 33, 42, 0.8) 100%);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-gradient) 100%);
   border: 1px solid var(--border-color);
   border-radius: 10px;
   color: var(--text-secondary);
@@ -80,7 +80,7 @@
   align-items: center;
   gap: 4px;
   padding: 9px 10px;
-  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 33, 42, 0.8) 100%);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-gradient) 100%);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-pill);
   white-space: nowrap;
