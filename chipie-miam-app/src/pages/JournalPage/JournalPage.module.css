@@ -60,6 +60,85 @@
   text-transform: capitalize;
 }
 
+/* === Day list === */
+.dayList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 12px 8px;
+}
+
+.dayListItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  text-align: left;
+  transition: all 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dayListItem:active {
+  background: var(--bg-card-hover);
+}
+
+.dayListItemSelected {
+  border-color: var(--accent-orange);
+  background: var(--accent-orange-dim);
+}
+
+.dayListItemToday .dayListNum {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dayListDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 36px;
+}
+
+.dayListNum {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dayListItemSelected .dayListNum {
+  color: var(--accent-orange);
+}
+
+.dayListName {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+.dayListItemSelected .dayListName {
+  color: var(--accent-orange);
+}
+
+.dayListContent {
+  flex: 1;
+}
+
+.dayListEmpty {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.dayListCount {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-orange);
+}
+
 /* === Week navigation === */
 .weekNav {
   display: flex;

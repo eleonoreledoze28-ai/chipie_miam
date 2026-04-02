@@ -54,12 +54,12 @@ export default function JournalPage() {
 
   // Navigation helpers
   const navPrev = () => {
-    if (view === 'day') setSelectedDate(addDays(selectedDate, -1))
+    if (view === 'day') setSelectedDate(addDays(selectedDate, -7))
     else if (view === 'week') setSelectedDate(addDays(selectedDate, -7))
     else setSelectedDate(addMonths(selectedDate, -1))
   }
   const navNext = () => {
-    if (view === 'day') setSelectedDate(addDays(selectedDate, 1))
+    if (view === 'day') setSelectedDate(addDays(selectedDate, 7))
     else if (view === 'week') setSelectedDate(addDays(selectedDate, 7))
     else setSelectedDate(addMonths(selectedDate, 1))
   }
@@ -82,21 +82,51 @@ export default function JournalPage() {
         ))}
       </div>
 
-      {/* Day view */}
+      {/* Day view — list of days */}
       {view === 'day' && (
-        <div className={styles.dayNav}>
-          <button className={styles.weekBtn} onClick={navPrev}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
-              <path d="M15.75 19.5 8.25 12l7.5-7.5" />
-            </svg>
-          </button>
-          <span className={styles.dayNavTitle}>{formatDateFr(selectedDate)}</span>
-          <button className={styles.weekBtn} onClick={navNext}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
-              <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
-        </div>
+        <>
+          <div className={styles.dayNav}>
+            <button className={styles.weekBtn} onClick={navPrev}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+                <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+            <span className={styles.dayNavTitle}>{formatMonthFr(selectedDate)}</span>
+            <button className={styles.weekBtn} onClick={navNext}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18">
+                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </div>
+          <div className={styles.dayList}>
+            {weekDays.map((day) => {
+              const isToday = day === todayStr()
+              const isSelected = day === selectedDate
+              const dayEnt = getEntriesForDate(day)
+              return (
+                <button
+                  key={day}
+                  className={`${styles.dayListItem} ${isSelected ? styles.dayListItemSelected : ''} ${isToday ? styles.dayListItemToday : ''}`}
+                  onClick={() => setSelectedDate(day)}
+                >
+                  <div className={styles.dayListDate}>
+                    <span className={styles.dayListNum}>{new Date(day + 'T00:00:00').getDate()}</span>
+                    <span className={styles.dayListName}>{formatDateShort(day).split(' ')[0]}</span>
+                  </div>
+                  <div className={styles.dayListContent}>
+                    {dayEnt.length === 0 ? (
+                      <span className={styles.dayListEmpty}>—</span>
+                    ) : (
+                      <span className={styles.dayListCount}>
+                        {dayEnt.length} aliment{dayEnt.length > 1 ? 's' : ''}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </>
       )}
 
       {/* Week view */}
