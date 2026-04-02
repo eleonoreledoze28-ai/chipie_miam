@@ -72,7 +72,7 @@
 [data-theme="lavender"] {
   /* Fond & surfaces — warm lavender tinted */
   --bg-primary: #EDE5ED;
-  --bg-gradient: linear-gradient(90deg, #F0E8F2 0%, #E6DCF0 40%, #EAE4DE 70%, #F0ECE4 100%);
+  --bg-gradient: linear-gradient(90deg, #F2E4F0 0%, #EEDCE8 40%, #F5DDE6 70%, #F8E0E8 100%);
   --bg-secondary: #F4EFF4;
   --bg-card: #FDFAFD;
   --bg-card-hover: #F0E8F0;
