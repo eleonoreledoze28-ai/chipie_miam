@@ -6,6 +6,7 @@ const STORAGE_KEYS = [
   'chipie_journal',
   'chipie_custom_images',
   'chipie_collapsed_categories',
+  'chipie_profil',
 ]
 
 function exportData() {

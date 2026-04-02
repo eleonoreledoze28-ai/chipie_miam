@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useProfil } from '../../hooks/useProfil'
 import ThemePicker from '../ThemePicker/ThemePicker'
 import styles from './Header.module.css'
 
@@ -7,20 +8,21 @@ export default function Header() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [showThemes, setShowThemes] = useState(false)
+  const { profil } = useProfil()
 
   const isDetail = pathname.startsWith('/detail/')
   if (isDetail) return null
 
   return (
     <header className={styles.header}>
-      {/* Left — Chipie avatar + name */}
+      {/* Left — avatar + name */}
       <button className={styles.profileBtn} onClick={() => navigate('/profil')}>
         <img
           src={`${import.meta.env.BASE_URL}chipie-avatar.jpeg`}
-          alt="Chipie"
+          alt={profil.nom}
           className={styles.avatar}
         />
-        <span className={styles.profileName}>Chipie</span>
+        <span className={styles.profileName}>{profil.nom}</span>
       </button>
 
       {/* Center — rabbit icon + bicolor title */}

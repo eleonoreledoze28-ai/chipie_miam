@@ -44,6 +44,34 @@
   margin-bottom: 24px;
 }
 
+/* Editable name/subtitle inputs */
+.nameInput {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  width: 100%;
+  max-width: 260px;
+  margin-bottom: 6px;
+}
+
+.subtitleInput {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  width: 100%;
+  max-width: 260px;
+  margin-bottom: 24px;
+}
+
 .infoGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -75,11 +103,90 @@
   color: var(--text-primary);
 }
 
-.hint {
-  margin-top: 32px;
-  font-size: 0.75rem;
-  color: var(--text-muted);
+/* Editable info input */
+.infoInput {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
   text-align: center;
-  max-width: 260px;
-  font-style: italic;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  width: 100%;
+}
+
+.infoInput::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Toggle buttons (Sterilise) */
+.toggleRow {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.toggleBtn {
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  transition: all 150ms ease;
+}
+
+.toggleBtnActive {
+  background: var(--accent-orange);
+  color: #000;
+  border-color: var(--accent-orange);
+}
+
+/* Action buttons */
+.editBtn {
+  margin-top: 28px;
+  padding: 12px 28px;
+  border-radius: var(--radius-pill);
+  font-size: 0.88rem;
+  font-weight: 700;
+  background: var(--accent-orange);
+  color: #000;
+  transition: opacity 150ms ease;
+}
+
+.editBtn:active {
+  opacity: 0.7;
+}
+
+.editActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.cancelBtn {
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-color);
+}
+
+.saveBtn {
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: var(--accent-orange);
+  color: #000;
+}
+
+.saveBtn:active,
+.cancelBtn:active {
+  opacity: 0.7;
 }
