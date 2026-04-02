@@ -34,7 +34,7 @@
   margin: 3px 10px;
   padding: 7px 12px;
   text-align: left;
-  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 33, 42, 0.85) 100%);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-gradient) 100%);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   -webkit-tap-highlight-color: transparent;

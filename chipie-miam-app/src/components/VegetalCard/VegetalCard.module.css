@@ -10,7 +10,7 @@
   gap: 8px;
   width: 100%;
   padding: 6px 10px;
-  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(30, 33, 42, 0.85) 100%);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-gradient) 100%);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   transition: box-shadow 180ms ease, border-color 180ms ease;
