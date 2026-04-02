@@ -1,0 +1,80 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 199;
+}
+
+.popup {
+  position: absolute;
+  top: calc(var(--header-height) + 4px);
+  right: 10px;
+  z-index: 200;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.option:active {
+  background: var(--bg-card-hover);
+}
+
+.optionActive {
+  background: var(--bg-card);
+  outline: 2px solid var(--accent-orange);
+  outline-offset: -2px;
+}
+
+.swatch {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.swatchHalf {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+}
+
+.swatchLeft {
+  left: 0;
+  border-radius: 50% 0 0 50%;
+}
+
+.swatchRight {
+  right: 0;
+  border-radius: 0 50% 50% 0;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}

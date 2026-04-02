@@ -61,6 +61,46 @@
   --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* ============================================================================
+   Theme Lavande — Lavender Lily / Seafoam Green
+   ============================================================================ */
+
+[data-theme="lavender"] {
+  --bg-primary: #F5F0F8;
+  --bg-secondary: #EDE6F2;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F0EAF5;
+  --bg-elevated: #FFFFFF;
+
+  --text-primary: #2D2B3A;
+  --text-secondary: #5C5A6B;
+  --text-muted: #9590A6;
+
+  --accent-orange: #9B7CBF;
+  --accent-orange-dim: rgba(155, 124, 191, 0.12);
+  --accent-orange-border: #8A6BAE;
+
+  --accent-violet: #7BAF7E;
+  --accent-violet-bright: #8CC08F;
+  --accent-violet-dim: rgba(123, 175, 126, 0.12);
+  --accent-violet-glow: rgba(123, 175, 126, 0.25);
+
+  --accent-green: #6AB06D;
+  --accent-green-dim: rgba(106, 176, 109, 0.12);
+  --accent-red: #D94452;
+  --accent-red-dim: rgba(217, 68, 82, 0.10);
+  --accent-yellow: #C9A830;
+  --accent-yellow-dim: rgba(201, 168, 48, 0.10);
+
+  --border-color: #D4CDE0;
+  --border-subtle: #E8E2F0;
+
+  --shadow-card: 0 2px 8px rgba(100, 80, 130, 0.08);
+  --shadow-elevated: 0 4px 20px rgba(100, 80, 130, 0.12);
+  --glow-violet: 0 0 12px rgba(123, 175, 126, 0.2);
+  --glow-violet-strong: 0 0 18px rgba(123, 175, 126, 0.3);
+}
+
 /* === Reset === */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
