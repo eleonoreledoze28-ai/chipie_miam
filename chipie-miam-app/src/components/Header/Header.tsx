@@ -18,7 +18,7 @@ export default function Header() {
       {/* Left — avatar + name */}
       <button className={styles.profileBtn} onClick={() => navigate('/profil')}>
         <img
-          src={`${import.meta.env.BASE_URL}chipie-avatar.jpeg`}
+          src={profil.avatar || `${import.meta.env.BASE_URL}chipie-avatar.jpeg`}
           alt={profil.nom}
           className={styles.avatar}
         />

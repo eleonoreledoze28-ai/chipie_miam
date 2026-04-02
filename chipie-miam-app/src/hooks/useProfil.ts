@@ -7,6 +7,7 @@ export interface Profil {
   age: string
   poids: string
   sterilise: string
+  avatar: string // base64 data URL or empty for default
 }
 
 const STORAGE_KEY = 'chipie_profil'
@@ -18,6 +19,7 @@ const DEFAULTS: Profil = {
   age: '',
   poids: '',
   sterilise: '',
+  avatar: '',
 }
 
 function load(): Profil {
