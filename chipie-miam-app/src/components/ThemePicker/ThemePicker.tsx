@@ -3,6 +3,7 @@ import styles from './ThemePicker.module.css'
 
 const THEMES: { id: ThemeId; label: string; left: string; right: string }[] = [
   { id: 'dark', label: 'Sombre', left: '#0A0B0F', right: '#F0A53A' },
+  { id: 'lavender', label: 'Lavande', left: '#B29EB1', right: '#CED6B6' },
 ]
 
 interface Props {

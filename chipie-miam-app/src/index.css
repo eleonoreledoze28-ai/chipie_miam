@@ -61,6 +61,54 @@
   --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* ============================================================================
+   Theme Lavande — Soft premium / pastel lavender & sage matcha
+   Palette: Lavender Lily, Sedum Sage, Dusty Mauve, Matcha Olive
+   ============================================================================ */
+
+[data-theme="lavender"] {
+  /* Fond & surfaces — porcelain cream / silk / warm paper */
+  --bg-primary: #EDEDE5;
+  --bg-secondary: #F6F4EF;
+  --bg-card: #FBFAF7;
+  --bg-card-hover: #F0EDE6;
+  --bg-elevated: #FBFAF7;
+
+  /* Texte — dark taupe for readability */
+  --text-primary: #3E3935;
+  --text-secondary: #6A605D;
+  --text-muted: #9DA188;
+
+  /* Accent principal — lavender lily */
+  --accent-orange: #B29EB1;
+  --accent-orange-dim: rgba(178, 158, 177, 0.15);
+  --accent-orange-border: #A48FA3;
+
+  /* Accent secondaire — matcha olive (nav active, links) */
+  --accent-violet: #7A7C69;
+  --accent-violet-bright: #8E9B7A;
+  --accent-violet-dim: rgba(122, 124, 105, 0.12);
+  --accent-violet-glow: rgba(122, 124, 105, 0.25);
+
+  /* Etats semantiques */
+  --accent-green: #8E9B7A;
+  --accent-green-dim: rgba(142, 155, 122, 0.15);
+  --accent-red: #A97C84;
+  --accent-red-dim: rgba(169, 124, 132, 0.12);
+  --accent-yellow: #B49A74;
+  --accent-yellow-dim: rgba(180, 154, 116, 0.12);
+
+  /* Bordures — sage taupe */
+  --border-color: #BBBEAA;
+  --border-subtle: #D0CABE;
+
+  /* Ombres — editorial soft */
+  --shadow-card: 0 6px 18px rgba(62, 57, 53, 0.08);
+  --shadow-elevated: 0 14px 36px rgba(62, 57, 53, 0.12);
+  --glow-violet: 0 0 12px rgba(122, 124, 105, 0.15);
+  --glow-violet-strong: 0 0 18px rgba(145, 125, 129, 0.2);
+}
+
 /* === Reset === */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
