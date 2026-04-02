@@ -67,46 +67,47 @@
    ============================================================================ */
 
 [data-theme="lavender"] {
-  /* Fond & surfaces — porcelain cream / silk / warm paper */
-  --bg-primary: #EDEDE5;
-  --bg-secondary: #F6F4EF;
-  --bg-card: #FBFAF7;
-  --bg-card-hover: #F0EDE6;
-  --bg-elevated: #FBFAF7;
+  /* Fond & surfaces — warm lavender tinted */
+  --bg-primary: #EDE5ED;
+  --bg-secondary: #F4EFF4;
+  --bg-card: #FDFAFD;
+  --bg-card-hover: #F0E8F0;
+  --bg-elevated: #FDFAFD;
+  --bg-nav: #F4EFF4;
 
-  /* Texte — dark taupe for readability */
-  --text-primary: #3E3935;
-  --text-secondary: #6A605D;
-  --text-muted: #9DA188;
+  /* Texte — rich dark for strong contrast */
+  --text-primary: #2A2030;
+  --text-secondary: #554660;
+  --text-muted: #917D91;
 
-  /* Accent principal — lavender lily */
-  --accent-orange: #B29EB1;
-  --accent-orange-dim: rgba(178, 158, 177, 0.15);
-  --accent-orange-border: #A48FA3;
+  /* Accent principal — rich lavender */
+  --accent-orange: #9B6E9B;
+  --accent-orange-dim: rgba(155, 110, 155, 0.14);
+  --accent-orange-border: #8A5E8A;
 
-  /* Accent secondaire — matcha olive (nav active, links) */
-  --accent-violet: #7A7C69;
-  --accent-violet-bright: #8E9B7A;
-  --accent-violet-dim: rgba(122, 124, 105, 0.12);
-  --accent-violet-glow: rgba(122, 124, 105, 0.25);
+  /* Accent secondaire — vibrant sage green (nav active) */
+  --accent-violet: #5E8A5E;
+  --accent-violet-bright: #6B9E6B;
+  --accent-violet-dim: rgba(94, 138, 94, 0.12);
+  --accent-violet-glow: rgba(94, 138, 94, 0.35);
 
   /* Etats semantiques */
-  --accent-green: #8E9B7A;
-  --accent-green-dim: rgba(142, 155, 122, 0.15);
-  --accent-red: #A97C84;
-  --accent-red-dim: rgba(169, 124, 132, 0.12);
-  --accent-yellow: #B49A74;
-  --accent-yellow-dim: rgba(180, 154, 116, 0.12);
+  --accent-green: #5E8A5E;
+  --accent-green-dim: rgba(94, 138, 94, 0.14);
+  --accent-red: #A96272;
+  --accent-red-dim: rgba(169, 98, 114, 0.12);
+  --accent-yellow: #B09050;
+  --accent-yellow-dim: rgba(176, 144, 80, 0.12);
 
-  /* Bordures — sage taupe */
-  --border-color: #BBBEAA;
-  --border-subtle: #D0CABE;
+  /* Bordures — soft lavender */
+  --border-color: #C8B8C8;
+  --border-subtle: #DDD0DD;
 
-  /* Ombres — editorial soft */
-  --shadow-card: 0 6px 18px rgba(62, 57, 53, 0.08);
-  --shadow-elevated: 0 14px 36px rgba(62, 57, 53, 0.12);
-  --glow-violet: 0 0 12px rgba(122, 124, 105, 0.15);
-  --glow-violet-strong: 0 0 18px rgba(145, 125, 129, 0.2);
+  /* Ombres — soft purple tinted */
+  --shadow-card: 0 4px 14px rgba(80, 50, 80, 0.08);
+  --shadow-elevated: 0 8px 28px rgba(80, 50, 80, 0.12);
+  --glow-violet: 0 0 12px rgba(94, 138, 94, 0.25);
+  --glow-violet-strong: 0 0 18px rgba(94, 138, 94, 0.35);
 }
 
 /* === Reset === */

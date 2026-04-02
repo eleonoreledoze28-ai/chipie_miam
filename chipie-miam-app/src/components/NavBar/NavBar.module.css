@@ -12,7 +12,7 @@
   align-items: center;
   height: var(--nav-height);
   padding-bottom: var(--safe-bottom);
-  background: #0E0F14;
+  background: var(--bg-nav, #0E0F14);
   border-top: 1px solid var(--border-subtle);
   z-index: 200;
 }
@@ -35,11 +35,11 @@
 }
 
 .tab.active .icon {
-  filter: drop-shadow(0 0 8px rgba(176, 124, 255, 0.6));
+  filter: drop-shadow(0 0 8px var(--accent-violet-glow));
 }
 
 .tab.active .label {
-  text-shadow: 0 0 10px rgba(176, 124, 255, 0.5);
+  text-shadow: 0 0 10px var(--accent-violet-glow);
 }
 
 .icon {
