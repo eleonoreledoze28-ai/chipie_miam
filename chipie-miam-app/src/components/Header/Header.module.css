@@ -71,7 +71,19 @@
   font-weight: 700;
 }
 
-/* Right spacer */
-.rightSpacer {
+/* Right — Settings */
+.settingsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 80px;
+  padding: 6px;
+  border-radius: var(--radius-pill);
+  color: var(--text-secondary);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settingsBtn:active {
+  background: var(--bg-card);
+  color: var(--accent-orange);
 }

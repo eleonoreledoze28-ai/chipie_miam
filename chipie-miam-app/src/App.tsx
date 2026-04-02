@@ -5,6 +5,7 @@ import DetailPage from './pages/DetailPage/DetailPage'
 import JournalPage from './pages/JournalPage/JournalPage'
 import StatsPage from './pages/StatsPage/StatsPage'
 import ProfilPage from './pages/ProfilPage/ProfilPage'
+import SettingsPage from './pages/SettingsPage/SettingsPage'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="journal" element={<JournalPage />} />
         <Route path="stats" element={<StatsPage />} />
         <Route path="profil" element={<ProfilPage />} />
+        <Route path="settings" element={<SettingsPage />} />
       </Route>
     </Routes>
   )
