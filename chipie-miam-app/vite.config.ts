@@ -2,13 +2,13 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
-  base: '/chipie_miam/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/chipie_miam/' : '/',
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'images/**/*'],
+      includeAssets: ['favicon.svg', 'chipie-avatar.jpeg', 'images/**/*'],
       manifest: {
         name: 'Chipie Miam',
         short_name: 'Chipie Miam',
@@ -36,4 +36,4 @@ export default defineConfig({
       },
     }),
   ],
-})
+}))

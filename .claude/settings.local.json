@@ -15,7 +15,9 @@
       "Bash(where py:*)",
       "Bash(python /tmp/remap_images.py)",
       "Bash(node -e \"console.log\\(''ok''\\)\")",
-      "Bash(node remap_images.mjs)"
+      "Bash(node remap_images.mjs)",
+      "Bash(git rebase:*)",
+      "Bash(GIT_EDITOR=true git rebase --continue)"
     ]
   }
 }

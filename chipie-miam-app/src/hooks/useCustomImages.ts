@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { assetUrl } from '../utils/assetUrl'
 
 const STORAGE_KEY = 'chipie_custom_images'
 
@@ -23,7 +24,8 @@ export function useCustomImages() {
   const [overrides, setOverrides] = useState<Record<string, string>>(load)
 
   const getImage = useCallback(
-    (vegetalId: string, defaultUrl: string) => overrides[vegetalId] || defaultUrl,
+    (vegetalId: string, defaultUrl: string) =>
+      overrides[vegetalId] || assetUrl(defaultUrl),
     [overrides],
   )
 

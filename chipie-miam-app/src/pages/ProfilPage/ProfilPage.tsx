@@ -13,7 +13,9 @@ export default function ProfilPage() {
         <span>Retour</span>
       </button>
 
-      <div className={styles.avatar}>🐰</div>
+      <div className={styles.avatar}>
+        <img src={`${import.meta.env.BASE_URL}chipie-avatar.jpeg`} alt="Chipie" className={styles.avatarImg} />
+      </div>
       <h1 className={styles.name}>Chipie</h1>
       <p className={styles.subtitle}>Lapin nain</p>
 

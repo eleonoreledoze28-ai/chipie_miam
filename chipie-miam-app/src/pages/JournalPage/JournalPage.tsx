@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useJournal } from '../../hooks/useJournal'
 import { VEGETAUX } from '../../data/vegetaux'
+import { assetUrl } from '../../utils/assetUrl'
 import AddEntryModal from '../../components/AddEntryModal/AddEntryModal'
 import { todayStr, addDays, formatDateFr, getWeekDays, formatDateShort } from '../../utils/dates'
 import styles from './JournalPage.module.css'
@@ -91,7 +92,7 @@ export default function JournalPage() {
             if (!veg) return null
             return (
               <div key={entry.id} className={styles.entry}>
-                <img src={veg.image} alt="" className={styles.entryImg} />
+                <img src={assetUrl(veg.image)} alt="" className={styles.entryImg} />
                 <div className={styles.entryInfo}>
                   <span className={styles.entryName}>{veg.nom}</span>
                   <span className={styles.entryQty}>{entry.quantite}</span>

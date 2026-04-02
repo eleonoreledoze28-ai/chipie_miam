@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { VEGETAUX } from '../../data/vegetaux'
+import { assetUrl } from '../../utils/assetUrl'
 import styles from './AddEntryModal.module.css'
 
 const QUANTITES = [
@@ -67,7 +68,7 @@ export default function AddEntryModal({ date, onAdd, onClose, preSelectedId = nu
                   className={styles.listItem}
                   onClick={() => setSelectedId(v.id)}
                 >
-                  <img src={v.image} alt="" className={styles.thumb} loading="lazy" />
+                  <img src={assetUrl(v.image)} alt="" className={styles.thumb} loading="lazy" />
                   <span>{v.nom}</span>
                 </button>
               ))}
@@ -79,7 +80,7 @@ export default function AddEntryModal({ date, onAdd, onClose, preSelectedId = nu
         ) : (
           <>
             <div className={styles.selectedVeg}>
-              <img src={selected.image} alt="" className={styles.selectedImg} />
+              <img src={assetUrl(selected.image)} alt="" className={styles.selectedImg} />
               <div>
                 <p className={styles.selectedName}>{selected.nom}</p>
                 <button className={styles.changeBtn} onClick={() => setSelectedId(null)}>

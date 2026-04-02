@@ -18,15 +18,18 @@
 }
 
 .avatar {
-  font-size: 4rem;
   width: 100px;
   height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-card);
   border-radius: 50%;
   margin-bottom: 12px;
+  overflow: hidden;
+  border: 3px solid var(--accent-orange-border);
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .name {
