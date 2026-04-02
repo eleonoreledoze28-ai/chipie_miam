@@ -115,6 +115,57 @@
   --glow-violet-strong: 0 0 18px rgba(94, 138, 94, 0.35);
 }
 
+/* ============================================================================
+   Theme Aqua — Aqua Caustic Light
+   Crystalline, fresh, calm, luminous, aquatic, premium
+   ============================================================================ */
+
+[data-theme="aqua"] {
+  /* Fond & surfaces — crystalline blue */
+  --bg-primary: #F4FBFF;
+  --bg-gradient: linear-gradient(135deg, #F4FBFF 0%, #DDF3FB 38%, #C7EBFA 68%, #EEF9FE 100%);
+  --bg-secondary: #EAF7FD;
+  --bg-card: #F8FDFF;
+  --bg-card-hover: #EEF9FE;
+  --bg-card-gradient: rgba(190, 233, 248, 0.35);
+  --bg-elevated: #FFFFFF;
+  --bg-nav: #EAF7FD;
+
+  /* Texte — deep ocean for readability */
+  --text-primary: #16384C;
+  --text-secondary: #4D7187;
+  --text-muted: #7F9FB1;
+
+  /* Accent principal — aqua blue */
+  --accent-orange: #3AA9D9;
+  --accent-orange-dim: rgba(58, 169, 217, 0.12);
+  --accent-orange-border: #2E6FA3;
+
+  /* Accent secondaire — cyan bright (nav active) */
+  --accent-violet: #2E6FA3;
+  --accent-violet-bright: #3AA9D9;
+  --accent-violet-dim: rgba(46, 111, 163, 0.12);
+  --accent-violet-glow: rgba(110, 211, 245, 0.35);
+
+  /* Etats semantiques */
+  --accent-green: #57C7B6;
+  --accent-green-dim: rgba(87, 199, 182, 0.14);
+  --accent-red: #E89AA8;
+  --accent-red-dim: rgba(232, 154, 168, 0.12);
+  --accent-yellow: #F2C98A;
+  --accent-yellow-dim: rgba(242, 201, 138, 0.15);
+
+  /* Bordures — soft sky */
+  --border-color: #BDDDEA;
+  --border-subtle: #D9EEF7;
+
+  /* Ombres — aquatic float */
+  --shadow-card: 0 12px 32px rgba(74, 143, 174, 0.14);
+  --shadow-elevated: 0 14px 36px rgba(74, 143, 174, 0.18);
+  --glow-violet: 0 0 12px rgba(110, 211, 245, 0.25);
+  --glow-violet-strong: 0 0 18px rgba(110, 211, 245, 0.4);
+}
+
 /* === Reset === */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
