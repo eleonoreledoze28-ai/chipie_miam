@@ -158,3 +158,52 @@
   color: var(--text-secondary);
   line-height: 1.55;
 }
+
+/* Game card */
+.gameCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  -webkit-tap-highlight-color: transparent;
+  transition: all 150ms ease;
+  text-align: left;
+}
+
+.gameCard:active {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-orange-border);
+}
+
+.gameLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gameEmoji {
+  font-size: 1.6rem;
+}
+
+.gameTitle {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+.gameDesc {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.gameArrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
