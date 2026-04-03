@@ -79,12 +79,17 @@ export default function JeuPage() {
 
   // Final screen
   if (gameOver) {
-    const emoji = accuracy >= 80 ? '🏆' : accuracy >= 50 ? '👍' : '💪'
-    const message = accuracy >= 80
-      ? 'Excellent ! Vous connaissez bien vos végétaux !'
-      : accuracy >= 50
-        ? 'Pas mal ! Continuez à apprendre.'
-        : 'Continuez à explorer le guide pour progresser !'
+    const emoji = accuracy === 100 ? '🌟' : accuracy >= 80 ? '🏆' : accuracy >= 60 ? '🎉' : accuracy >= 40 ? '👍' : '💪'
+    const title = accuracy === 100 ? 'Parfait !' : accuracy >= 80 ? 'Impressionnant !' : accuracy >= 60 ? 'Bien joué !' : accuracy >= 40 ? 'Pas mal !' : 'Bel effort !'
+    const message = accuracy === 100
+      ? '🐰 Chipie est fière de toi ! Tu connais tous les végétaux par cœur !'
+      : accuracy >= 80
+        ? '🐰 Chipie te félicite ! Tu es un vrai expert en alimentation lapin !'
+        : accuracy >= 60
+          ? '🐰 Chipie est contente ! Continue comme ça, tu progresses vite !'
+          : accuracy >= 40
+            ? '🐰 Chipie t\'encourage ! Explore le guide pour découvrir plus de végétaux.'
+            : '🐰 Chipie croit en toi ! Chaque partie te rend plus fort. Réessaie !'
 
     return (
       <div className={styles.page}>
@@ -97,7 +102,7 @@ export default function JeuPage() {
 
         <div className={styles.endScreen}>
           <span className={styles.endEmoji}>{emoji}</span>
-          <h1 className={styles.endTitle}>Partie terminée !</h1>
+          <h1 className={styles.endTitle}>{title}</h1>
 
           <div className={styles.endStats}>
             <div className={styles.endStat}>
