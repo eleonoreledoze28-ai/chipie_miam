@@ -6,6 +6,14 @@ import styles from './JeuPage.module.css'
 
 const MAX_QUESTIONS = 10
 
+type Difficulty = 'easy' | 'normal' | 'hard'
+
+const DIFFICULTY_CONFIG = {
+  easy: { choices: 2, label: 'Facile', emoji: '🌱', desc: '2 choix, catégories différentes', sameCategory: false },
+  normal: { choices: 4, label: 'Normal', emoji: '🌿', desc: '4 choix mélangés', sameCategory: false },
+  hard: { choices: 6, label: 'Difficile', emoji: '🔥', desc: '6 choix, même catégorie', sameCategory: true },
+}
+
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
@@ -15,18 +23,39 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-function generateRound() {
+function generateRound(difficulty: Difficulty) {
   const pool = VEGETAUX.filter(v => v.image && !v.image.includes('placeholder'))
+  const config = DIFFICULTY_CONFIG[difficulty]
+
   const shuffled = shuffle(pool)
   const correct = shuffled[0]
-  const wrongOptions = shuffled.slice(1, 4)
+
+  let wrongPool: typeof pool
+  if (config.sameCategory) {
+    // Hard: same category only
+    wrongPool = pool.filter(v => v.categorie === correct.categorie && v.id !== correct.id)
+    if (wrongPool.length < config.choices - 1) {
+      wrongPool = pool.filter(v => v.id !== correct.id)
+    }
+  } else if (difficulty === 'easy') {
+    // Easy: different categories to make it obvious
+    wrongPool = pool.filter(v => v.categorie !== correct.categorie)
+    if (wrongPool.length < config.choices - 1) {
+      wrongPool = pool.filter(v => v.id !== correct.id)
+    }
+  } else {
+    wrongPool = pool.filter(v => v.id !== correct.id)
+  }
+
+  const wrongOptions = shuffle(wrongPool).slice(0, config.choices - 1)
   const options = shuffle([correct, ...wrongOptions])
   return { correct, options }
 }
 
 export default function JeuPage() {
   const navigate = useNavigate()
-  const [round, setRound] = useState(() => generateRound())
+  const [difficulty, setDifficulty] = useState<Difficulty | null>(null)
+  const [round, setRound] = useState<ReturnType<typeof generateRound> | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [score, setScore] = useState(0)
   const [total, setTotal] = useState(0)
@@ -35,15 +64,26 @@ export default function JeuPage() {
   const [showResult, setShowResult] = useState(false)
   const [gameOver, setGameOver] = useState(false)
 
-  const isCorrect = selected === round.correct.id
+  const isCorrect = round ? selected === round.correct.id : false
   const accuracy = total > 0 ? Math.round((score / total) * 100) : 0
 
+  const startGame = useCallback((diff: Difficulty) => {
+    setDifficulty(diff)
+    setRound(generateRound(diff))
+    setSelected(null)
+    setShowResult(false)
+    setScore(0)
+    setTotal(0)
+    setStreak(0)
+    setBestStreak(0)
+    setGameOver(false)
+  }, [])
+
   const handleSelect = useCallback((id: string) => {
-    if (showResult || gameOver) return
+    if (showResult || gameOver || !round) return
     setSelected(id)
     setShowResult(true)
-    const newTotal = total + 1
-    setTotal(newTotal)
+    setTotal(t => t + 1)
     if (id === round.correct.id) {
       setScore(s => s + 1)
       setStreak(s => {
@@ -54,20 +94,20 @@ export default function JeuPage() {
     } else {
       setStreak(0)
     }
-  }, [showResult, gameOver, round.correct.id, total])
+  }, [showResult, gameOver, round])
 
   const handleNext = useCallback(() => {
     if (total >= MAX_QUESTIONS) {
       setGameOver(true)
       return
     }
-    setRound(generateRound())
+    setRound(generateRound(difficulty!))
     setSelected(null)
     setShowResult(false)
-  }, [total])
+  }, [total, difficulty])
 
   const handleRestart = useCallback(() => {
-    setRound(generateRound())
+    setRound(generateRound(difficulty!))
     setSelected(null)
     setShowResult(false)
     setScore(0)
@@ -75,10 +115,49 @@ export default function JeuPage() {
     setStreak(0)
     setBestStreak(0)
     setGameOver(false)
-  }, [])
+  }, [difficulty])
 
-  // Final screen
+  // ========== Level select screen ==========
+  if (!difficulty || !round) {
+    return (
+      <div className={styles.page}>
+        <button className={styles.back} onClick={() => navigate(-1)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
+            <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+          <span>Retour</span>
+        </button>
+
+        <div className={styles.levelScreen}>
+          <span className={styles.levelEmoji}>🎮</span>
+          <h1 className={styles.levelTitle}>Devinette Photo</h1>
+          <p className={styles.levelSubtitle}>Choisissez votre niveau</p>
+
+          <div className={styles.levelList}>
+            {(['easy', 'normal', 'hard'] as const).map(diff => {
+              const cfg = DIFFICULTY_CONFIG[diff]
+              return (
+                <button key={diff} className={styles.levelCard} onClick={() => startGame(diff)}>
+                  <span className={styles.levelCardEmoji}>{cfg.emoji}</span>
+                  <div className={styles.levelCardInfo}>
+                    <span className={styles.levelCardName}>{cfg.label}</span>
+                    <span className={styles.levelCardDesc}>{cfg.desc}</span>
+                  </div>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18" className={styles.levelArrow}>
+                    <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ========== End screen ==========
   if (gameOver) {
+    const config = DIFFICULTY_CONFIG[difficulty]
     const emoji = accuracy === 100 ? '🌟' : accuracy >= 80 ? '🏆' : accuracy >= 60 ? '🎉' : accuracy >= 40 ? '👍' : '💪'
     const title = accuracy === 100 ? 'Parfait !' : accuracy >= 80 ? 'Impressionnant !' : accuracy >= 60 ? 'Bien joué !' : accuracy >= 40 ? 'Pas mal !' : 'Bel effort !'
     const message = accuracy === 100
@@ -103,6 +182,7 @@ export default function JeuPage() {
         <div className={styles.endScreen}>
           <span className={styles.endEmoji}>{emoji}</span>
           <h1 className={styles.endTitle}>{title}</h1>
+          <span className={styles.endDifficulty}>{config.emoji} {config.label}</span>
 
           <div className={styles.endStats}>
             <div className={styles.endStat}>
@@ -124,7 +204,10 @@ export default function JeuPage() {
           <p className={styles.endMessage}>{message}</p>
 
           <button className={styles.restartBtn} onClick={handleRestart}>
-            🔄 Rejouer
+            🔄 Rejouer ({config.label})
+          </button>
+          <button className={styles.restartBtn} onClick={() => { setDifficulty(null); setGameOver(false) }}>
+            🎚️ Changer de niveau
           </button>
           <button className={styles.backBtn} onClick={() => navigate(-1)}>
             Retour au guide
@@ -133,6 +216,9 @@ export default function JeuPage() {
       </div>
     )
   }
+
+  // ========== Game screen ==========
+  const config = DIFFICULTY_CONFIG[difficulty]
 
   return (
     <div className={styles.page}>
@@ -144,7 +230,7 @@ export default function JeuPage() {
       </button>
 
       <h1 className={styles.title}>🎮 Devinette Photo</h1>
-      <p className={styles.subtitle}>Question {total + 1} / {MAX_QUESTIONS}</p>
+      <p className={styles.subtitle}>Question {total + 1}/{MAX_QUESTIONS} — {config.emoji} {config.label}</p>
 
       {/* Score bar */}
       <div className={styles.scoreBar}>
@@ -175,7 +261,7 @@ export default function JeuPage() {
       </div>
 
       {/* Options */}
-      <div className={styles.options}>
+      <div className={round.options.length <= 4 ? styles.options : styles.options3col}>
         {round.options.map(v => {
           let optClass = styles.option
           if (showResult) {
