@@ -4,7 +4,6 @@ import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
 import styles from './TamagotchiPage.module.css'
 
-// Pick random vegetables for feeding options
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
@@ -19,14 +18,59 @@ function getRandomFood(count: number) {
   return shuffle(pool).slice(0, count)
 }
 
-// Chipie moods
-function getMood(faim: number, soif: number, bonheur: number): { emoji: string; label: string; color: string } {
+// Random events
+const EVENTS = [
+  { text: '🌞 Il fait beau ! Chipie veut jouer dehors.', action: 'pet', boost: 'bonheur' },
+  { text: '🌧️ Il pleut... Chipie a besoin de réconfort.', action: 'pet', boost: 'bonheur' },
+  { text: '🥕 Chipie renifle l\'air... elle a faim !', action: 'feed', boost: 'faim' },
+  { text: '💤 Chipie bâille... elle se repose un peu.', action: 'none', boost: 'bonheur' },
+  { text: '🏃 Chipie fait des binkies ! Elle est heureuse !', action: 'none', boost: 'bonheur' },
+  { text: '🔍 Chipie explore son enclos avec curiosité.', action: 'none', boost: 'bonheur' },
+  { text: '☀️ Chipie se prélasse au soleil.', action: 'none', boost: 'bonheur' },
+  { text: '🌿 Chipie grignote un brin d\'herbe.', action: 'none', boost: 'faim' },
+]
+
+// Chipie dialogue bubbles
+function getDialogue(faim: number, soif: number, bonheur: number): string {
+  if (faim <= 15) return 'J\'ai tellement faim... 🥺'
+  if (soif <= 15) return 'De l\'eau s\'il te plaît ! 💧'
+  if (bonheur <= 15) return 'Je me sens seul(e)... 😢'
+  if (faim >= 90 && soif >= 90 && bonheur >= 90) return 'Je suis le plus heureux des lapins ! 🌟'
+  if (bonheur >= 80) return 'Je t\'adore ! 💕'
+  if (faim >= 80) return 'Mmmh, j\'ai bien mangé ! 😋'
+  if (soif >= 80) return 'Aaah, rafraîchissant ! 💦'
+  return ''
+}
+
+// XP and Level
+function getLevel(totalFed: number): { level: number; xp: number; xpNeeded: number; title: string } {
+  const thresholds = [0, 5, 15, 30, 50, 80, 120, 170, 230, 300]
+  const titles = ['Débutant', 'Apprenti', 'Soigneur', 'Nourricier', 'Gardien', 'Protecteur', 'Expert', 'Maître', 'Champion', 'Légende']
+  let level = 0
+  for (let i = thresholds.length - 1; i >= 0; i--) {
+    if (totalFed >= thresholds[i]) { level = i; break }
+  }
+  const xp = totalFed - thresholds[level]
+  const xpNeeded = (thresholds[level + 1] || thresholds[level] + 100) - thresholds[level]
+  return { level: level + 1, xp, xpNeeded, title: titles[level] }
+}
+
+function getMood(faim: number, soif: number, bonheur: number) {
   const avg = (faim + soif + bonheur) / 3
-  if (avg >= 80) return { emoji: '😍', label: 'Aux anges !', color: 'var(--accent-green)' }
-  if (avg >= 60) return { emoji: '😊', label: 'Content(e)', color: 'var(--accent-green)' }
-  if (avg >= 40) return { emoji: '😐', label: 'Ça va...', color: 'var(--accent-yellow)' }
-  if (avg >= 20) return { emoji: '😢', label: 'Pas bien...', color: 'var(--accent-orange)' }
-  return { emoji: '😭', label: 'Au secours !', color: 'var(--accent-red)' }
+  if (avg >= 80) return { emoji: '😍', label: 'Aux anges !' }
+  if (avg >= 60) return { emoji: '😊', label: 'Content(e)' }
+  if (avg >= 40) return { emoji: '😐', label: 'Ça va...' }
+  if (avg >= 20) return { emoji: '😢', label: 'Pas bien...' }
+  return { emoji: '😭', label: 'Au secours !' }
+}
+
+// Chipie animation class
+function getAnimation(faim: number, soif: number, bonheur: number, action: string | null): string {
+  if (action) return styles.chipieBounce
+  const avg = (faim + soif + bonheur) / 3
+  if (avg >= 70) return styles.chipieHappy
+  if (avg <= 25) return styles.chipieSad
+  return ''
 }
 
 const STORAGE_KEY = 'chipie_tamagotchi'
@@ -37,7 +81,6 @@ interface TamaState {
   bonheur: number
   lastUpdate: number
   totalFed: number
-  daysAlive: number
   startDate: string
 }
 
@@ -46,47 +89,60 @@ function loadState(): TamaState {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) return JSON.parse(raw)
   } catch { /* ignore */ }
-  return { faim: 70, soif: 70, bonheur: 70, lastUpdate: Date.now(), totalFed: 0, daysAlive: 0, startDate: new Date().toISOString().split('T')[0] }
+  return { faim: 70, soif: 70, bonheur: 70, lastUpdate: Date.now(), totalFed: 0, startDate: new Date().toISOString().split('T')[0] }
 }
 
 function saveState(state: TamaState) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
 }
 
-// Decay stats based on time passed
 function applyDecay(state: TamaState): TamaState {
   const now = Date.now()
   const minutesPassed = (now - state.lastUpdate) / 60000
-  const decay = Math.floor(minutesPassed * 0.5) // 0.5 per minute
-  const startDate = new Date(state.startDate + 'T00:00:00')
-  const daysAlive = Math.floor((now - startDate.getTime()) / 86400000)
+  const decay = Math.floor(minutesPassed * 0.4)
   return {
     ...state,
     faim: Math.max(0, state.faim - decay),
     soif: Math.max(0, state.soif - decay * 1.2),
-    bonheur: Math.max(0, state.bonheur - decay * 0.3),
+    bonheur: Math.max(0, state.bonheur - decay * 0.25),
     lastUpdate: now,
-    daysAlive,
   }
 }
 
 export default function TamagotchiPage() {
   const navigate = useNavigate()
   const [state, setState] = useState(() => applyDecay(loadState()))
-  const [foodOptions, setFoodOptions] = useState(() => getRandomFood(4))
+  const [foodOptions, setFoodOptions] = useState(() => getRandomFood(6))
   const [lastAction, setLastAction] = useState<string | null>(null)
   const [showFeed, setShowFeed] = useState(false)
+  const [event, setEvent] = useState<string | null>(null)
+  const [zzz, setZzz] = useState(false)
 
   const mood = getMood(state.faim, state.soif, state.bonheur)
+  const dialogue = getDialogue(state.faim, state.soif, state.bonheur)
+  const levelInfo = getLevel(state.totalFed)
+  const animClass = getAnimation(state.faim, state.soif, state.bonheur, lastAction)
+  const daysAlive = Math.floor((Date.now() - new Date(state.startDate + 'T00:00:00').getTime()) / 86400000)
 
-  // Save on change
   useEffect(() => { saveState(state) }, [state])
 
   // Decay every 30 seconds
   useEffect(() => {
+    const interval = setInterval(() => setState(prev => applyDecay(prev)), 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Random events every 45 seconds
+  useEffect(() => {
     const interval = setInterval(() => {
-      setState(prev => applyDecay(prev))
-    }, 30000)
+      if (Math.random() > 0.5) {
+        const ev = EVENTS[Math.floor(Math.random() * EVENTS.length)]
+        setEvent(ev.text)
+        if (ev.boost === 'bonheur') setState(prev => ({ ...prev, bonheur: Math.min(100, prev.bonheur + 3) }))
+        if (ev.boost === 'faim') setState(prev => ({ ...prev, faim: Math.max(0, prev.faim - 2) }))
+        setTimeout(() => setEvent(null), 4000)
+      }
+    }, 45000)
     return () => clearInterval(interval)
   }, [])
 
@@ -94,12 +150,9 @@ export default function TamagotchiPage() {
     const cat = CATEGORIES.find(c => c.id === vegetal.categorie)
     let faimBoost = 15
     let bonheurBoost = 10
-
-    // Fruits give more bonheur but less faim
     if (vegetal.categorie === 'fruits') { faimBoost = 8; bonheurBoost = 20 }
-    // Salades give more faim
-    if (vegetal.categorie === 'salades') { faimBoost = 20; bonheurBoost = 8 }
-    // If restriction, negative effect
+    if (vegetal.categorie === 'salades') { faimBoost = 22; bonheurBoost = 8 }
+    if (vegetal.categorie === 'aromatiques') { faimBoost = 12; bonheurBoost = 15 }
     if (vegetal.restriction === 'a_eviter') { faimBoost = -10; bonheurBoost = -15 }
 
     setState(prev => ({
@@ -109,43 +162,37 @@ export default function TamagotchiPage() {
       totalFed: prev.totalFed + 1,
     }))
 
-    if (vegetal.restriction === 'a_eviter') {
-      setLastAction(`😵 Chipie n'aime pas ${vegetal.nom} !`)
-    } else {
-      setLastAction(`😋 Chipie adore ${vegetal.nom} ! ${cat?.emoji || ''}`)
-    }
+    setLastAction(vegetal.restriction === 'a_eviter'
+      ? `😵 Beurk ! Chipie recrache ${vegetal.nom} !`
+      : `😋 Miam ! Chipie adore ${vegetal.nom} ! ${cat?.emoji || ''}`)
     setShowFeed(false)
-    setFoodOptions(getRandomFood(4))
+    setFoodOptions(getRandomFood(6))
     setTimeout(() => setLastAction(null), 2500)
   }, [])
 
   const giveWater = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      soif: Math.min(100, prev.soif + 25),
-      bonheur: Math.min(100, prev.bonheur + 5),
-    }))
-    setLastAction('💧 Chipie a bien bu !')
+    setState(prev => ({ ...prev, soif: Math.min(100, prev.soif + 25), bonheur: Math.min(100, prev.bonheur + 5) }))
+    setLastAction('💧 Glou glou ! Chipie boit avec plaisir !')
     setTimeout(() => setLastAction(null), 2000)
   }, [])
 
   const pet = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      bonheur: Math.min(100, prev.bonheur + 15),
-    }))
-    setLastAction('🥰 Chipie ronronne de bonheur !')
+    setState(prev => ({ ...prev, bonheur: Math.min(100, prev.bonheur + 15) }))
+    setLastAction('🥰 Chipie ferme les yeux de bonheur...')
     setTimeout(() => setLastAction(null), 2000)
   }, [])
 
   const giveHay = useCallback(() => {
-    setState(prev => ({
-      ...prev,
-      faim: Math.min(100, prev.faim + 10),
-      bonheur: Math.min(100, prev.bonheur + 5),
-    }))
-    setLastAction('🌾 Chipie grignote son foin !')
+    setState(prev => ({ ...prev, faim: Math.min(100, prev.faim + 10), bonheur: Math.min(100, prev.bonheur + 5) }))
+    setLastAction('🌾 Crunch crunch ! Chipie grignote son foin !')
     setTimeout(() => setLastAction(null), 2000)
+  }, [])
+
+  const sleep = useCallback(() => {
+    setZzz(true)
+    setState(prev => ({ ...prev, bonheur: Math.min(100, prev.bonheur + 10) }))
+    setLastAction('💤 Chipie fait une sieste...')
+    setTimeout(() => { setZzz(false); setLastAction(null) }, 3000)
   }, [])
 
   return (
@@ -157,86 +204,107 @@ export default function TamagotchiPage() {
         <span>Retour</span>
       </button>
 
-      <h1 className={styles.title}>🐰 Chipie Virtuelle</h1>
-      <p className={styles.subtitle}>Jour {state.daysAlive + 1} — {state.totalFed} repas servis</p>
-
-      {/* Chipie */}
-      <div className={styles.chipieArea}>
-        <div className={styles.chipieCircle}>
-          <img src={`${import.meta.env.BASE_URL}chipie-avatar.jpeg`} alt="Chipie" className={styles.chipieImg} />
+      {/* Header with level */}
+      <div className={styles.header}>
+        <h1 className={styles.title}>🐰 Chipie Virtuelle</h1>
+        <div className={styles.levelBadge}>
+          <span className={styles.levelNum}>Niv. {levelInfo.level}</span>
+          <span className={styles.levelTitle}>{levelInfo.title}</span>
         </div>
-        <div className={styles.moodBadge} style={{ color: mood.color }}>
-          <span className={styles.moodEmoji}>{mood.emoji}</span>
+      </div>
+      <p className={styles.subtitle}>Jour {daysAlive + 1} — {state.totalFed} repas servis</p>
+
+      {/* XP bar */}
+      <div className={styles.xpBar}>
+        <div className={styles.xpFill} style={{ width: `${(levelInfo.xp / levelInfo.xpNeeded) * 100}%` }} />
+        <span className={styles.xpText}>{levelInfo.xp}/{levelInfo.xpNeeded} XP</span>
+      </div>
+
+      {/* Chipie scene */}
+      <div className={styles.scene}>
+        {/* Background elements */}
+        <div className={styles.sceneBg}>
+          <span className={styles.sceneSun}>☀️</span>
+          <span className={styles.sceneCloud1}>☁️</span>
+          <span className={styles.sceneCloud2}>☁️</span>
+          <span className={styles.sceneGrass}>🌿🌱🌿🌱🌿🌱🌿</span>
+        </div>
+
+        {/* Chipie */}
+        <div className={`${styles.chipieWrap} ${animClass} ${zzz ? styles.chipieSleep : ''}`}>
+          <img src={`${import.meta.env.BASE_URL}chipie-avatar.jpeg`} alt="Chipie" className={styles.chipieImg} />
+          {zzz && <span className={styles.zzzBubble}>💤</span>}
+        </div>
+
+        {/* Speech bubble */}
+        {(dialogue || lastAction) && (
+          <div className={styles.speechBubble}>
+            {lastAction || dialogue}
+          </div>
+        )}
+
+        {/* Mood */}
+        <div className={styles.moodTag}>
+          <span>{mood.emoji}</span>
           <span>{mood.label}</span>
         </div>
       </div>
 
-      {/* Action feedback */}
-      {lastAction && (
-        <div className={styles.actionFeedback}>{lastAction}</div>
-      )}
+      {/* Event banner */}
+      {event && <div className={styles.eventBanner}>{event}</div>}
 
-      {/* Stats bars */}
+      {/* Stats */}
       <div className={styles.statsCard}>
-        <div className={styles.barRow}>
-          <span className={styles.barLabel}>🥬 Faim</span>
-          <div className={styles.barTrack}>
-            <div className={`${styles.barFill} ${state.faim <= 20 ? styles.barDanger : state.faim <= 40 ? styles.barWarn : styles.barOk}`}
-              style={{ width: `${state.faim}%` }} />
+        {[
+          { label: '🥬 Faim', value: state.faim },
+          { label: '💧 Soif', value: state.soif },
+          { label: '😊 Bonheur', value: state.bonheur },
+        ].map(s => (
+          <div key={s.label} className={styles.barRow}>
+            <span className={styles.barLabel}>{s.label}</span>
+            <div className={styles.barTrack}>
+              <div className={`${styles.barFill} ${s.value <= 20 ? styles.barDanger : s.value <= 40 ? styles.barWarn : styles.barOk}`}
+                style={{ width: `${s.value}%` }} />
+            </div>
+            <span className={styles.barValue}>{Math.round(s.value)}%</span>
           </div>
-          <span className={styles.barValue}>{Math.round(state.faim)}%</span>
-        </div>
-        <div className={styles.barRow}>
-          <span className={styles.barLabel}>💧 Soif</span>
-          <div className={styles.barTrack}>
-            <div className={`${styles.barFill} ${state.soif <= 20 ? styles.barDanger : state.soif <= 40 ? styles.barWarn : styles.barOk}`}
-              style={{ width: `${state.soif}%` }} />
-          </div>
-          <span className={styles.barValue}>{Math.round(state.soif)}%</span>
-        </div>
-        <div className={styles.barRow}>
-          <span className={styles.barLabel}>😊 Bonheur</span>
-          <div className={styles.barTrack}>
-            <div className={`${styles.barFill} ${state.bonheur <= 20 ? styles.barDanger : state.bonheur <= 40 ? styles.barWarn : styles.barOk}`}
-              style={{ width: `${state.bonheur}%` }} />
-          </div>
-          <span className={styles.barValue}>{Math.round(state.bonheur)}%</span>
-        </div>
+        ))}
       </div>
 
-      {/* Action buttons */}
+      {/* Actions */}
       <div className={styles.actions}>
-        <button className={styles.actionBtn} onClick={() => setShowFeed(!showFeed)}>
-          <span className={styles.actionEmoji}>🥬</span>
-          <span>Nourrir</span>
-        </button>
-        <button className={styles.actionBtn} onClick={giveWater}>
-          <span className={styles.actionEmoji}>💧</span>
-          <span>Eau</span>
-        </button>
-        <button className={styles.actionBtn} onClick={giveHay}>
-          <span className={styles.actionEmoji}>🌾</span>
-          <span>Foin</span>
-        </button>
-        <button className={styles.actionBtn} onClick={pet}>
-          <span className={styles.actionEmoji}>🤗</span>
-          <span>Caresser</span>
-        </button>
+        {[
+          { emoji: '🥬', label: 'Nourrir', onClick: () => setShowFeed(!showFeed) },
+          { emoji: '💧', label: 'Eau', onClick: giveWater },
+          { emoji: '🌾', label: 'Foin', onClick: giveHay },
+          { emoji: '🤗', label: 'Caresser', onClick: pet },
+          { emoji: '💤', label: 'Dodo', onClick: sleep },
+        ].map(a => (
+          <button key={a.label} className={styles.actionBtn} onClick={a.onClick}>
+            <span className={styles.actionEmoji}>{a.emoji}</span>
+            <span>{a.label}</span>
+          </button>
+        ))}
       </div>
 
-      {/* Food selection */}
+      {/* Food panel */}
       {showFeed && (
         <div className={styles.foodPanel}>
-          <span className={styles.foodTitle}>Choisir un aliment :</span>
+          <span className={styles.foodTitle}>Que voulez-vous donner a Chipie ?</span>
           <div className={styles.foodGrid}>
             {foodOptions.map(v => (
               <button key={v.id} className={styles.foodItem} onClick={() => feed(v)}>
                 <img src={assetUrl(v.image)} alt="" className={styles.foodImg} />
-                <span className={styles.foodName}>{v.nom}</span>
+                <div className={styles.foodInfo}>
+                  <span className={styles.foodName}>{v.nom}</span>
+                  <span className={styles.foodCat}>
+                    {CATEGORIES.find(c => c.id === v.categorie)?.emoji} {CATEGORIES.find(c => c.id === v.categorie)?.nom}
+                  </span>
+                </div>
               </button>
             ))}
           </div>
-          <button className={styles.foodRefresh} onClick={() => setFoodOptions(getRandomFood(4))}>
+          <button className={styles.foodRefresh} onClick={() => setFoodOptions(getRandomFood(6))}>
             🔄 Autres aliments
           </button>
         </div>
