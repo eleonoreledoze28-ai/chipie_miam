@@ -23,6 +23,13 @@ const GAMES = [
     title: 'Mot Mélangé',
     desc: 'Remettez les lettres dans le bon ordre',
   },
+  {
+    id: 'tamagotchi',
+    path: '/jeu/tamagotchi',
+    emoji: '🐰',
+    title: 'Chipie Virtuelle',
+    desc: 'Occupez-vous de Chipie : nourriture, eau, câlins',
+  },
 ]
 
 export default function JeuxHubPage() {

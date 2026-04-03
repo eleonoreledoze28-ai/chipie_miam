@@ -10,6 +10,7 @@ import JeuxHubPage from './pages/JeuxHubPage/JeuxHubPage'
 import JeuPage from './pages/JeuPage/JeuPage'
 import MemoryPage from './pages/MemoryPage/MemoryPage'
 import AnagrammePage from './pages/AnagrammePage/AnagrammePage'
+import TamagotchiPage from './pages/TamagotchiPage/TamagotchiPage'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="jeu/devinette" element={<JeuPage />} />
         <Route path="jeu/memory" element={<MemoryPage />} />
         <Route path="jeu/anagramme" element={<AnagrammePage />} />
+        <Route path="jeu/tamagotchi" element={<TamagotchiPage />} />
       </Route>
     </Routes>
   )
