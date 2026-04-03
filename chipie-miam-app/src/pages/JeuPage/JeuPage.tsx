@@ -10,7 +10,7 @@ type Difficulty = 'easy' | 'normal' | 'hard'
 
 const DIFFICULTY_CONFIG = {
   easy: { choices: 2, label: 'Facile', emoji: '🌱', desc: '2 choix, catégories différentes', sameCategory: false },
-  normal: { choices: 4, label: 'Normal', emoji: '🌿', desc: '4 choix mélangés', sameCategory: false },
+  normal: { choices: 4, label: 'Normal', emoji: '🌿', desc: '4 choix, image zoomée', sameCategory: false },
   hard: { choices: 6, label: 'Difficile', emoji: '🔥', desc: '6 choix, même catégorie, image floue', sameCategory: true },
 }
 
@@ -89,6 +89,28 @@ export default function JeuPage() {
     return () => { if (blurInterval.current) clearInterval(blurInterval.current) }
   }, [difficulty, round, showResult])
 
+  // Progressive zoom-out for normal mode
+  const [zoom, setZoom] = useState(difficulty === 'normal' ? 3.5 : 1)
+  const zoomInterval = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (difficulty !== 'normal' || showResult || !round) {
+      if (zoomInterval.current) clearInterval(zoomInterval.current)
+      return
+    }
+    setZoom(3.5)
+    zoomInterval.current = window.setInterval(() => {
+      setZoom(prev => {
+        if (prev <= 1) {
+          if (zoomInterval.current) clearInterval(zoomInterval.current)
+          return 1
+        }
+        return prev - 0.1
+      })
+    }, 500)
+    return () => { if (zoomInterval.current) clearInterval(zoomInterval.current) }
+  }, [difficulty, round, showResult])
+
   // Timer per question
   const TIMER_SECONDS = 20
   const [timer, setTimer] = useState(TIMER_SECONDS)
@@ -117,7 +139,9 @@ export default function JeuPage() {
     if (timer === 0 && !showResult && !gameOver && round) {
       setShowResult(true)
       setBlur(0)
+      setZoom(1)
       if (blurInterval.current) clearInterval(blurInterval.current)
+      if (zoomInterval.current) clearInterval(zoomInterval.current)
       setTotal(t => t + 1)
       setStreak(0)
     }
@@ -140,7 +164,9 @@ export default function JeuPage() {
     setSelected(id)
     setShowResult(true)
     setBlur(0)
+    setZoom(1)
     if (blurInterval.current) clearInterval(blurInterval.current)
+    if (zoomInterval.current) clearInterval(zoomInterval.current)
     setTotal(t => t + 1)
     if (id === round.correct.id) {
       setScore(s => s + 1)
@@ -328,7 +354,11 @@ export default function JeuPage() {
           src={assetUrl(round.correct.image)}
           alt="Devinez !"
           className={styles.photo}
-          style={difficulty === 'hard' ? { filter: `blur(${blur}px)`, transition: 'filter 0.3s ease' } : undefined}
+          style={{
+            ...(difficulty === 'hard' ? { filter: `blur(${blur}px)` } : {}),
+            ...(difficulty === 'normal' ? { transform: `scale(${zoom})` } : {}),
+            transition: 'filter 0.3s ease, transform 0.5s ease',
+          }}
         />
       </div>
 
