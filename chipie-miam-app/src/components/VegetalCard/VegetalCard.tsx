@@ -8,6 +8,7 @@ interface Props {
   imageUrl: string
   todayCount: number
   onAddToJournal: (vegetalId: string) => void
+  onRemoveFromJournal: (vegetalId: string) => void
   onChangeImage: (vegetalId: string, url: string) => void
 }
 
@@ -17,7 +18,7 @@ function shortNote(v: Vegetal): string {
   return ''
 }
 
-export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJournal, onChangeImage }: Props) {
+export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJournal, onRemoveFromJournal, onChangeImage }: Props) {
   const navigate = useNavigate()
   const [imgError, setImgError] = useState(false)
   const [showImageEdit, setShowImageEdit] = useState(false)
@@ -27,6 +28,11 @@ export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJour
   const handleAddClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     onAddToJournal(vegetal.id)
+  }
+
+  const handleRemoveClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onRemoveFromJournal(vegetal.id)
   }
 
   const handleMoreInfo = (e: React.MouseEvent) => {
@@ -57,20 +63,32 @@ export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJour
   return (
     <div className={styles.cardWrap}>
       <div className={`${styles.card} ${hasCount ? styles.cardGiven : ''}`}>
-        {/* Bouton "ajouter au journal" avec compteur */}
-        <button
-          className={`${styles.addBtn} ${hasCount ? styles.addBtnActive : ''}`}
-          onClick={handleAddClick}
-          title="Ajouter au journal d'aujourd'hui"
-        >
-          {hasCount ? (
+        {/* Add / Remove / Count */}
+        {hasCount ? (
+          <div className={styles.counterGroup}>
+            <button className={styles.counterBtn} onClick={handleRemoveClick} title="Retirer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
+                <path d="M19.5 12h-15" />
+              </svg>
+            </button>
             <span className={styles.countBadge}>{todayCount}</span>
-          ) : (
+            <button className={styles.counterBtn} onClick={handleAddClick} title="Ajouter">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
+                <path d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </button>
+          </div>
+        ) : (
+          <button
+            className={styles.addBtn}
+            onClick={handleAddClick}
+            title="Ajouter au journal d'aujourd'hui"
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
               <path d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-          )}
-        </button>
+          </button>
+        )}
 
         {/* Thumbnail (click to edit URL) */}
         <button className={styles.thumbWrap} onClick={handleImageClick} title="Changer l'image">

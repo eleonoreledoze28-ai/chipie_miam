@@ -21,7 +21,7 @@ export default function GuidePage() {
 
   const { openCategories, allCollapsed, toggleCategory, toggleCollapseAll } = useCollapseState()
   const { getImage, setImage } = useCustomImages()
-  const { entries, addEntry, getEntriesForDate } = useJournal()
+  const { entries, addEntry, removeEntry, getEntriesForDate } = useJournal()
 
   const today = todayStr()
   const todayEntries = useMemo(() => getEntriesForDate(today), [entries, today])
@@ -38,6 +38,16 @@ export default function GuidePage() {
   const handleAddClick = useCallback((vegetalId: string) => {
     setModalVegetalId(vegetalId)
   }, [])
+
+  const handleRemoveClick = useCallback((vegetalId: string) => {
+    // Remove the most recent entry for this vegetal today
+    const todayForVeg = todayEntries
+      .filter(e => e.vegetalId === vegetalId)
+      .sort((a, b) => b.timestamp - a.timestamp)
+    if (todayForVeg.length > 0) {
+      removeEntry(todayForVeg[0].id)
+    }
+  }, [todayEntries, removeEntry])
 
   const handleModalAdd = useCallback((vegetalId: string, quantite: string, notes: string) => {
     addEntry({ vegetalId, date: today, quantite, notes })
@@ -78,6 +88,7 @@ export default function GuidePage() {
       imageUrl={getImage(v.id, v.image)}
       todayCount={todayCounts[v.id] || 0}
       onAddToJournal={handleAddClick}
+      onRemoveFromJournal={handleRemoveClick}
       onChangeImage={setImage}
     />
   )
