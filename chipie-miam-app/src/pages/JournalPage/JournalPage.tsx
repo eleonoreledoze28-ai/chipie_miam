@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useJournal } from '../../hooks/useJournal'
-import { VEGETAUX } from '../../data/vegetaux'
+import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
 import AddEntryModal from '../../components/AddEntryModal/AddEntryModal'
 import {
@@ -37,6 +37,23 @@ export default function JournalPage() {
     entries.forEach((e) => set.add(e.date))
     return set
   }, [entries])
+
+  // Week category breakdown
+  const weekBreakdown = useMemo(() => {
+    const counts: Record<string, number> = {}
+    weekEntries.forEach(e => {
+      const v = vegetauxMap.get(e.vegetalId)
+      if (v) {
+        const cat = CATEGORIES.find(c => c.id === v.categorie)
+        if (cat) counts[cat.nom] = (counts[cat.nom] || 0) + 1
+      }
+    })
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])
+  }, [weekEntries])
+
+  const weekTotal = weekEntries.length
+  const varietyGoal = 5
+  const varietyProgress = Math.min(uniqueCount / varietyGoal, 1)
 
   // Alerts
   const fruitsThisWeek = weekEntries.filter((e) => {
@@ -247,6 +264,43 @@ export default function JournalPage() {
               </div>
             )
           })
+        )}
+      </div>
+
+      {/* Week summary section */}
+      <div className={styles.weekSection}>
+        {/* Variety progress */}
+        <div className={styles.varietyCard}>
+          <div className={styles.varietyHeader}>
+            <span className={styles.varietyTitle}>🎯 Objectif variété</span>
+            <span className={styles.varietyCount}>{uniqueCount}/{varietyGoal}</span>
+          </div>
+          <div className={styles.varietyBar}>
+            <div className={styles.varietyFill} style={{ width: `${varietyProgress * 100}%` }} />
+          </div>
+          <p className={styles.varietyHint}>
+            {uniqueCount >= varietyGoal
+              ? '✅ Bravo ! Objectif atteint cette semaine.'
+              : `Encore ${varietyGoal - uniqueCount} végéta${varietyGoal - uniqueCount > 1 ? 'ux' : 'l'} différent${varietyGoal - uniqueCount > 1 ? 's' : ''} pour atteindre l'objectif.`}
+          </p>
+        </div>
+
+        {/* Category breakdown */}
+        {weekBreakdown.length > 0 && (
+          <div className={styles.breakdownCard}>
+            <span className={styles.breakdownTitle}>📊 Répartition de la semaine</span>
+            <div className={styles.breakdownList}>
+              {weekBreakdown.map(([cat, count]) => (
+                <div key={cat} className={styles.breakdownRow}>
+                  <span className={styles.breakdownCat}>{cat}</span>
+                  <div className={styles.breakdownBarWrap}>
+                    <div className={styles.breakdownBar} style={{ width: `${(count / weekTotal) * 100}%` }} />
+                  </div>
+                  <span className={styles.breakdownNum}>{count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 

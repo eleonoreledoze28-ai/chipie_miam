@@ -390,6 +390,128 @@
   color: var(--accent-red);
 }
 
+/* === Week summary section === */
+.weekSection {
+  padding: 12px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Variety card */
+.varietyCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.varietyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.varietyTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent-orange);
+}
+
+.varietyCount {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--accent-orange);
+}
+
+.varietyBar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border-subtle);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.varietyFill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent-orange);
+  transition: width 300ms ease;
+}
+
+.varietyHint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Breakdown card */
+.breakdownCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.breakdownTitle {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent-orange);
+  margin-bottom: 12px;
+}
+
+.breakdownList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.breakdownRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.breakdownCat {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.breakdownBarWrap {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border-subtle);
+  overflow: hidden;
+}
+
+.breakdownBar {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent-orange);
+  min-width: 4px;
+  transition: width 300ms ease;
+}
+
+.breakdownNum {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  min-width: 20px;
+  text-align: right;
+}
+
 /* === FAB === */
 .fab {
   position: fixed;
