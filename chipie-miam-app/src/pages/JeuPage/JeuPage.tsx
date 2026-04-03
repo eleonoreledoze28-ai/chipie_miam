@@ -205,7 +205,7 @@ export default function JeuPage() {
   if (!difficulty || !round) {
     return (
       <div className={styles.page}>
-        <button className={styles.back} onClick={() => navigate(-1)}>
+        <button className={styles.back} onClick={() => navigate('/jeu')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
             <path d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
@@ -256,7 +256,7 @@ export default function JeuPage() {
 
     return (
       <div className={styles.page}>
-        <button className={styles.back} onClick={() => navigate(-1)}>
+        <button className={styles.back} onClick={() => navigate('/jeu')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
             <path d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
@@ -293,7 +293,7 @@ export default function JeuPage() {
           <button className={styles.restartBtn} onClick={() => { setDifficulty(null); setGameOver(false) }}>
             🎚️ Changer de niveau
           </button>
-          <button className={styles.backBtn} onClick={() => navigate(-1)}>
+          <button className={styles.backBtn} onClick={() => navigate('/jeu')}>
             Retour au guide
           </button>
         </div>
@@ -306,7 +306,7 @@ export default function JeuPage() {
 
   return (
     <div className={styles.page}>
-      <button className={styles.back} onClick={() => navigate(-1)}>
+      <button className={styles.back} onClick={() => navigate('/jeu')}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
           <path d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>

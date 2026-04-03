@@ -6,7 +6,9 @@ import JournalPage from './pages/JournalPage/JournalPage'
 import StatsPage from './pages/StatsPage/StatsPage'
 import ProfilPage from './pages/ProfilPage/ProfilPage'
 import SettingsPage from './pages/SettingsPage/SettingsPage'
+import JeuxHubPage from './pages/JeuxHubPage/JeuxHubPage'
 import JeuPage from './pages/JeuPage/JeuPage'
+import MemoryPage from './pages/MemoryPage/MemoryPage'
 
 function App() {
   return (
@@ -18,7 +20,9 @@ function App() {
         <Route path="stats" element={<StatsPage />} />
         <Route path="profil" element={<ProfilPage />} />
         <Route path="settings" element={<SettingsPage />} />
-        <Route path="jeu" element={<JeuPage />} />
+        <Route path="jeu" element={<JeuxHubPage />} />
+        <Route path="jeu/devinette" element={<JeuPage />} />
+        <Route path="jeu/memory" element={<MemoryPage />} />
       </Route>
     </Routes>
   )
