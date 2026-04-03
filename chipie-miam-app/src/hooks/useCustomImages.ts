@@ -1,11 +1,14 @@
 import { useState, useCallback } from 'react'
 import { assetUrl } from '../utils/assetUrl'
+import { getActiveProfileId } from './useProfiles'
 
-const STORAGE_KEY = 'chipie_custom_images'
+function getStorageKey() {
+  return `chipie_custom_images_${getActiveProfileId()}`
+}
 
 function load(): Record<string, string> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(getStorageKey())
     return raw ? JSON.parse(raw) : {}
   } catch {
     return {}
@@ -13,13 +16,9 @@ function load(): Record<string, string> {
 }
 
 function save(data: Record<string, string>) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+  localStorage.setItem(getStorageKey(), JSON.stringify(data))
 }
 
-/**
- * Hook to manage custom image URLs per vegetal.
- * Returns getImage(vegetalId, defaultUrl) and setImage(vegetalId, url).
- */
 export function useCustomImages() {
   const [overrides, setOverrides] = useState<Record<string, string>>(load)
 

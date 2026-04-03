@@ -2,16 +2,26 @@ import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './SettingsPage.module.css'
 
-const STORAGE_KEYS = [
-  'chipie_journal',
-  'chipie_custom_images',
-  'chipie_collapsed_categories',
-  'chipie_profil',
-]
+// Collect all profile-related keys dynamically
+function getAllStorageKeys(): string[] {
+  const keys: string[] = ['chipie_profiles_meta', 'chipie_collapsed_categories', 'chipie_theme']
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (key && (
+      key.startsWith('chipie_profil_') ||
+      key.startsWith('chipie_journal_') ||
+      key.startsWith('chipie_custom_images_')
+    )) {
+      keys.push(key)
+    }
+  }
+  return keys
+}
 
 function exportData() {
+  const keys = getAllStorageKeys()
   const data: Record<string, unknown> = {}
-  for (const key of STORAGE_KEYS) {
+  for (const key of keys) {
     const raw = localStorage.getItem(key)
     if (raw) {
       try { data[key] = JSON.parse(raw) } catch { data[key] = raw }
@@ -44,9 +54,9 @@ export default function SettingsPage() {
     reader.onload = () => {
       try {
         const data = JSON.parse(reader.result as string)
-        for (const key of STORAGE_KEYS) {
-          if (key in data) {
-            localStorage.setItem(key, JSON.stringify(data[key]))
+        for (const [key, value] of Object.entries(data)) {
+          if (key.startsWith('chipie_')) {
+            localStorage.setItem(key, JSON.stringify(value))
           }
         }
         setStatus({ msg: 'Données restaurées ! Rechargement...' })
@@ -56,7 +66,6 @@ export default function SettingsPage() {
       }
     }
     reader.readAsText(file)
-    // Reset pour pouvoir reimporter le meme fichier
     e.target.value = ''
   }
 
@@ -77,7 +86,7 @@ export default function SettingsPage() {
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Sauvegarde</div>
         <p className={styles.sectionDesc}>
-          Télécharge un fichier JSON contenant votre journal et vos préférences.
+          Télécharge un fichier JSON contenant tous vos profils, journaux et préférences.
         </p>
         <button className={`${styles.btn} ${styles.btnExport}`} onClick={handleExport}>
           Sauvegarder mes données

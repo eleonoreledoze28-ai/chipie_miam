@@ -14,7 +14,133 @@
   font-size: 0.85rem;
   font-weight: 600;
   padding: 4px 0;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+}
+
+/* Profile selector */
+.profileSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 16px;
+  width: 100%;
+  max-width: 360px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.profileSelector::-webkit-scrollbar { display: none; }
+
+.profileChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 6px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 150ms ease;
+}
+
+.profileChipActive {
+  border-color: var(--accent-orange);
+  background: var(--accent-orange-dim);
+}
+
+.chipAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chipName {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.profileChipActive .chipName {
+  color: var(--accent-orange);
+}
+
+.addChip {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 150ms ease;
+}
+
+.addChip:active {
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+}
+
+/* New profile form */
+.newForm {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 16px;
+  animation: slideDown 150ms ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.newInput {
+  flex: 1;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+.newInput::placeholder { color: var(--text-muted); }
+
+.newOk {
+  padding: 8px 16px;
+  background: var(--accent-orange);
+  color: #000;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+}
+
+.newCancel {
+  padding: 8px 10px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* Delete profile */
+.deleteProfileBtn {
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent-red);
+  background: transparent;
+  border: 1px solid var(--accent-red-dim);
+}
+
+.deleteProfileBtn:active {
+  background: var(--accent-red-dim);
 }
 
 .avatar {

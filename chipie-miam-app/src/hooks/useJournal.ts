@@ -1,19 +1,22 @@
 import { useState, useEffect, useCallback } from 'react'
+import { getActiveProfileId } from './useProfiles'
 
 export interface JournalEntry {
   id: string
   vegetalId: string
   date: string       // YYYY-MM-DD
-  quantite: string   // 'une feuille', 'une poignee', etc.
+  quantite: string
   notes: string
   timestamp: number
 }
 
-const STORAGE_KEY = 'chipie_journal'
+function getStorageKey() {
+  return `chipie_journal_${getActiveProfileId()}`
+}
 
 function loadEntries(): JournalEntry[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(getStorageKey())
     return raw ? JSON.parse(raw) : []
   } catch {
     return []
@@ -21,7 +24,7 @@ function loadEntries(): JournalEntry[] {
 }
 
 function saveEntries(entries: JournalEntry[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries))
+  localStorage.setItem(getStorageKey(), JSON.stringify(entries))
 }
 
 export function useJournal() {

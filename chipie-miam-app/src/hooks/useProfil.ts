@@ -1,4 +1,5 @@
 import { useCallback, useSyncExternalStore } from 'react'
+import { getActiveProfileId } from './useProfiles'
 
 export interface Profil {
   nom: string
@@ -7,10 +8,12 @@ export interface Profil {
   age: string
   poids: string
   sterilise: string
-  avatar: string // base64 data URL or empty for default
+  avatar: string
 }
 
-const STORAGE_KEY = 'chipie_profil'
+function getStorageKey() {
+  return `chipie_profil_${getActiveProfileId()}`
+}
 
 const DEFAULTS: Profil = {
   nom: 'Chipie',
@@ -24,7 +27,7 @@ const DEFAULTS: Profil = {
 
 function load(): Profil {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(getStorageKey())
     return raw ? { ...DEFAULTS, ...JSON.parse(raw) } : { ...DEFAULTS }
   } catch {
     return { ...DEFAULTS }
@@ -32,10 +35,9 @@ function load(): Profil {
 }
 
 function save(profil: Profil) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(profil))
+  localStorage.setItem(getStorageKey(), JSON.stringify(profil))
 }
 
-// Cache the snapshot to avoid infinite loops with useSyncExternalStore
 let cachedSnapshot: Profil = load()
 
 let listeners: (() => void)[] = []
@@ -44,13 +46,8 @@ function subscribe(cb: () => void) {
   return () => { listeners = listeners.filter(l => l !== cb) }
 }
 
-function getSnapshot(): Profil {
-  return cachedSnapshot
-}
-
-function getServerSnapshot(): Profil {
-  return DEFAULTS
-}
+function getSnapshot(): Profil { return cachedSnapshot }
+function getServerSnapshot(): Profil { return DEFAULTS }
 
 function notify() {
   cachedSnapshot = load()

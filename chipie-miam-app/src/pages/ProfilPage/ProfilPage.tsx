@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProfil } from '../../hooks/useProfil'
+import { useProfiles } from '../../hooks/useProfiles'
 import styles from './ProfilPage.module.css'
 
 const DEFAULT_AVATAR = `${import.meta.env.BASE_URL}chipie-avatar.jpeg`
@@ -8,8 +9,11 @@ const DEFAULT_AVATAR = `${import.meta.env.BASE_URL}chipie-avatar.jpeg`
 export default function ProfilPage() {
   const navigate = useNavigate()
   const { profil, updateProfil } = useProfil()
+  const { profiles, activeId, switchProfile, addProfile, removeProfile, updateProfileMeta } = useProfiles()
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(profil)
+  const [showNewForm, setShowNewForm] = useState(false)
+  const [newName, setNewName] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
   const startEdit = () => {
@@ -19,12 +23,12 @@ export default function ProfilPage() {
 
   const saveEdit = () => {
     updateProfil(draft)
+    // Sync meta
+    updateProfileMeta(activeId, { nom: draft.nom, avatar: draft.avatar })
     setEditing(false)
   }
 
-  const cancelEdit = () => {
-    setEditing(false)
-  }
+  const cancelEdit = () => setEditing(false)
 
   const set = (key: keyof typeof draft, value: string) => {
     setDraft(prev => ({ ...prev, [key]: value }))
@@ -35,7 +39,6 @@ export default function ProfilPage() {
     if (!file) return
     const reader = new FileReader()
     reader.onload = () => {
-      // Resize to max 200x200 to save localStorage space
       const img = new Image()
       img.onload = () => {
         const canvas = document.createElement('canvas')
@@ -54,6 +57,19 @@ export default function ProfilPage() {
     e.target.value = ''
   }
 
+  const handleAddProfile = () => {
+    if (newName.trim()) {
+      addProfile(newName.trim())
+    }
+  }
+
+  const handleDeleteProfile = () => {
+    if (profiles.length <= 1) return
+    if (confirm(`Supprimer le profil "${profil.nom}" et toutes ses données ?`)) {
+      removeProfile(activeId)
+    }
+  }
+
   const avatarSrc = (editing ? draft.avatar : profil.avatar) || DEFAULT_AVATAR
 
   return (
@@ -65,6 +81,41 @@ export default function ProfilPage() {
         <span>Retour</span>
       </button>
 
+      {/* Profile selector */}
+      <div className={styles.profileSelector}>
+        {profiles.map(p => (
+          <button
+            key={p.id}
+            className={`${styles.profileChip} ${p.id === activeId ? styles.profileChipActive : ''}`}
+            onClick={() => p.id !== activeId && switchProfile(p.id)}
+          >
+            <img src={p.avatar || DEFAULT_AVATAR} alt="" className={styles.chipAvatar} />
+            <span className={styles.chipName}>{p.nom}</span>
+          </button>
+        ))}
+        <button className={styles.addChip} onClick={() => setShowNewForm(true)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+            <path d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+        </button>
+      </div>
+
+      {/* New profile form */}
+      {showNewForm && (
+        <div className={styles.newForm}>
+          <input
+            className={styles.newInput}
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="Nom du lapin..."
+            autoFocus
+          />
+          <button className={styles.newOk} onClick={handleAddProfile}>Créer</button>
+          <button className={styles.newCancel} onClick={() => { setShowNewForm(false); setNewName('') }}>✕</button>
+        </div>
+      )}
+
+      {/* Avatar */}
       <div className={`${styles.avatar} ${editing ? styles.avatarEditing : ''}`} onClick={editing ? () => fileRef.current?.click() : undefined}>
         <img src={avatarSrc} alt={profil.nom} className={styles.avatarImg} />
         {editing && (
@@ -75,29 +126,14 @@ export default function ProfilPage() {
             </svg>
           </div>
         )}
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className={styles.fileInput}
-          onChange={handleAvatarChange}
-        />
+        <input ref={fileRef} type="file" accept="image/*" className={styles.fileInput} onChange={handleAvatarChange} />
       </div>
 
+      {/* Name & subtitle */}
       {editing ? (
         <>
-          <input
-            className={styles.nameInput}
-            value={draft.nom}
-            onChange={(e) => set('nom', e.target.value)}
-            placeholder="Nom"
-          />
-          <input
-            className={styles.subtitleInput}
-            value={draft.sousTitre}
-            onChange={(e) => set('sousTitre', e.target.value)}
-            placeholder="Sous-titre (ex: Lapin nain)"
-          />
+          <input className={styles.nameInput} value={draft.nom} onChange={(e) => set('nom', e.target.value)} placeholder="Nom" />
+          <input className={styles.subtitleInput} value={draft.sousTitre} onChange={(e) => set('sousTitre', e.target.value)} placeholder="Sous-titre" />
         </>
       ) : (
         <>
@@ -106,58 +142,25 @@ export default function ProfilPage() {
         </>
       )}
 
+      {/* Info grid */}
       <div className={styles.infoGrid}>
+        {(['race', 'age', 'poids'] as const).map(key => (
+          <div key={key} className={styles.infoCard}>
+            <span className={styles.infoLabel}>{key === 'race' ? 'Race' : key === 'age' ? 'Âge' : 'Poids'}</span>
+            {editing ? (
+              <input className={styles.infoInput} value={draft[key]} onChange={(e) => set(key, e.target.value)} placeholder="—" />
+            ) : (
+              <span className={styles.infoValue}>{profil[key] || '—'}</span>
+            )}
+          </div>
+        ))}
         <div className={styles.infoCard}>
-          <span className={styles.infoLabel}>Race</span>
-          {editing ? (
-            <input
-              className={styles.infoInput}
-              value={draft.race}
-              onChange={(e) => set('race', e.target.value)}
-              placeholder="—"
-            />
-          ) : (
-            <span className={styles.infoValue}>{profil.race || '—'}</span>
-          )}
-        </div>
-        <div className={styles.infoCard}>
-          <span className={styles.infoLabel}>Age</span>
-          {editing ? (
-            <input
-              className={styles.infoInput}
-              value={draft.age}
-              onChange={(e) => set('age', e.target.value)}
-              placeholder="—"
-            />
-          ) : (
-            <span className={styles.infoValue}>{profil.age || '—'}</span>
-          )}
-        </div>
-        <div className={styles.infoCard}>
-          <span className={styles.infoLabel}>Poids</span>
-          {editing ? (
-            <input
-              className={styles.infoInput}
-              value={draft.poids}
-              onChange={(e) => set('poids', e.target.value)}
-              placeholder="—"
-            />
-          ) : (
-            <span className={styles.infoValue}>{profil.poids || '—'}</span>
-          )}
-        </div>
-        <div className={styles.infoCard}>
-          <span className={styles.infoLabel}>Sterilise(e)</span>
+          <span className={styles.infoLabel}>Stérilisé(e)</span>
           {editing ? (
             <div className={styles.toggleRow}>
-              {['Oui', 'Non'].map((opt) => (
-                <button
-                  key={opt}
-                  className={`${styles.toggleBtn} ${draft.sterilise === opt ? styles.toggleBtnActive : ''}`}
-                  onClick={() => set('sterilise', opt)}
-                >
-                  {opt}
-                </button>
+              {['Oui', 'Non'].map(opt => (
+                <button key={opt} className={`${styles.toggleBtn} ${draft.sterilise === opt ? styles.toggleBtnActive : ''}`}
+                  onClick={() => set('sterilise', opt)}>{opt}</button>
               ))}
             </div>
           ) : (
@@ -166,13 +169,21 @@ export default function ProfilPage() {
         </div>
       </div>
 
+      {/* Actions */}
       {editing ? (
         <div className={styles.editActions}>
           <button className={styles.cancelBtn} onClick={cancelEdit}>Annuler</button>
           <button className={styles.saveBtn} onClick={saveEdit}>Enregistrer</button>
         </div>
       ) : (
-        <button className={styles.editBtn} onClick={startEdit}>Modifier le profil</button>
+        <div className={styles.editActions}>
+          <button className={styles.editBtn} onClick={startEdit}>Modifier le profil</button>
+          {profiles.length > 1 && (
+            <button className={styles.deleteProfileBtn} onClick={handleDeleteProfile}>
+              Supprimer ce profil
+            </button>
+          )}
+        </div>
       )}
     </div>
   )
