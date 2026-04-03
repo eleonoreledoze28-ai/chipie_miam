@@ -20,6 +20,7 @@ export default function JournalPage() {
   const { entries, addEntry, removeEntry, getEntriesForDate, getEntriesForWeek, getUniqueVegetauxCount } = useJournal()
   const [selectedDate, setSelectedDate] = useState(todayStr())
   const [showModal, setShowModal] = useState(false)
+  const [modalVegetalId, setModalVegetalId] = useState<string | null>(null)
   const [view, setView] = useState<ViewMode>('week')
 
   const weekDays = useMemo(() => getWeekDays(selectedDate), [selectedDate])
@@ -65,8 +66,24 @@ export default function JournalPage() {
   if (fruitsThisWeek > 7) alerts.push(`⚠️ ${fruitsThisWeek} fruits cette semaine — attention au sucre !`)
   if (weekEntries.length > 5 && uniqueCount < 3) alerts.push('🥬 Pensez à varier les végétaux !')
 
+  // Top frequent vegetables
+  const topFrequent = useMemo(() => {
+    const counts: Record<string, number> = {}
+    entries.forEach(e => { counts[e.vegetalId] = (counts[e.vegetalId] || 0) + 1 })
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([id, count]) => ({ veg: vegetauxMap.get(id)!, count }))
+      .filter(f => f.veg)
+  }, [entries])
+
   const handleAdd = (vegetalId: string, quantite: string, notes: string) => {
     addEntry({ vegetalId, date: selectedDate, quantite, notes })
+  }
+
+  const handleQuickAdd = (vegetalId: string) => {
+    setModalVegetalId(vegetalId)
+    setShowModal(true)
   }
 
   // Navigation helpers
@@ -304,18 +321,40 @@ export default function JournalPage() {
         )}
       </div>
 
-      {/* FAB */}
-      <button className={styles.fab} onClick={() => setShowModal(true)}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="28" height="28">
-          <path d="M12 4.5v15m7.5-7.5h-15" />
-        </svg>
-      </button>
+      {/* Favorites / Quick add */}
+      <div className={styles.weekSection}>
+        <div className={styles.favCard}>
+          <div className={styles.favHeader}>
+            <span className={styles.favTitle}>⭐ Favoris</span>
+            <button className={styles.favAddBtn} onClick={() => { setModalVegetalId(null); setShowModal(true) }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+                <path d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Ajouter
+            </button>
+          </div>
+          {topFrequent.length === 0 ? (
+            <p className={styles.favEmpty}>Vos aliments les plus donnés apparaîtront ici.</p>
+          ) : (
+            <div className={styles.favGrid}>
+              {topFrequent.map(({ veg, count }) => (
+                <button key={veg.id} className={styles.favItem} onClick={() => handleQuickAdd(veg.id)}>
+                  <img src={assetUrl(veg.image)} alt="" className={styles.favImg} />
+                  <span className={styles.favName}>{veg.nom}</span>
+                  <span className={styles.favCount}>{count}×</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
       {showModal && (
         <AddEntryModal
           date={formatDateFr(selectedDate)}
+          preSelectedId={modalVegetalId ?? undefined}
           onAdd={handleAdd}
-          onClose={() => setShowModal(false)}
+          onClose={() => { setShowModal(false); setModalVegetalId(null) }}
         />
       )}
     </div>
