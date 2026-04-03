@@ -67,6 +67,45 @@
   gap: 12px;
 }
 
+/* Essentials card */
+.essentialsCard {
+  background: var(--bg-card);
+  border: 1px solid var(--accent-orange-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.essentialsTitle {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent-orange);
+  margin-bottom: 12px;
+}
+
+.essentialsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.essentialItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.essentialIcon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
 .summaryCard {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);

@@ -166,8 +166,26 @@ export default function GuidePage() {
         </div>
       )}
 
-      {/* Today summary */}
+      {/* Essentials + Today summary */}
       <div className={styles.summarySection}>
+        <div className={styles.essentialsCard}>
+          <span className={styles.essentialsTitle}>🐰 Les essentiels au quotidien</span>
+          <div className={styles.essentialsList}>
+            <div className={styles.essentialItem}>
+              <span className={styles.essentialIcon}>🥬</span>
+              <span>100g de végétaux frais par jour (matin et soir)</span>
+            </div>
+            <div className={styles.essentialItem}>
+              <span className={styles.essentialIcon}>🌾</span>
+              <span>Du foin à volonté, toujours à disposition</span>
+            </div>
+            <div className={styles.essentialItem}>
+              <span className={styles.essentialIcon}>💧</span>
+              <span>Une gamelle d'eau fraîche et propre en permanence</span>
+            </div>
+          </div>
+        </div>
+
         <div className={styles.summaryCard}>
           <div className={styles.summaryHeader}>
             <span className={styles.summaryEmoji}>📋</span>
