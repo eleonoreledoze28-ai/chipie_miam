@@ -78,12 +78,9 @@ export default function SearchBar({
           onClick={onToggleCollapseAll}
           title={allCollapsed ? 'Tout déplier' : 'Tout replier'}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-            {allCollapsed ? (
-              <path d="M4 8l4 4 4-4M12 8l4 4 4-4" />
-            ) : (
-              <path d="M4 12l4-4 4 4M12 12l4-4 4 4" />
-            )}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+            <path d="M8 4l4 4 4-4" />
+            <path d="M8 20l4-4 4 4" />
           </svg>
         </button>
 
