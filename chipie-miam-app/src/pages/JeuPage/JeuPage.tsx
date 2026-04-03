@@ -85,12 +85,12 @@ export default function JeuPage() {
         }
         return prev - 1
       })
-    }, 800)
+    }, 600)
     return () => { if (blurInterval.current) clearInterval(blurInterval.current) }
   }, [difficulty, round, showResult])
 
   // Timer per question
-  const TIMER_SECONDS = 15
+  const TIMER_SECONDS = 20
   const [timer, setTimer] = useState(TIMER_SECONDS)
   const timerInterval = useRef<number | null>(null)
 
