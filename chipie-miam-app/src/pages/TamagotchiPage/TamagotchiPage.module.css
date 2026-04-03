@@ -108,7 +108,7 @@
 .sky {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, #A8D8EA 0%, #D4EDFC 50%, #E8F5E9 70%, #C8E6C9 100%);
+  background: linear-gradient(175deg, #FFF8E7 0%, #FDEBD0 30%, #D5F5E3 65%, #A9DFBF 100%);
 }
 
 .ground {
@@ -116,37 +116,80 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 50px;
-  background: linear-gradient(180deg, #81C784, #66BB6A);
-  border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+  height: 65px;
+  background: linear-gradient(180deg, #7DCEA0 0%, #52BE80 50%, #45B47A 100%);
+  border-radius: 60% 60% 0 0 / 24px 24px 0 0;
+}
+
+.ground::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 15%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.ground::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  right: 20%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .cloud1, .cloud2 {
   position: absolute;
-  width: 60px;
-  height: 22px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
   border-radius: 20px;
 }
 
 .cloud1 {
-  top: 20px;
-  left: 15%;
-  animation: drift 18s linear infinite;
+  top: 18px;
+  left: 12%;
+  width: 54px;
+  height: 18px;
+  animation: drift 22s ease-in-out infinite alternate;
+}
+
+.cloud1::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  width: 28px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
 }
 
 .cloud2 {
-  top: 40px;
-  left: 55%;
-  width: 45px;
+  top: 32px;
+  right: 14%;
+  width: 42px;
+  height: 14px;
+  animation: drift 28s ease-in-out infinite alternate-reverse;
+}
+
+.cloud2::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 10px;
+  width: 20px;
   height: 16px;
-  animation: drift 24s linear infinite;
-  animation-delay: -8s;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
 }
 
 @keyframes drift {
-  0% { transform: translateX(-30px); }
-  100% { transform: translateX(30px); }
+  0% { transform: translateX(-20px); }
+  100% { transform: translateX(20px); }
 }
 
 /* Chipie SVG in scene */
