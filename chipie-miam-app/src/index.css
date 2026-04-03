@@ -167,6 +167,93 @@
 }
 
 /* ============================================================================
+   Theme Automne Light — Cabin Cosy Autumn
+   Warm, organic, textured, rustic premium, amber, burnt orange
+   ============================================================================ */
+
+[data-theme="autumn"] {
+  --bg-primary: #F5EBDD;
+  --bg-gradient: linear-gradient(135deg, #F7EFE4 0%, #E8C39D 50%, #F5EBDD 100%);
+  --bg-secondary: #EFE0CC;
+  --bg-card: #F0E2D0;
+  --bg-card-hover: #E8D5BE;
+  --bg-card-gradient: rgba(232, 195, 157, 0.40);
+  --bg-elevated: #FBF4EA;
+  --bg-nav: #EFE0CC;
+
+  --text-primary: #4A2417;
+  --text-secondary: #6B3B26;
+  --text-muted: #8A5B42;
+
+  --accent-orange: #C95A1E;
+  --accent-orange-dim: rgba(201, 90, 30, 0.12);
+  --accent-orange-border: #A34F25;
+
+  --accent-violet: #A34F25;
+  --accent-violet-bright: #C95A1E;
+  --accent-violet-dim: rgba(163, 79, 37, 0.12);
+  --accent-violet-glow: rgba(225, 154, 59, 0.35);
+
+  --accent-green: #6E7C43;
+  --accent-green-dim: rgba(110, 124, 67, 0.14);
+  --accent-red: #A53A23;
+  --accent-red-dim: rgba(165, 58, 35, 0.12);
+  --accent-yellow: #D68422;
+  --accent-yellow-dim: rgba(214, 132, 34, 0.12);
+
+  --border-color: #BE8D66;
+  --border-subtle: #D8B89D;
+
+  --shadow-card: 0 4px 14px rgba(96, 34, 20, 0.10);
+  --shadow-elevated: 0 14px 36px rgba(96, 34, 20, 0.18);
+  --glow-violet: 0 0 12px rgba(225, 154, 59, 0.25);
+  --glow-violet-strong: 0 0 18px rgba(225, 154, 59, 0.40);
+}
+
+/* ============================================================================
+   Theme Automne Dark — Cabin Cosy Autumn (Fireside)
+   ============================================================================ */
+
+[data-theme="autumn-dark"] {
+  --bg-primary: #24130F;
+  --bg-gradient: linear-gradient(135deg, #24130F 0%, #3B1E14 40%, #4A2A1C 100%);
+  --bg-secondary: #2F1B15;
+  --bg-card: #342019;
+  --bg-card-hover: #3F2920;
+  --bg-card-gradient: rgba(67, 42, 31, 0.85);
+  --bg-elevated: #3B241B;
+  --bg-nav: #2F1B15;
+
+  --text-primary: #F3E4D0;
+  --text-secondary: #D9B89C;
+  --text-muted: #B6896F;
+
+  --accent-orange: #D06B2A;
+  --accent-orange-dim: rgba(208, 107, 42, 0.14);
+  --accent-orange-border: #B85724;
+
+  --accent-violet: #B85724;
+  --accent-violet-bright: #D06B2A;
+  --accent-violet-dim: rgba(184, 87, 36, 0.14);
+  --accent-violet-glow: rgba(224, 162, 74, 0.36);
+
+  --accent-green: #879355;
+  --accent-green-dim: rgba(135, 147, 85, 0.14);
+  --accent-red: #C45231;
+  --accent-red-dim: rgba(196, 82, 49, 0.14);
+  --accent-yellow: #E0A24A;
+  --accent-yellow-dim: rgba(224, 162, 74, 0.14);
+
+  --border-color: #8A5B42;
+  --border-subtle: #6B4636;
+
+  --shadow-card: 0 6px 18px rgba(0, 0, 0, 0.24);
+  --shadow-elevated: 0 18px 40px rgba(0, 0, 0, 0.34);
+  --glow-violet: 0 0 12px rgba(224, 162, 74, 0.20);
+  --glow-violet-strong: 0 0 18px rgba(224, 162, 74, 0.35);
+}
+
+/* ============================================================================
    Theme Aqua Dark — Glacial Caustics (Deep Water)
    ============================================================================ */
 

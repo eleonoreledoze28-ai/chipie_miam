@@ -5,7 +5,9 @@ const THEMES: { id: ThemeId; label: string; left: string; right: string }[] = [
   { id: 'dark', label: 'Sombre', left: '#0A0B0F', right: '#F0A53A' },
   { id: 'lavender', label: 'Lavande', left: '#B29EB1', right: '#CED6B6' },
   { id: 'aqua', label: 'Aqua', left: '#D6F0FA', right: '#49A9D6' },
-  { id: 'aqua-dark', label: 'Ocean', left: '#071A26', right: '#62C3EB' },
+  { id: 'aqua-dark', label: 'Océan', left: '#071A26', right: '#62C3EB' },
+  { id: 'autumn', label: 'Automne', left: '#F5EBDD', right: '#C95A1E' },
+  { id: 'autumn-dark', label: 'Cabane', left: '#24130F', right: '#D06B2A' },
 ]
 
 interface Props {
