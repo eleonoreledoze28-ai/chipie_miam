@@ -67,8 +67,8 @@ export default function JeuPage() {
   const isCorrect = round ? selected === round.correct.id : false
   const accuracy = total > 0 ? Math.round((score / total) * 100) : 0
 
-  // Progressive blur for hard mode
-  const [blur, setBlur] = useState(difficulty === 'hard' ? 20 : 0)
+  // Progressive blur for hard mode (slower: 800ms per step)
+  const [blur, setBlur] = useState(difficulty === 'hard' ? 25 : 0)
   const blurInterval = useRef<number | null>(null)
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function JeuPage() {
       if (blurInterval.current) clearInterval(blurInterval.current)
       return
     }
-    setBlur(20)
+    setBlur(25)
     blurInterval.current = window.setInterval(() => {
       setBlur(prev => {
         if (prev <= 0) {
@@ -85,9 +85,43 @@ export default function JeuPage() {
         }
         return prev - 1
       })
-    }, 300)
+    }, 800)
     return () => { if (blurInterval.current) clearInterval(blurInterval.current) }
   }, [difficulty, round, showResult])
+
+  // Timer per question
+  const TIMER_SECONDS = 15
+  const [timer, setTimer] = useState(TIMER_SECONDS)
+  const timerInterval = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (showResult || gameOver || !round || !difficulty) {
+      if (timerInterval.current) clearInterval(timerInterval.current)
+      return
+    }
+    setTimer(TIMER_SECONDS)
+    timerInterval.current = window.setInterval(() => {
+      setTimer(prev => {
+        if (prev <= 1) {
+          if (timerInterval.current) clearInterval(timerInterval.current)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => { if (timerInterval.current) clearInterval(timerInterval.current) }
+  }, [round, showResult, gameOver, difficulty])
+
+  // Auto-fail when timer runs out
+  useEffect(() => {
+    if (timer === 0 && !showResult && !gameOver && round) {
+      setShowResult(true)
+      setBlur(0)
+      if (blurInterval.current) clearInterval(blurInterval.current)
+      setTotal(t => t + 1)
+      setStreak(0)
+    }
+  }, [timer, showResult, gameOver, round])
 
   const startGame = useCallback((diff: Difficulty) => {
     setDifficulty(diff)
@@ -274,9 +308,18 @@ export default function JeuPage() {
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div className={styles.progressBar}>
-        <div className={styles.progressFill} style={{ width: `${(total / MAX_QUESTIONS) * 100}%` }} />
+      {/* Progress + Timer */}
+      <div className={styles.progressRow}>
+        <div className={styles.progressBar}>
+          <div className={styles.progressFill} style={{ width: `${(total / MAX_QUESTIONS) * 100}%` }} />
+        </div>
+        <div className={`${styles.timer} ${timer <= 5 ? styles.timerUrgent : ''}`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+          {timer}s
+        </div>
       </div>
 
       {/* Photo */}
@@ -310,7 +353,7 @@ export default function JeuPage() {
       {showResult && (
         <div className={styles.feedback}>
           <div className={`${styles.feedbackBanner} ${isCorrect ? styles.feedbackCorrect : styles.feedbackWrong}`}>
-            {isCorrect ? '✅ Bravo !' : `❌ C'était ${round.correct.nom}`}
+            {isCorrect ? '✅ Bravo !' : selected === null ? `⏰ Temps écoulé ! C'était ${round.correct.nom}` : `❌ C'était ${round.correct.nom}`}
           </div>
           <p className={styles.feedbackLatin}>{round.correct.nomLatin}</p>
           <button className={styles.nextBtn} onClick={handleNext}>
