@@ -1,7 +1,12 @@
 /* === Section catégorie === */
 
 .section {
-  margin-bottom: 2px;
+  margin: 6px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .header {
@@ -9,11 +14,10 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 12px 14px;
+  padding: 14px 16px;
   background: transparent;
   -webkit-tap-highlight-color: transparent;
   transition: background 150ms ease;
-  border-radius: var(--radius-sm);
 }
 
 .header:active {
@@ -22,6 +26,7 @@
 
 .headerOpen {
   background: var(--accent-orange-dim);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .headerLeft {
@@ -61,7 +66,7 @@
   font-size: 0.65rem;
   font-weight: 700;
   color: var(--text-muted);
-  background: var(--bg-card);
+  background: var(--bg-secondary, var(--bg-card));
   padding: 2px 8px;
   border-radius: var(--radius-pill);
 }
@@ -77,5 +82,5 @@
 }
 
 .list {
-  padding: 2px 0 6px;
+  padding: 4px 4px 8px;
 }
