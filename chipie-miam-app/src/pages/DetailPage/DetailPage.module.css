@@ -23,13 +23,12 @@
   font-size: 0.85rem;
 }
 
-/* ========== Hero image ========== */
+/* ========== Hero ========== */
 .heroWrap {
   position: relative;
   width: 100%;
-  height: 300px;
+  height: 320px;
   overflow: hidden;
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   flex-shrink: 0;
 }
 
@@ -51,26 +50,51 @@
 
 .heroOverlay {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 120px;
-  background: linear-gradient(transparent, var(--bg-primary));
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.15) 0%,
+    transparent 40%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
 }
 
-/* Nav buttons on hero */
-.back {
+.heroText {
+  position: absolute;
+  bottom: 18px;
+  left: 20px;
+  right: 20px;
+  z-index: 5;
+}
+
+.heroName {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  line-height: 1.15;
+}
+
+.heroLatin {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  margin-top: 2px;
+}
+
+/* Nav buttons */
+.back, .editImgBtn {
   position: absolute;
   top: 14px;
-  left: 14px;
   z-index: 10;
   width: 38px;
   height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 50%;
@@ -78,35 +102,16 @@
   transition: background 150ms ease;
 }
 
-.back:active {
+.back { left: 14px; }
+.editImgBtn { right: 14px; }
+
+.back:active, .editImgBtn:active {
   background: rgba(0, 0, 0, 0.6);
 }
 
 .back svg {
   width: 20px;
   height: 20px;
-}
-
-.editImgBtn {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 10;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 50%;
-  color: white;
-  transition: background 150ms ease;
-}
-
-.editImgBtn:active {
-  background: rgba(0, 0, 0, 0.6);
 }
 
 /* Image edit bar */
@@ -135,9 +140,7 @@
   min-width: 0;
 }
 
-.imageInput::placeholder {
-  color: var(--text-muted);
-}
+.imageInput::placeholder { color: var(--text-muted); }
 
 .imageOk {
   font-size: 0.75rem;
@@ -158,39 +161,22 @@
   border-radius: var(--radius-sm);
 }
 
-/* ========== Content ========== */
-.content {
-  padding: 0 20px 48px;
-  margin-top: -32px;
+/* ========== Floating quick card ========== */
+.quickCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: -24px 16px 0;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  z-index: 10;
 }
 
-/* Title block */
-.titleBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.name {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  line-height: 1.2;
-}
-
-.latin {
-  font-size: 0.82rem;
-  font-style: italic;
-  color: var(--text-muted);
-}
-
-/* Badges row */
-.badges {
+.quickLeft {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -201,47 +187,123 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  padding: 4px 12px;
+  background: var(--bg-secondary);
   border-radius: var(--radius-pill);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
 }
 
-/* ========== Glass card ========== */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 18px;
-  box-shadow: var(--shadow-card);
-}
-
-.cardHeader {
+.quickRight {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
 }
 
-.cardIcon {
-  width: 18px;
-  height: 18px;
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.statNum {
+  font-size: 1.2rem;
+  font-weight: 800;
   color: var(--accent-orange);
+}
+
+.statLabel {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-weight: 600;
+}
+
+/* ========== Content ========== */
+.content {
+  padding: 20px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ========== Tip banner ========== */
+.tipBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.tipIcon {
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
 }
 
-.cardTitle {
+.tip_aucune {
+  background: var(--accent-green-dim);
+  color: var(--accent-green);
+}
+
+.tip_petite_quantite {
+  background: var(--accent-yellow-dim);
+  color: var(--accent-yellow);
+}
+
+.tip_a_eviter {
+  background: var(--accent-red-dim);
+  color: var(--accent-red);
+}
+
+/* ========== Section with accent bar ========== */
+.section {
+  display: flex;
+  gap: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-subtle);
+}
+
+.sectionBar {
+  width: 4px;
+  flex-shrink: 0;
+  background: var(--accent-orange);
+  border-radius: 4px 0 0 4px;
+}
+
+.sectionContent {
+  padding: 16px 18px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   color: var(--accent-orange);
+  margin-bottom: 10px;
 }
 
-.cardText {
+.sectionIcon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.sectionText {
   font-size: 0.88rem;
   color: var(--text-secondary);
   line-height: 1.65;
@@ -254,17 +316,23 @@
   gap: 10px;
 }
 
-.infoItem {
+.infoCard {
   background: var(--bg-secondary);
   padding: 14px;
   border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  text-align: center;
+}
+
+.infoEmoji {
+  font-size: 1.4rem;
+  margin-bottom: 2px;
 }
 
 .infoLabel {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--text-muted);
@@ -277,7 +345,7 @@
   color: var(--text-primary);
 }
 
-/* Sugar level bar */
+/* Sugar bar */
 .sugarBar {
   height: 4px;
   border-radius: 2px;
@@ -300,7 +368,7 @@
 .sugarFill_moyen { background: var(--accent-yellow); width: 55%; }
 .sugarFill_faible { background: var(--accent-green); width: 25%; }
 
-/* ========== Google link ========== */
+/* ========== Google button ========== */
 .googleBtn {
   display: flex;
   align-items: center;
