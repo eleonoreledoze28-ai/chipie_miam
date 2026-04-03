@@ -8,8 +8,6 @@ const THEMES: { id: ThemeId; label: string; left: string; right: string }[] = [
   { id: 'aqua-dark', label: 'Océan', left: '#071A26', right: '#62C3EB' },
   { id: 'autumn', label: 'Automne', left: '#F5EBDD', right: '#C95A1E' },
   { id: 'autumn-dark', label: 'Cabane', left: '#24130F', right: '#D06B2A' },
-  { id: 'tropical', label: 'Tropical', left: '#F8F3EC', right: '#2DA7B8' },
-  { id: 'tropical-dark', label: 'Resort', left: '#0E1B22', right: '#46B4C0' },
 ]
 
 interface Props {
