@@ -13,6 +13,23 @@ import styles from './GuidePage.module.css'
 type SortOption = 'categorie' | 'alpha' | 'restriction'
 type FilterOption = 'tous' | CategorieId
 
+const TIPS = [
+  '🥬 Un lapin doit manger chaque jour une quantité de verdure équivalente à la taille de sa tête.',
+  '💧 Les légumes frais apportent de l\'eau en complément du biberon.',
+  '🌿 Variez les aromatiques pour stimuler l\'appétit de votre lapin.',
+  '⚠️ Introduisez toujours un nouvel aliment progressivement sur plusieurs jours.',
+  '🥕 Les légumes racines sont riches en sucre, à donner avec modération.',
+  '🍎 Les fruits sont des friandises, pas un repas : max 1-2 fois par semaine.',
+  '🌾 Le foin doit rester la base de l\'alimentation (80% de la ration).',
+  '🧹 Retirez les légumes non consommés après 4h pour éviter la fermentation.',
+  '🌱 Les fanes de carottes sont excellentes et plus saines que la carotte elle-même.',
+  '🐰 Un lapin adulte a besoin d\'au moins 5 végétaux différents par semaine.',
+  '🌿 Le persil est très riche en calcium, à alterner avec d\'autres herbes.',
+  '❄️ Ne donnez jamais de légumes sortis directement du réfrigérateur, laissez-les revenir à température ambiante.',
+  '🌳 Les branches d\'arbres fruitiers sont excellentes pour l\'usure des dents.',
+  '🥗 La roquette et le pissenlit sont parmi les aliments préférés des lapins.',
+]
+
 export default function GuidePage() {
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState<SortOption>('categorie')
@@ -34,6 +51,21 @@ export default function GuidePage() {
     })
     return counts
   }, [todayEntries])
+
+  // Today summary
+  const todayTotal = todayEntries.length
+  const todayUniqueCount = new Set(todayEntries.map(e => e.vegetalId)).size
+  const todayCategoryCount = new Set(todayEntries.map(e => {
+    const v = VEGETAUX.find(vv => vv.id === e.vegetalId)
+    return v?.categorie
+  }).filter(Boolean)).size
+
+  // Tip of the day (changes daily based on date)
+  const tipIndex = useMemo(() => {
+    const d = new Date()
+    return (d.getFullYear() * 366 + d.getMonth() * 31 + d.getDate()) % TIPS.length
+  }, [])
+  const dailyTip = TIPS[tipIndex]
 
   const handleAddClick = useCallback((vegetalId: string) => {
     setModalVegetalId(vegetalId)
@@ -131,6 +163,43 @@ export default function GuidePage() {
           {filtered.map(renderCard)}
         </div>
       )}
+
+      {/* Today summary */}
+      <div className={styles.summarySection}>
+        <div className={styles.summaryCard}>
+          <div className={styles.summaryHeader}>
+            <span className={styles.summaryEmoji}>📋</span>
+            <span className={styles.summaryTitle}>Aujourd'hui</span>
+          </div>
+          {todayTotal === 0 ? (
+            <p className={styles.summaryEmpty}>Aucun aliment enregistré aujourd'hui. Appuyez sur + pour commencer !</p>
+          ) : (
+            <div className={styles.summaryStats}>
+              <div className={styles.stat}>
+                <span className={styles.statNum}>{todayTotal}</span>
+                <span className={styles.statLabel}>portion{todayTotal > 1 ? 's' : ''}</span>
+              </div>
+              <div className={styles.statDivider} />
+              <div className={styles.stat}>
+                <span className={styles.statNum}>{todayUniqueCount}</span>
+                <span className={styles.statLabel}>aliment{todayUniqueCount > 1 ? 's' : ''}</span>
+              </div>
+              <div className={styles.statDivider} />
+              <div className={styles.stat}>
+                <span className={styles.statNum}>{todayCategoryCount}</span>
+                <span className={styles.statLabel}>catégorie{todayCategoryCount > 1 ? 's' : ''}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.tipCard}>
+          <div className={styles.tipHeader}>
+            <span className={styles.tipLabel}>💡 Conseil du jour</span>
+          </div>
+          <p className={styles.tipText}>{dailyTip}</p>
+        </div>
+      </div>
 
       {modalVegetalId && (
         <AddEntryModal

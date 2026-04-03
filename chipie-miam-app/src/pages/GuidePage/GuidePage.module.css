@@ -1,5 +1,5 @@
 .page {
-  padding-bottom: 8px;
+  padding-bottom: 16px;
 }
 
 .empty {
@@ -57,4 +57,104 @@
   font-size: 0.88rem;
   font-weight: 500;
   color: var(--text-primary);
+}
+
+/* ========== Summary + Tip section ========== */
+.summarySection {
+  padding: 16px 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summaryCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.summaryHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.summaryEmoji {
+  font-size: 1.2rem;
+}
+
+.summaryTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--accent-orange);
+}
+
+.summaryEmpty {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.summaryStats {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.statNum {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent-orange);
+}
+
+.statLabel {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--text-muted);
+}
+
+.statDivider {
+  width: 1px;
+  height: 32px;
+  background: var(--border-subtle);
+}
+
+/* Tip card */
+.tipCard {
+  background: var(--accent-orange-dim);
+  border: 1px solid var(--accent-orange-border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+}
+
+.tipHeader {
+  margin-bottom: 6px;
+}
+
+.tipLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent-orange);
+}
+
+.tipText {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
 }
