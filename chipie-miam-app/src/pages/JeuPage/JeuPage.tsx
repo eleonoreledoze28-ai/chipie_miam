@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VEGETAUX } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
@@ -11,7 +11,7 @@ type Difficulty = 'easy' | 'normal' | 'hard'
 const DIFFICULTY_CONFIG = {
   easy: { choices: 2, label: 'Facile', emoji: '🌱', desc: '2 choix, catégories différentes', sameCategory: false },
   normal: { choices: 4, label: 'Normal', emoji: '🌿', desc: '4 choix mélangés', sameCategory: false },
-  hard: { choices: 6, label: 'Difficile', emoji: '🔥', desc: '6 choix, même catégorie', sameCategory: true },
+  hard: { choices: 6, label: 'Difficile', emoji: '🔥', desc: '6 choix, même catégorie, image floue', sameCategory: true },
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -67,6 +67,28 @@ export default function JeuPage() {
   const isCorrect = round ? selected === round.correct.id : false
   const accuracy = total > 0 ? Math.round((score / total) * 100) : 0
 
+  // Progressive blur for hard mode
+  const [blur, setBlur] = useState(difficulty === 'hard' ? 20 : 0)
+  const blurInterval = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (difficulty !== 'hard' || showResult || !round) {
+      if (blurInterval.current) clearInterval(blurInterval.current)
+      return
+    }
+    setBlur(20)
+    blurInterval.current = window.setInterval(() => {
+      setBlur(prev => {
+        if (prev <= 0) {
+          if (blurInterval.current) clearInterval(blurInterval.current)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 300)
+    return () => { if (blurInterval.current) clearInterval(blurInterval.current) }
+  }, [difficulty, round, showResult])
+
   const startGame = useCallback((diff: Difficulty) => {
     setDifficulty(diff)
     setRound(generateRound(diff))
@@ -83,6 +105,8 @@ export default function JeuPage() {
     if (showResult || gameOver || !round) return
     setSelected(id)
     setShowResult(true)
+    setBlur(0)
+    if (blurInterval.current) clearInterval(blurInterval.current)
     setTotal(t => t + 1)
     if (id === round.correct.id) {
       setScore(s => s + 1)
@@ -257,7 +281,12 @@ export default function JeuPage() {
 
       {/* Photo */}
       <div className={styles.photoCard}>
-        <img src={assetUrl(round.correct.image)} alt="Devinez !" className={styles.photo} />
+        <img
+          src={assetUrl(round.correct.image)}
+          alt="Devinez !"
+          className={styles.photo}
+          style={difficulty === 'hard' ? { filter: `blur(${blur}px)`, transition: 'filter 0.3s ease' } : undefined}
+        />
       </div>
 
       {/* Options */}
