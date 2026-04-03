@@ -191,10 +191,121 @@
   opacity: 0.7;
 }
 
-/* Best streak */
-.bestStreak {
-  margin-top: 16px;
-  font-size: 0.78rem;
-  color: var(--text-muted);
+/* Progress bar */
+.progressBar {
+  width: 100%;
+  max-width: 340px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-subtle);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent-orange);
+  transition: width 300ms ease;
+}
+
+/* ========== End screen ========== */
+.endScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.endEmoji {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+}
+
+.endTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+.endStats {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  padding: 18px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 20px;
+}
+
+.endStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.endStatNum {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent-orange);
+}
+
+.endStatLabel {
+  font-size: 0.6rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--text-muted);
+}
+
+.endDivider {
+  width: 1px;
+  height: 36px;
+  background: var(--border-subtle);
+}
+
+.endMessage {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.restartBtn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-orange);
+  color: #000;
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  transition: opacity 150ms ease;
+}
+
+.restartBtn:active {
+  opacity: 0.7;
+}
+
+.backBtn {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.backBtn:active {
+  background: var(--bg-card);
 }

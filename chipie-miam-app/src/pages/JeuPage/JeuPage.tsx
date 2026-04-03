@@ -4,6 +4,8 @@ import { VEGETAUX } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
 import styles from './JeuPage.module.css'
 
+const MAX_QUESTIONS = 10
+
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
@@ -31,14 +33,17 @@ export default function JeuPage() {
   const [streak, setStreak] = useState(0)
   const [bestStreak, setBestStreak] = useState(0)
   const [showResult, setShowResult] = useState(false)
+  const [gameOver, setGameOver] = useState(false)
 
   const isCorrect = selected === round.correct.id
+  const accuracy = total > 0 ? Math.round((score / total) * 100) : 0
 
   const handleSelect = useCallback((id: string) => {
-    if (showResult) return
+    if (showResult || gameOver) return
     setSelected(id)
     setShowResult(true)
-    setTotal(t => t + 1)
+    const newTotal = total + 1
+    setTotal(newTotal)
     if (id === round.correct.id) {
       setScore(s => s + 1)
       setStreak(s => {
@@ -49,15 +54,80 @@ export default function JeuPage() {
     } else {
       setStreak(0)
     }
-  }, [showResult, round.correct.id])
+  }, [showResult, gameOver, round.correct.id, total])
 
   const handleNext = useCallback(() => {
+    if (total >= MAX_QUESTIONS) {
+      setGameOver(true)
+      return
+    }
     setRound(generateRound())
     setSelected(null)
     setShowResult(false)
+  }, [total])
+
+  const handleRestart = useCallback(() => {
+    setRound(generateRound())
+    setSelected(null)
+    setShowResult(false)
+    setScore(0)
+    setTotal(0)
+    setStreak(0)
+    setBestStreak(0)
+    setGameOver(false)
   }, [])
 
-  const accuracy = total > 0 ? Math.round((score / total) * 100) : 0
+  // Final screen
+  if (gameOver) {
+    const emoji = accuracy >= 80 ? '🏆' : accuracy >= 50 ? '👍' : '💪'
+    const message = accuracy >= 80
+      ? 'Excellent ! Vous connaissez bien vos végétaux !'
+      : accuracy >= 50
+        ? 'Pas mal ! Continuez à apprendre.'
+        : 'Continuez à explorer le guide pour progresser !'
+
+    return (
+      <div className={styles.page}>
+        <button className={styles.back} onClick={() => navigate(-1)}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
+            <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+          <span>Retour</span>
+        </button>
+
+        <div className={styles.endScreen}>
+          <span className={styles.endEmoji}>{emoji}</span>
+          <h1 className={styles.endTitle}>Partie terminée !</h1>
+
+          <div className={styles.endStats}>
+            <div className={styles.endStat}>
+              <span className={styles.endStatNum}>{score}/{MAX_QUESTIONS}</span>
+              <span className={styles.endStatLabel}>Bonnes réponses</span>
+            </div>
+            <div className={styles.endDivider} />
+            <div className={styles.endStat}>
+              <span className={styles.endStatNum}>{accuracy}%</span>
+              <span className={styles.endStatLabel}>Précision</span>
+            </div>
+            <div className={styles.endDivider} />
+            <div className={styles.endStat}>
+              <span className={styles.endStatNum}>{bestStreak}🔥</span>
+              <span className={styles.endStatLabel}>Meilleure série</span>
+            </div>
+          </div>
+
+          <p className={styles.endMessage}>{message}</p>
+
+          <button className={styles.restartBtn} onClick={handleRestart}>
+            🔄 Rejouer
+          </button>
+          <button className={styles.backBtn} onClick={() => navigate(-1)}>
+            Retour au guide
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className={styles.page}>
@@ -69,7 +139,7 @@ export default function JeuPage() {
       </button>
 
       <h1 className={styles.title}>🎮 Devinette Photo</h1>
-      <p className={styles.subtitle}>Quel est cet aliment ?</p>
+      <p className={styles.subtitle}>Question {total + 1} / {MAX_QUESTIONS}</p>
 
       {/* Score bar */}
       <div className={styles.scoreBar}>
@@ -89,13 +159,14 @@ export default function JeuPage() {
         </div>
       </div>
 
+      {/* Progress bar */}
+      <div className={styles.progressBar}>
+        <div className={styles.progressFill} style={{ width: `${(total / MAX_QUESTIONS) * 100}%` }} />
+      </div>
+
       {/* Photo */}
       <div className={styles.photoCard}>
-        <img
-          src={assetUrl(round.correct.image)}
-          alt="Devinez !"
-          className={styles.photo}
-        />
+        <img src={assetUrl(round.correct.image)} alt="Devinez !" className={styles.photo} />
       </div>
 
       {/* Options */}
@@ -123,14 +194,9 @@ export default function JeuPage() {
           </div>
           <p className={styles.feedbackLatin}>{round.correct.nomLatin}</p>
           <button className={styles.nextBtn} onClick={handleNext}>
-            Question suivante →
+            {total >= MAX_QUESTIONS ? 'Voir les résultats →' : 'Question suivante →'}
           </button>
         </div>
-      )}
-
-      {/* Best streak */}
-      {bestStreak > 0 && (
-        <p className={styles.bestStreak}>🏆 Meilleure série : {bestStreak}</p>
       )}
     </div>
   )
