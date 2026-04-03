@@ -9,6 +9,7 @@ import SettingsPage from './pages/SettingsPage/SettingsPage'
 import JeuxHubPage from './pages/JeuxHubPage/JeuxHubPage'
 import JeuPage from './pages/JeuPage/JeuPage'
 import MemoryPage from './pages/MemoryPage/MemoryPage'
+import AnagrammePage from './pages/AnagrammePage/AnagrammePage'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="jeu" element={<JeuxHubPage />} />
         <Route path="jeu/devinette" element={<JeuPage />} />
         <Route path="jeu/memory" element={<MemoryPage />} />
+        <Route path="jeu/anagramme" element={<AnagrammePage />} />
       </Route>
     </Routes>
   )

@@ -16,6 +16,13 @@ const GAMES = [
     title: 'Memory',
     desc: 'Trouvez les paires image / nom de végétaux',
   },
+  {
+    id: 'anagramme',
+    path: '/jeu/anagramme',
+    emoji: '🔤',
+    title: 'Mot Mélangé',
+    desc: 'Remettez les lettres dans le bon ordre',
+  },
 ]
 
 export default function JeuxHubPage() {
