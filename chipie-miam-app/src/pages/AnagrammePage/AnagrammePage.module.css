@@ -252,6 +252,58 @@
 
 .nextBtn:active { opacity: 0.7; }
 
+/* ========== Level select ========== */
+.levelScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 24px;
+  width: 100%;
+  max-width: 360px;
+  animation: fadeInUp 400ms ease;
+}
+
+.levelEmoji { font-size: 3.5rem; margin-bottom: 12px; }
+.levelTitle { font-size: 1.4rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px; }
+.levelSubtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 32px; }
+
+.levelList { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+
+.levelCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 150ms ease;
+}
+
+.levelCard:active {
+  background: var(--accent-orange-dim);
+  border-color: var(--accent-orange-border);
+}
+
+.levelCardEmoji { font-size: 1.8rem; flex-shrink: 0; }
+.levelCardInfo { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.levelCardName { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+.levelCardDesc { font-size: 0.72rem; color: var(--text-muted); }
+.levelArrow { color: var(--text-muted); flex-shrink: 0; }
+
+.endDifficulty {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  padding: 4px 14px;
+  background: var(--bg-secondary, var(--bg-card));
+  border-radius: var(--radius-pill);
+}
+
 /* ========== End screen ========== */
 .endScreen {
   display: flex;

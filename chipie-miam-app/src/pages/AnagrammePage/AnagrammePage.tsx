@@ -5,7 +5,14 @@ import { assetUrl } from '../../utils/assetUrl'
 import styles from './AnagrammePage.module.css'
 
 const MAX_QUESTIONS = 10
-const TIMER_SECONDS = 30
+
+type Difficulty = 'easy' | 'normal' | 'hard'
+
+const LEVELS = {
+  easy: { label: 'Facile', emoji: '🌱', desc: 'Mots courts, image visible, 40s', timer: 40, minLen: 3, maxLen: 6, showImage: true },
+  normal: { label: 'Normal', emoji: '🌿', desc: 'Mots variés, indice caché, 30s', timer: 30, minLen: 3, maxLen: 14, showImage: false },
+  hard: { label: 'Difficile', emoji: '🔥', desc: 'Mots longs, pas d\'indice, 20s', timer: 20, minLen: 7, maxLen: 20, showImage: false },
+}
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
@@ -19,43 +26,66 @@ function shuffle<T>(arr: T[]): T[] {
 function scramble(word: string): string[] {
   const letters = word.toUpperCase().split('')
   let shuffled = shuffle(letters)
-  // Make sure it's not the same order
   while (shuffled.join('') === letters.join('') && letters.length > 1) {
     shuffled = shuffle(letters)
   }
   return shuffled
 }
 
-function pickVegetal() {
-  const pool = VEGETAUX.filter(v => v.nom.length >= 3 && v.nom.length <= 14 && !v.nom.includes(' '))
+function pickVegetal(minLen: number, maxLen: number) {
+  const pool = VEGETAUX.filter(v => {
+    const len = v.nom.length
+    return len >= minLen && len <= maxLen && !v.nom.includes(' ')
+  })
+  if (pool.length === 0) {
+    // Fallback to any single-word vegetal
+    const fallback = VEGETAUX.filter(v => !v.nom.includes(' '))
+    return shuffle(fallback)[0]
+  }
   return shuffle(pool)[0]
 }
 
 export default function AnagrammePage() {
   const navigate = useNavigate()
-  const [vegetal, setVegetal] = useState(() => pickVegetal())
-  const [letters, setLetters] = useState(() => scramble(vegetal.nom))
-  const [guess, setGuess] = useState<number[]>([]) // indices into letters
+  const [difficulty, setDifficulty] = useState<Difficulty | null>(null)
+  const [vegetal, setVegetal] = useState(VEGETAUX[0])
+  const [letters, setLetters] = useState<string[]>([])
+  const [guess, setGuess] = useState<number[]>([])
   const [score, setScore] = useState(0)
   const [total, setTotal] = useState(0)
   const [showResult, setShowResult] = useState(false)
   const [gameOver, setGameOver] = useState(false)
-  const [timer, setTimer] = useState(TIMER_SECONDS)
+  const [timer, setTimer] = useState(30)
   const timerRef = useRef<number | null>(null)
   const [hint, setHint] = useState(false)
 
+  const level = difficulty ? LEVELS[difficulty] : null
   const answer = vegetal.nom.toUpperCase()
   const currentGuess = guess.map(i => letters[i]).join('')
   const isCorrect = currentGuess === answer
   const accuracy = total > 0 ? Math.round((score / total) * 100) : 0
 
+  const startGame = (diff: Difficulty) => {
+    const cfg = LEVELS[diff]
+    setDifficulty(diff)
+    const v = pickVegetal(cfg.minLen, cfg.maxLen)
+    setVegetal(v)
+    setLetters(scramble(v.nom))
+    setGuess([])
+    setScore(0)
+    setTotal(0)
+    setShowResult(false)
+    setGameOver(false)
+    setHint(cfg.showImage)
+    setTimer(cfg.timer)
+  }
+
   // Timer
   useEffect(() => {
-    if (showResult || gameOver) {
+    if (showResult || gameOver || !difficulty) {
       if (timerRef.current) clearInterval(timerRef.current)
       return
     }
-    setTimer(TIMER_SECONDS)
     timerRef.current = window.setInterval(() => {
       setTimer(prev => {
         if (prev <= 1) {
@@ -66,24 +96,22 @@ export default function AnagrammePage() {
       })
     }, 1000)
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [vegetal, showResult, gameOver])
+  }, [vegetal, showResult, gameOver, difficulty])
 
   // Auto-fail on timeout
   useEffect(() => {
-    if (timer === 0 && !showResult && !gameOver) {
+    if (timer === 0 && !showResult && !gameOver && difficulty) {
       setShowResult(true)
       setTotal(t => t + 1)
     }
-  }, [timer, showResult, gameOver])
+  }, [timer, showResult, gameOver, difficulty])
 
   // Auto-check when all letters placed
   useEffect(() => {
-    if (guess.length === letters.length && !showResult) {
+    if (guess.length === letters.length && letters.length > 0 && !showResult) {
       setShowResult(true)
       setTotal(t => t + 1)
-      if (currentGuess === answer) {
-        setScore(s => s + 1)
-      }
+      if (currentGuess === answer) setScore(s => s + 1)
     }
   }, [guess, letters.length, showResult, currentGuess, answer])
 
@@ -102,31 +130,58 @@ export default function AnagrammePage() {
       setGameOver(true)
       return
     }
-    const v = pickVegetal()
+    if (!level) return
+    const v = pickVegetal(level.minLen, level.maxLen)
     setVegetal(v)
     setLetters(scramble(v.nom))
     setGuess([])
     setShowResult(false)
-    setHint(false)
-  }, [total])
+    setHint(level.showImage)
+    setTimer(level.timer)
+  }, [total, level])
 
   const handleRestart = useCallback(() => {
-    const v = pickVegetal()
-    setVegetal(v)
-    setLetters(scramble(v.nom))
-    setGuess([])
-    setScore(0)
-    setTotal(0)
-    setShowResult(false)
-    setGameOver(false)
-    setHint(false)
-  }, [])
+    if (!difficulty) return
+    startGame(difficulty)
+  }, [difficulty])
 
-  const handleHint = () => {
-    setHint(true)
+  // ========== Level select ==========
+  if (!difficulty) {
+    return (
+      <div className={styles.page}>
+        <button className={styles.back} onClick={() => navigate('/jeu')}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20">
+            <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+          </svg>
+          <span>Retour</span>
+        </button>
+        <div className={styles.levelScreen}>
+          <span className={styles.levelEmoji}>🔤</span>
+          <h1 className={styles.levelTitle}>Mot Mélangé</h1>
+          <p className={styles.levelSubtitle}>Choisissez votre niveau</p>
+          <div className={styles.levelList}>
+            {(['easy', 'normal', 'hard'] as const).map(diff => {
+              const cfg = LEVELS[diff]
+              return (
+                <button key={diff} className={styles.levelCard} onClick={() => startGame(diff)}>
+                  <span className={styles.levelCardEmoji}>{cfg.emoji}</span>
+                  <div className={styles.levelCardInfo}>
+                    <span className={styles.levelCardName}>{cfg.label}</span>
+                    <span className={styles.levelCardDesc}>{cfg.desc}</span>
+                  </div>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18" className={styles.levelArrow}>
+                    <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    )
   }
 
-  // End screen
+  // ========== End screen ==========
   if (gameOver) {
     const emoji = accuracy >= 80 ? '🌟' : accuracy >= 50 ? '🎉' : '💪'
     const message = accuracy >= 80
@@ -146,6 +201,7 @@ export default function AnagrammePage() {
         <div className={styles.endScreen}>
           <span className={styles.endEmoji}>{emoji}</span>
           <h1 className={styles.endTitle}>{accuracy >= 80 ? 'Excellent !' : accuracy >= 50 ? 'Bien joué !' : 'Bel effort !'}</h1>
+          <span className={styles.endDifficulty}>{level!.emoji} {level!.label}</span>
           <div className={styles.endStats}>
             <div className={styles.endStat}>
               <span className={styles.endStatNum}>{score}/{MAX_QUESTIONS}</span>
@@ -158,13 +214,15 @@ export default function AnagrammePage() {
             </div>
           </div>
           <p className={styles.endMessage}>{message}</p>
-          <button className={styles.restartBtn} onClick={handleRestart}>🔄 Rejouer</button>
+          <button className={styles.restartBtn} onClick={handleRestart}>🔄 Rejouer ({level!.label})</button>
+          <button className={styles.restartBtn} onClick={() => setDifficulty(null)}>🎚️ Changer de niveau</button>
           <button className={styles.backBtn} onClick={() => navigate('/jeu')}>Retour aux jeux</button>
         </div>
       </div>
     )
   }
 
+  // ========== Game ==========
   return (
     <div className={styles.page}>
       <button className={styles.back} onClick={() => navigate('/jeu')}>
@@ -175,9 +233,8 @@ export default function AnagrammePage() {
       </button>
 
       <h1 className={styles.title}>🔤 Mot Mélangé</h1>
-      <p className={styles.subtitle}>Question {total + 1}/{MAX_QUESTIONS}</p>
+      <p className={styles.subtitle}>Question {total + 1}/{MAX_QUESTIONS} — {level!.emoji} {level!.label}</p>
 
-      {/* Score + Timer */}
       <div className={styles.statsBar}>
         <div className={styles.stat}>
           <span className={styles.statNum}>{score}/{total}</span>
@@ -190,15 +247,17 @@ export default function AnagrammePage() {
         </div>
       </div>
 
-      {/* Image hint */}
-      <div className={styles.imageArea}>
-        <img src={assetUrl(vegetal.image)} alt="" className={`${styles.hintImage} ${hint ? '' : styles.hintHidden}`} />
-        {!hint && !showResult && (
-          <button className={styles.hintBtn} onClick={handleHint}>
-            👁️ Voir l'indice
-          </button>
-        )}
-      </div>
+      {/* Image hint (only if not hard mode) */}
+      {difficulty !== 'hard' && (
+        <div className={styles.imageArea}>
+          <img src={assetUrl(vegetal.image)} alt="" className={`${styles.hintImage} ${hint ? '' : styles.hintHidden}`} />
+          {!hint && !showResult && (
+            <button className={styles.hintBtn} onClick={() => setHint(true)}>
+              👁️ Voir l'indice
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Answer slots */}
       <div className={styles.answerSlots}>
@@ -216,12 +275,8 @@ export default function AnagrammePage() {
         })}
       </div>
 
-      {/* Show correct answer if wrong */}
-      {showResult && !isCorrect && (
-        <p className={styles.correctAnswer}>{answer}</p>
-      )}
+      {showResult && !isCorrect && <p className={styles.correctAnswer}>{answer}</p>}
 
-      {/* Available letters */}
       {!showResult && (
         <div className={styles.letterPool}>
           {letters.map((letter, i) => (
@@ -237,7 +292,6 @@ export default function AnagrammePage() {
         </div>
       )}
 
-      {/* Feedback + Next */}
       {showResult && (
         <div className={styles.feedback}>
           <div className={`${styles.feedbackBanner} ${isCorrect ? styles.feedbackCorrect : styles.feedbackWrong}`}>
