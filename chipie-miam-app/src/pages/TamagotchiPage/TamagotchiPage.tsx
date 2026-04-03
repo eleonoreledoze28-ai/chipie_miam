@@ -222,19 +222,11 @@ export default function TamagotchiPage() {
 
       {/* Chipie scene */}
       <div className={styles.scene}>
-        {/* Background elements */}
-        <div className={styles.sceneBg}>
-          <span className={styles.sceneSun}>☀️</span>
-          <span className={styles.sceneCloud1}>☁️</span>
-          <span className={styles.sceneCloud2}>☁️</span>
-          <span className={styles.sceneGrass}>🌿🌱🌿🌱🌿🌱🌿</span>
-        </div>
-
-        {/* Chipie */}
-        <div className={`${styles.chipieWrap} ${animClass} ${zzz ? styles.chipieSleep : ''}`}>
-          <img src={`${import.meta.env.BASE_URL}chipie-avatar.jpeg`} alt="Chipie" className={styles.chipieImg} />
-          {zzz && <span className={styles.zzzBubble}>💤</span>}
-        </div>
+        {/* CSS sky + ground */}
+        <div className={styles.sky} />
+        <div className={styles.ground} />
+        <div className={styles.cloud1} />
+        <div className={styles.cloud2} />
 
         {/* Speech bubble */}
         {(dialogue || lastAction) && (
@@ -243,7 +235,65 @@ export default function TamagotchiPage() {
           </div>
         )}
 
-        {/* Mood */}
+        {/* Chipie SVG rabbit */}
+        <div className={`${styles.chipieWrap} ${animClass} ${zzz ? styles.chipieSleep : ''}`}>
+          <svg viewBox="0 0 120 140" className={styles.chipieSvg}>
+            {/* Ears */}
+            <ellipse cx="42" cy="28" rx="14" ry="35" fill="var(--accent-orange)" opacity="0.9" />
+            <ellipse cx="42" cy="28" rx="8" ry="28" fill="#FFB6C1" opacity="0.5" />
+            <ellipse cx="78" cy="28" rx="14" ry="35" fill="var(--accent-orange)" opacity="0.9" />
+            <ellipse cx="78" cy="28" rx="8" ry="28" fill="#FFB6C1" opacity="0.5" />
+            {/* Body */}
+            <ellipse cx="60" cy="100" rx="38" ry="32" fill="var(--accent-orange)" opacity="0.85" />
+            {/* Head */}
+            <circle cx="60" cy="70" r="30" fill="var(--accent-orange)" />
+            {/* Cheeks */}
+            <circle cx="42" cy="78" r="6" fill="#FFB6C1" opacity="0.4" />
+            <circle cx="78" cy="78" r="6" fill="#FFB6C1" opacity="0.4" />
+            {/* Eyes */}
+            {zzz ? (
+              <>
+                <path d="M48 68 L56 68" stroke="var(--bg-primary)" strokeWidth="2.5" strokeLinecap="round" />
+                <path d="M64 68 L72 68" stroke="var(--bg-primary)" strokeWidth="2.5" strokeLinecap="round" />
+              </>
+            ) : state.bonheur >= 60 ? (
+              <>
+                <ellipse cx="50" cy="66" rx="4" ry="5" fill="var(--bg-primary)" />
+                <ellipse cx="70" cy="66" rx="4" ry="5" fill="var(--bg-primary)" />
+                <circle cx="51.5" cy="65" r="1.5" fill="#fff" />
+                <circle cx="71.5" cy="65" r="1.5" fill="#fff" />
+              </>
+            ) : (
+              <>
+                <ellipse cx="50" cy="68" rx="4" ry="4" fill="var(--bg-primary)" />
+                <ellipse cx="70" cy="68" rx="4" ry="4" fill="var(--bg-primary)" />
+                {state.bonheur <= 25 && <path d="M46 60 Q50 63 54 60" stroke="var(--bg-primary)" strokeWidth="1.5" fill="none" />}
+                {state.bonheur <= 25 && <path d="M66 60 Q70 63 74 60" stroke="var(--bg-primary)" strokeWidth="1.5" fill="none" />}
+              </>
+            )}
+            {/* Nose */}
+            <ellipse cx="60" cy="76" rx="3" ry="2" fill="#FFB6C1" />
+            {/* Mouth */}
+            {state.bonheur >= 60 ? (
+              <path d="M54 80 Q60 86 66 80" stroke="var(--bg-primary)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+            ) : state.bonheur >= 30 ? (
+              <path d="M55 82 L65 82" stroke="var(--bg-primary)" strokeWidth="1.5" strokeLinecap="round" />
+            ) : (
+              <path d="M54 84 Q60 78 66 84" stroke="var(--bg-primary)" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+            )}
+            {/* Whiskers */}
+            <line x1="35" y1="74" x2="20" y2="70" stroke="var(--bg-primary)" strokeWidth="0.8" opacity="0.4" />
+            <line x1="35" y1="78" x2="20" y2="80" stroke="var(--bg-primary)" strokeWidth="0.8" opacity="0.4" />
+            <line x1="85" y1="74" x2="100" y2="70" stroke="var(--bg-primary)" strokeWidth="0.8" opacity="0.4" />
+            <line x1="85" y1="78" x2="100" y2="80" stroke="var(--bg-primary)" strokeWidth="0.8" opacity="0.4" />
+            {/* Feet */}
+            <ellipse cx="45" cy="128" rx="12" ry="7" fill="var(--accent-orange)" opacity="0.85" />
+            <ellipse cx="75" cy="128" rx="12" ry="7" fill="var(--accent-orange)" opacity="0.85" />
+          </svg>
+          {zzz && <span className={styles.zzzBubble}>💤</span>}
+        </div>
+
+        {/* Mood tag */}
         <div className={styles.moodTag}>
           <span>{mood.emoji}</span>
           <span>{mood.label}</span>
