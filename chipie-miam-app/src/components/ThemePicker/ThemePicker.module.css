@@ -7,7 +7,8 @@
 .popup {
   position: absolute;
   top: calc(var(--header-height) + 4px);
-  right: 10px;
+  left: 8px;
+  right: 8px;
   z-index: 200;
   background: var(--bg-elevated);
   border: 1px solid var(--border-color);
@@ -15,8 +16,16 @@
   box-shadow: var(--shadow-elevated);
   padding: 10px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   animation: fadeIn 0.15s ease;
+}
+
+.popup::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes fadeIn {
@@ -28,12 +37,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
+  gap: 5px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.15s;
   -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
 }
 
 .option:active {
