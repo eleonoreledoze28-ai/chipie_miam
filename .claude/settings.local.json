@@ -17,7 +17,29 @@
       "Bash(node -e \"console.log\\(''ok''\\)\")",
       "Bash(node remap_images.mjs)",
       "Bash(git rebase:*)",
-      "Bash(GIT_EDITOR=true git rebase --continue)"
+      "Bash(GIT_EDITOR=true git rebase --continue)",
+      "Bash(gh run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:eleonoreledoze28-ai.github.io)",
+      "Bash(curl -s https://eleonoreledoze28-ai.github.io/chipie_miam/index.html)",
+      "Bash(curl -s https://eleonoreledoze28-ai.github.io/chipie_miam/assets/index-DfE9dVJ4.js)",
+      "Bash(grep -o 'src:`[^`]*chipie-avatar[^`]*`')",
+      "Bash(curl -s https://eleonoreledoze28-ai.github.io/chipie_miam/assets/)",
+      "Bash(curl -s \"https://api.github.com/repos/eleonoreledoze28-ai/chipie_miam/actions/runs?per_page=3\")",
+      "Bash(curl -s \"https://api.github.com/repos/eleonoreledoze28-ai/chipie_miam/git/ref/heads/gh-pages\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/eleonoreledoze28-ai/chipie_miam/gh-pages/index.html\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/eleonoreledoze28-ai/chipie_miam/gh-pages/assets/index-CPWV9-6J.js\")",
+      "Bash(curl -s -I \"https://eleonoreledoze28-ai.github.io/chipie_miam/assets/index-CPWV9-6J.js\")",
+      "Bash(curl -s -I \"https://eleonoreledoze28-ai.github.io/chipie_miam/assets/index-DfE9dVJ4.js\")",
+      "Bash(curl -s \"https://api.github.com/repos/eleonoreledoze28-ai/chipie_miam/pages\")",
+      "Bash(curl -s \"https://api.github.com/repos/eleonoreledoze28-ai/chipie_miam\")",
+      "Bash(curl -s \"https://api.github.com/repos/eleonoreledoze28-ai/chipie_miam/actions/runs?per_page=2\")",
+      "Bash(curl -s -I \"https://eleonoreledoze28-ai.github.io/chipie_miam/chipie-avatar.jpeg\")",
+      "Bash(grep -n \"id: ''fraise\\\\|id: ''pomme\\\\|id: ''banane\" \"/c/Users/dique/Desktop/App/Chipie_Miam/chipie-miam-app/src/data/vegetaux.ts\" -i)",
+      "Bash(find /c/Users/dique/Desktop/App/Chipie_Miam/chipie-miam-app/src -type f \\\\\\(-name *.tsx -o -name *.ts -o -name *.css -o -name *.scss \\\\\\))",
+      "Bash(find /c/Users/dique/Desktop/App/Chipie_Miam/chipie-miam-app/src -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))"
     ]
   }
 }

@@ -30,6 +30,20 @@ const GAMES = [
     title: 'Chipie Virtuelle',
     desc: 'Occupez-vous de Chipie : nourriture, eau, câlins',
   },
+  {
+    id: 'labyrinthe',
+    path: '/jeu/labyrinthe',
+    emoji: '🌀',
+    title: 'Labyrinthe',
+    desc: 'Guidez Chipie à travers le labyrinthe vers son repas',
+  },
+  {
+    id: 'assiette',
+    path: '/jeu/assiette',
+    emoji: '🍽️',
+    title: 'Assiette de Chipie',
+    desc: 'Composez le repas idéal : bons aliments, pas de toxiques !',
+  },
 ]
 
 export default function JeuxHubPage() {

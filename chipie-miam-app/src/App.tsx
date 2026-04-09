@@ -11,6 +11,8 @@ import JeuPage from './pages/JeuPage/JeuPage'
 import MemoryPage from './pages/MemoryPage/MemoryPage'
 import AnagrammePage from './pages/AnagrammePage/AnagrammePage'
 import TamagotchiPage from './pages/TamagotchiPage/TamagotchiPage'
+import LabyrintePage from './pages/LabyrintePage/LabyrintePage'
+import AssiettePage from './pages/AssiettePage/AssiettePage'
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
         <Route path="jeu/memory" element={<MemoryPage />} />
         <Route path="jeu/anagramme" element={<AnagrammePage />} />
         <Route path="jeu/tamagotchi" element={<TamagotchiPage />} />
+        <Route path="jeu/labyrinthe" element={<LabyrintePage />} />
+        <Route path="jeu/assiette" element={<AssiettePage />} />
       </Route>
     </Routes>
   )
