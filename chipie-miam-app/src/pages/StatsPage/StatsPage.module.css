@@ -1,5 +1,6 @@
 .page {
   padding: 16px;
+  padding-bottom: 80px;
 }
 
 /* Summary cards */
@@ -52,7 +53,252 @@
   margin-bottom: 12px;
 }
 
-/* Bar chart */
+/* ===== History section ===== */
+.historyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.historyHeader .sectionTitle {
+  margin-bottom: 0;
+}
+
+.toggle {
+  display: flex;
+  gap: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+.toggleBtn {
+  padding: 5px 12px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  transition: all 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toggleActive {
+  background: var(--accent-orange);
+  color: #fff;
+}
+
+/* History legend */
+.histLegend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.histLegendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.histLegendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.trendBadge {
+  margin-left: auto;
+  font-size: 0.58rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.trendUp {
+  color: var(--accent-green, #4cd964);
+  background: rgba(76, 217, 100, 0.1);
+}
+
+.trendDown {
+  color: var(--accent-red, #ff3b30);
+  background: rgba(255, 59, 48, 0.1);
+}
+
+/* ===== Daily chart (7 days, vertical bars) ===== */
+.dailyChart {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 14px 8px 10px;
+  box-shadow: var(--shadow-card);
+}
+
+.dailyCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.dailyToday .dailyLabel {
+  color: var(--accent-orange);
+  font-weight: 800;
+}
+
+.dailyToday .dailyBar {
+  opacity: 1;
+}
+
+.dailyBars {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.dailyBarWrap {
+  position: relative;
+  width: 100%;
+  max-width: 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+}
+
+.dailyBar {
+  width: 45%;
+  background: var(--accent-orange);
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+  opacity: 0.5;
+  transition: height 400ms ease;
+}
+
+.dailyBarUnique {
+  width: 45%;
+  background: var(--accent-violet, #B07CFF);
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+  opacity: 0.7;
+  transition: height 400ms ease;
+}
+
+.dailyCount {
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.dailyLabel {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.dailyDay {
+  font-size: 0.48rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* ===== Weekly chart (4 weeks, horizontal bars) ===== */
+.weeklyChart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 14px 12px;
+  box-shadow: var(--shadow-card);
+}
+
+.weeklyRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.weeklyCurrent .weeklyLabel {
+  color: var(--accent-orange);
+  font-weight: 700;
+}
+
+.weeklyCurrent .weeklyBar {
+  opacity: 1;
+}
+
+.weeklyLabel {
+  width: 90px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.weeklyBarTrack {
+  flex: 1;
+  height: 24px;
+  position: relative;
+  background: var(--bg-secondary, var(--bg-primary));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.weeklyBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--accent-orange);
+  border-radius: 4px;
+  opacity: 0.5;
+  min-width: 3px;
+  transition: width 400ms ease;
+}
+
+.weeklyBarUnique {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--accent-violet, #B07CFF);
+  border-radius: 4px;
+  opacity: 0.4;
+  min-width: 2px;
+  transition: width 400ms ease;
+}
+
+.weeklyNums {
+  display: flex;
+  gap: 4px;
+  min-width: 40px;
+  justify-content: flex-end;
+}
+
+.weeklyCount {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.weeklyUnique {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--accent-violet, #B07CFF);
+}
+
+/* ===== Bar chart (categories) ===== */
 .chart {
   display: flex;
   flex-direction: column;
