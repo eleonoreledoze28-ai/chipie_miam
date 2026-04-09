@@ -337,6 +337,29 @@
   opacity: 0.7;
 }
 
+/* ===== Carnet de santé link ===== */
+.carnetLink {
+  width: 100%;
+  max-width: 360px;
+  margin-top: 20px;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-orange-border, rgba(240, 165, 58, 0.3));
+  border-radius: var(--radius-lg);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  -webkit-tap-highlight-color: transparent;
+  transition: all 150ms ease;
+}
+
+.carnetLink:active {
+  background: var(--accent-orange-dim);
+  transform: scale(0.97);
+}
+
 /* ===== Info card emoji ===== */
 .infoEmoji {
   font-size: 1rem;

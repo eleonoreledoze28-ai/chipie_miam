@@ -211,6 +211,13 @@ export default function ProfilPage() {
         )}
       </div>
 
+      {/* Carnet de santé link */}
+      {!editing && (
+        <button className={styles.carnetLink} onClick={() => navigate('/carnet-sante')}>
+          🩺 Carnet de santé
+        </button>
+      )}
+
       {/* Actions */}
       {editing ? (
         <div className={styles.editActions}>

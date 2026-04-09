@@ -16,6 +16,7 @@ import AssiettePage from './pages/AssiettePage/AssiettePage'
 import DangerPage from './pages/DangerPage/DangerPage'
 import QuizPage from './pages/QuizPage/QuizPage'
 import EncyclopediePage from './pages/EncyclopediePage/EncyclopediePage'
+import CarnetSantePage from './pages/CarnetSantePage/CarnetSantePage'
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="jeu/quiz" element={<QuizPage />} />
         <Route path="danger" element={<DangerPage />} />
         <Route path="encyclopedie" element={<EncyclopediePage />} />
+        <Route path="carnet-sante" element={<CarnetSantePage />} />
       </Route>
     </Routes>
   )
