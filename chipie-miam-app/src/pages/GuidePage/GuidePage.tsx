@@ -13,6 +13,37 @@ import styles from './GuidePage.module.css'
 type SortOption = 'categorie' | 'alpha' | 'restriction'
 type FilterOption = 'tous' | CategorieId
 
+// ===== Season helpers =====
+type SeasonName = 'Printemps' | 'Ete' | 'Automne' | 'Hiver'
+
+function getCurrentSeason(): SeasonName {
+  const month = new Date().getMonth() // 0-11
+  if (month >= 2 && month <= 4) return 'Printemps'
+  if (month >= 5 && month <= 7) return 'Ete'
+  if (month >= 8 && month <= 10) return 'Automne'
+  return 'Hiver'
+}
+
+const SEASON_LABELS: Record<SeasonName, string> = {
+  Printemps: 'Printemps',
+  Ete: '\u00c9t\u00e9',
+  Automne: 'Automne',
+  Hiver: 'Hiver',
+}
+
+function isInSeason(saisonnalite: string | undefined, season: SeasonName): boolean {
+  if (!saisonnalite) return true // no data = always show
+  const s = saisonnalite.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  if (s.includes("toute l'annee") || s.includes('toute l')) return true
+  const seasonMap: Record<SeasonName, string[]> = {
+    Printemps: ['printemps'],
+    Ete: ['ete'],
+    Automne: ['automne'],
+    Hiver: ['hiver'],
+  }
+  return seasonMap[season].some(keyword => s.includes(keyword))
+}
+
 const TIPS = [
   '🥬 Un lapin doit manger chaque jour une quantité de verdure équivalente à la taille de sa tête.',
   '💧 Les légumes frais apportent de l\'eau en complément du biberon.',
@@ -34,7 +65,9 @@ export default function GuidePage() {
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState<SortOption>('categorie')
   const [filter, setFilter] = useState<FilterOption>('tous')
+  const [seasonFilter, setSeasonFilter] = useState(false)
   const [modalVegetalId, setModalVegetalId] = useState<string | null>(null)
+  const currentSeason = getCurrentSeason()
 
   const { openCategories, allCollapsed, toggleCategory, toggleCollapseAll } = useCollapseState()
   const { getImage, setImage } = useCustomImages()
@@ -101,6 +134,10 @@ export default function GuidePage() {
       result = result.filter((v) => v.categorie === filter)
     }
 
+    if (seasonFilter) {
+      result = result.filter((v) => isInSeason(v.saisonnalite, currentSeason))
+    }
+
     if (sort === 'alpha') {
       result = [...result].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
     } else if (sort === 'restriction') {
@@ -109,7 +146,7 @@ export default function GuidePage() {
     }
 
     return result
-  }, [search, filter, sort])
+  }, [search, filter, sort, seasonFilter, currentSeason])
 
   const showByCategory = sort === 'categorie'
 
@@ -136,7 +173,17 @@ export default function GuidePage() {
         onFilterChange={setFilter}
         allCollapsed={allCollapsed}
         onToggleCollapseAll={toggleCollapseAll}
+        seasonFilter={seasonFilter}
+        onSeasonFilterChange={setSeasonFilter}
+        currentSeason={SEASON_LABELS[currentSeason]}
       />
+
+      {seasonFilter && (
+        <div className={styles.seasonBanner}>
+          <span>🌿 Aliments de saison : <strong>{SEASON_LABELS[currentSeason]}</strong></span>
+          <span className={styles.seasonCount}>{filtered.length} aliments</span>
+        </div>
+      )}
 
       {filtered.length === 0 ? (
         <div className={styles.empty}>

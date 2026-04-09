@@ -31,11 +31,14 @@ interface SearchBarProps {
   onFilterChange: (filter: FilterOption) => void
   allCollapsed: boolean
   onToggleCollapseAll: () => void
+  seasonFilter?: boolean
+  onSeasonFilterChange?: (on: boolean) => void
+  currentSeason?: string
 }
 
 export default function SearchBar({
   value, onChange, sort, onSortChange, filter, onFilterChange,
-  allCollapsed, onToggleCollapseAll,
+  allCollapsed, onToggleCollapseAll, seasonFilter, onSeasonFilterChange, currentSeason,
 }: SearchBarProps) {
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -72,11 +75,22 @@ export default function SearchBar({
           )}
         </div>
 
-        {/* Collapse all button — standalone */}
+        {/* Season filter toggle */}
+        {onSeasonFilterChange && (
+          <button
+            className={`${styles.seasonBtn} ${seasonFilter ? styles.seasonActive : ''}`}
+            onClick={() => onSeasonFilterChange(!seasonFilter)}
+            title={seasonFilter ? 'Voir tous les aliments' : `Filtrer : de saison (${currentSeason})`}
+          >
+            <span className={styles.seasonIcon}>{seasonFilter ? '🌿' : '📅'}</span>
+          </button>
+        )}
+
+        {/* Collapse all button */}
         <button
           className={styles.collapseBtn}
           onClick={onToggleCollapseAll}
-          title={allCollapsed ? 'Tout déplier' : 'Tout replier'}
+          title={allCollapsed ? 'Tout d\u00e9plier' : 'Tout replier'}
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
             <path d="M8 4l4 4 4-4" />
