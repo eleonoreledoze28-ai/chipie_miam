@@ -98,7 +98,31 @@ function saveBest(levelId: string, score: number): boolean {
 }
 
 type Screen = 'select' | 'play' | 'end'
-interface FloatingText { id: string; text: string; type: 'good' | 'moderate' | 'bad'; x: number; y: number }
+interface FloatingText { id: string; text: string; type: 'good' | 'moderate' | 'bad' | 'bonus'; x: number; y: number }
+
+// Multiplier tiers based on combo
+function getMultiplier(combo: number): number {
+  if (combo >= 8) return 3
+  if (combo >= 5) return 2
+  if (combo >= 3) return 1.5
+  return 1
+}
+
+// Chipie mood based on recent performance
+function getChipieMood(combo: number, lastAction: 'good' | 'bad' | 'none'): string {
+  if (lastAction === 'bad') return '😰'
+  if (combo >= 8) return '🤩'
+  if (combo >= 5) return '😍'
+  if (combo >= 3) return '😊'
+  if (combo >= 1) return '🐰'
+  return '😐'
+}
+
+// Progressive timer: each round gets slightly less time
+function getRoundTime(level: Level, roundNum: number): number {
+  const reduction = Math.floor((roundNum - 1) * 0.5) // lose 0.5s per round
+  return Math.max(Math.floor(level.timeLimit * 0.5), level.timeLimit - reduction)
+}
 
 // ===== Component =====
 export default function AssiettePage() {
@@ -122,6 +146,12 @@ export default function AssiettePage() {
   const [isNewRecord, setIsNewRecord] = useState(false)
   const [shakeItem, setShakeItem] = useState<string | null>(null)
   const [roundAnim, setRoundAnim] = useState(false)
+  const [mistakesThisRound, setMistakesThisRound] = useState(0)
+  const [roundScoreToast, setRoundScoreToast] = useState<{ score: number; perfect: boolean } | null>(null)
+  const [lastAction, setLastAction] = useState<'good' | 'bad' | 'none'>('none')
+  const [perfectRounds, setPerfectRounds] = useState(0)
+  const [totalMultiplied, setTotalMultiplied] = useState(0)
+  const roundScoreRef = useRef(0)
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -130,14 +160,27 @@ export default function AssiettePage() {
   }, [audio.MUTE_KEY])
 
   // Start a new round
-  const startRound = useCallback((lvl: Level, roundNum: number) => {
+  const startRound = useCallback((lvl: Level, roundNum: number, prevMistakes?: number) => {
+    // Check if previous round was perfect
+    if (roundNum > 1 && prevMistakes === 0) {
+      setPerfectRounds(p => p + 1)
+      setScore(s => s + 20)
+      setRoundScoreToast({ score: 20, perfect: true })
+      setTimeout(() => setRoundScoreToast(null), 1200)
+    } else if (roundNum > 1) {
+      setRoundScoreToast({ score: roundScoreRef.current, perfect: false })
+      setTimeout(() => setRoundScoreToast(null), 1000)
+    }
+    roundScoreRef.current = 0
     setRoundItems(pickRound(lvl))
     setSelected(new Set())
     setModerateThisRound(0)
-    setTimeLeft(lvl.timeLimit)
+    setMistakesThisRound(0)
+    setTimeLeft(getRoundTime(lvl, roundNum))
     setRound(roundNum)
     setFloats([])
     setShakeItem(null)
+    setLastAction('none')
     setRoundAnim(true)
     setTimeout(() => setRoundAnim(false), 400)
     audio.playRound()
@@ -152,6 +195,11 @@ export default function AssiettePage() {
     setPlate([])
     setCategoriesUsed(new Set())
     setIsNewRecord(false)
+    setPerfectRounds(0)
+    setTotalMultiplied(0)
+    setRoundScoreToast(null)
+    setLastAction('none')
+    roundScoreRef.current = 0
     setScreen('play')
     startRound(lvl, 1)
   }, [startRound])
@@ -167,8 +215,8 @@ export default function AssiettePage() {
             setScreen('end')
             return 0
           }
-          startRound(level, round + 1)
-          return level.timeLimit
+          startRound(level, round + 1, mistakesThisRound)
+          return getRoundTime(level, round + 1)
         }
         if (prev <= 4) audio.playTick()
         return prev - 1
@@ -205,23 +253,36 @@ export default function AssiettePage() {
     if (item.restriction === 'a_eviter') {
       // Bad!
       audio.playBad()
-      setScore(s => s - 15)
+      const penalty = 15
+      setScore(s => s - penalty)
+      roundScoreRef.current -= penalty
       setCombo(0)
+      setMistakesThisRound(m => m + 1)
+      setLastAction('bad')
       setShakeItem(item.id)
       setTimeout(() => setShakeItem(null), 400)
-      setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: '-15', type: 'bad', x, y }])
+      setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: `-${penalty}`, type: 'bad', x, y }])
     } else if (item.restriction === 'petite_quantite') {
       const newModCount = moderateThisRound + 1
       setModerateThisRound(newModCount)
       if (newModCount <= 2) {
         audio.playModerate()
-        setScore(s => s + 5)
+        const mult = getMultiplier(combo + 1)
+        const pts = Math.round(5 * mult)
+        setScore(s => s + pts)
+        roundScoreRef.current += pts
+        if (mult > 1) setTotalMultiplied(t => t + pts - 5)
         setCombo(c => { const n = c + 1; if (n > bestCombo) setBestCombo(n); audio.playCombo(n); return n })
-        setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: '+5', type: 'moderate', x, y }])
+        setLastAction('good')
+        const label = mult > 1 ? `+${pts} (x${mult})` : '+5'
+        setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: label, type: 'moderate', x, y }])
       } else {
         audio.playBad()
         setScore(s => s - 5)
+        roundScoreRef.current -= 5
         setCombo(0)
+        setMistakesThisRound(m => m + 1)
+        setLastAction('bad')
         setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: '-5 (exces)', type: 'bad', x, y }])
       }
       setPlate(p => [...p, item])
@@ -229,9 +290,15 @@ export default function AssiettePage() {
     } else {
       // Good!
       audio.playGood()
-      setScore(s => s + 10)
+      const mult = getMultiplier(combo + 1)
+      const pts = Math.round(10 * mult)
+      setScore(s => s + pts)
+      roundScoreRef.current += pts
+      if (mult > 1) setTotalMultiplied(t => t + pts - 10)
       setCombo(c => { const n = c + 1; if (n > bestCombo) setBestCombo(n); audio.playCombo(n); return n })
-      setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: '+10', type: 'good', x, y }])
+      setLastAction('good')
+      const label = mult > 1 ? `+${pts} (x${mult})` : '+10'
+      setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: label, type: mult > 1 ? 'bonus' : 'good', x, y }])
       setPlate(p => [...p, item])
       setCategoriesUsed(prev => new Set(prev).add(item.categorie))
     }
@@ -239,16 +306,16 @@ export default function AssiettePage() {
     // Clear old floats
     setTimeout(() => setFloats(prev => prev.slice(-6)), 1000)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selected, screen, moderateThisRound, bestCombo])
+  }, [selected, screen, moderateThisRound, bestCombo, combo])
 
   // Skip to next round
   const nextRound = useCallback(() => {
     if (round >= level.rounds) {
       setScreen('end')
     } else {
-      startRound(level, round + 1)
+      startRound(level, round + 1, mistakesThisRound)
     }
-  }, [round, level, startRound])
+  }, [round, level, startRound, mistakesThisRound])
 
   // Scoring
   const finalScore = score + categoriesUsed.size * 5
@@ -303,7 +370,8 @@ export default function AssiettePage() {
             <span className={styles.legendItem}>✅ Bon = +10</span>
             <span className={styles.legendItem}>⚠️ Modere = +5</span>
             <span className={styles.legendItem}>❌ Toxique = -15</span>
-            <span className={styles.legendItem}>🌈 Diversite bonus</span>
+            <span className={styles.legendItem}>🔥 Combo = multiplicateur</span>
+            <span className={styles.legendItem}>💎 Round parfait = +20</span>
           </div>
         </div>
       </div>
@@ -340,18 +408,18 @@ export default function AssiettePage() {
             </div>
             <div className={styles.endDivider} />
             <div className={styles.endStat}>
-              <span className={styles.endStatNum}>{plate.length}</span>
-              <span className={styles.endStatLabel}>aliments</span>
-            </div>
-            <div className={styles.endDivider} />
-            <div className={styles.endStat}>
-              <span className={styles.endStatNum}>{categoriesUsed.size}</span>
-              <span className={styles.endStatLabel}>categories</span>
-            </div>
-            <div className={styles.endDivider} />
-            <div className={styles.endStat}>
               <span className={styles.endStatNum}>x{bestCombo}</span>
-              <span className={styles.endStatLabel}>combo</span>
+              <span className={styles.endStatLabel}>combo max</span>
+            </div>
+            <div className={styles.endDivider} />
+            <div className={styles.endStat}>
+              <span className={styles.endStatNum}>{perfectRounds}</span>
+              <span className={styles.endStatLabel}>parfaits</span>
+            </div>
+            <div className={styles.endDivider} />
+            <div className={styles.endStat}>
+              <span className={styles.endStatNum}>+{totalMultiplied}</span>
+              <span className={styles.endStatLabel}>bonus multi</span>
             </div>
           </div>
 
@@ -402,6 +470,13 @@ export default function AssiettePage() {
           style={{ width: `${timerProgress * 100}%` }} />
       </div>
 
+      {/* Round score toast */}
+      {roundScoreToast && (
+        <div className={`${styles.roundToast} ${roundScoreToast.perfect ? styles.roundToastPerfect : ''}`}>
+          {roundScoreToast.perfect ? '💎 Round parfait ! +20 bonus' : `Round termine : +${roundScoreToast.score} pts`}
+        </div>
+      )}
+
       {/* Floating score texts */}
       {floats.map(f => (
         <div key={f.id} className={`${styles.floatingText} ${styles[`float_${f.type}`]}`}
@@ -432,8 +507,16 @@ export default function AssiettePage() {
 
         <div className={`${styles.comboBox} ${combo >= 3 ? styles.comboGlow : ''}`}>
           <span className={styles.comboNum}>x{combo}</span>
+          {getMultiplier(combo) > 1 && (
+            <span className={styles.multiplierBadge}>x{getMultiplier(combo)}</span>
+          )}
           <span className={styles.comboLabel}>combo</span>
         </div>
+      </div>
+
+      {/* Chipie mood */}
+      <div className={styles.chipieMood}>
+        <span className={styles.chipieMoodEmoji}>{getChipieMood(combo, lastAction)}</span>
       </div>
 
       {/* Round dots */}
