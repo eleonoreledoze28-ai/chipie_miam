@@ -1,6 +1,6 @@
 .page {
-  padding: 16px;
-  padding-bottom: 80px;
+  padding: 10px 16px;
+  padding-bottom: 72px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .back {
@@ -155,13 +155,13 @@
 
 /* ===== Play Screen ===== */
 .title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 800;
   color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 2px;
+  gap: 6px;
+  margin-bottom: 1px;
 }
 
 .diffBadge {
@@ -175,9 +175,9 @@
 }
 
 .subtitle {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 /* ===== Trap feedback toast ===== */
@@ -232,8 +232,8 @@
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 8px 16px;
-  margin-bottom: 14px;
+  padding: 6px 16px;
+  margin-bottom: 8px;
   box-shadow: var(--shadow-card);
   max-width: 340px;
   width: 100%;
@@ -282,7 +282,7 @@
 .mazeContainer {
   touch-action: none;
   user-select: none;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .maze {
@@ -471,14 +471,14 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 8px 18px;
+  padding: 6px 16px;
   background: var(--bg-card);
   border: 1px solid var(--accent-violet, #B07CFF);
   border-radius: var(--radius-pill);
   color: var(--accent-violet, #B07CFF);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   box-shadow: 0 0 8px rgba(176, 124, 255, 0.15);
   -webkit-tap-highlight-color: transparent;
   transition: all 150ms ease;
@@ -502,7 +502,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   transition: opacity 200ms ease;
 }
 
@@ -514,12 +514,12 @@
 .controlRow {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .dirBtn {
-  width: 52px;
-  height: 52px;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -543,12 +543,12 @@
 }
 
 .dirCenter {
-  width: 52px;
-  height: 52px;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   opacity: 0.3;
 }
 

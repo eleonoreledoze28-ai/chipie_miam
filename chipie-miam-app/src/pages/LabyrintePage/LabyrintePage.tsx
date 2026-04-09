@@ -459,7 +459,7 @@ export default function LabyrintePage() {
   }, [level.fog, pos])
 
   const cat = CATEGORIES.find(c => c.id === food.categorie)
-  const cellSize = Math.min(Math.floor(320 / level.size), 42)
+  const cellSize = Math.min(Math.floor(280 / level.size), 40)
   const bestForLevel = bestScores[level.id]
 
   // Portal color helper
