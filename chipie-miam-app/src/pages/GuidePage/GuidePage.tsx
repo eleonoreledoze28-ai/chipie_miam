@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import SearchBar from '../../components/SearchBar/SearchBar'
 import CategorySection from '../../components/CategorySection/CategorySection'
 import VegetalCard from '../../components/VegetalCard/VegetalCard'
@@ -62,6 +63,7 @@ const TIPS = [
 ]
 
 export default function GuidePage() {
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState<SortOption>('categorie')
   const [filter, setFilter] = useState<FilterOption>('tous')
@@ -229,6 +231,9 @@ export default function GuidePage() {
               <span>Une gamelle d'eau fraîche et propre en permanence</span>
             </div>
           </div>
+          <button className={styles.dangerLink} onClick={() => navigate('/danger')}>
+            ⚠️ Voir les aliments dangereux
+          </button>
         </div>
 
         <div className={styles.summaryCard}>
