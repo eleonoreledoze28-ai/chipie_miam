@@ -380,8 +380,9 @@ export default function AssiettePage() {
 
   // Timer progress (0 to 1)
   const timerProgress = level.timeLimit > 0 ? timeLeft / level.timeLimit : 1
-  const timerStroke = Math.PI * 2 * 18 // circumference for r=18
+  const timerStroke = Math.PI * 2 * 20
   const timerOffset = timerStroke * (1 - timerProgress)
+  const isUrgent = timeLeft <= 3
 
   // ===== Play screen =====
   return (
@@ -391,10 +392,15 @@ export default function AssiettePage() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><path d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
           <span>Retour</span>
         </button>
+        <span className={styles.roundLabel}>Round {round}/{level.rounds}</span>
         <button className={styles.muteBtn} onClick={toggleMute}>{muted ? '🔇' : '🔊'}</button>
       </div>
 
-      <h1 className={styles.title}>🍽️ Assiette <span className={styles.diffBadge}>{level.emoji} {level.label}</span></h1>
+      {/* Timer progress bar */}
+      <div className={styles.timerBarWrap}>
+        <div className={`${styles.timerBar} ${isUrgent ? styles.timerBarUrgent : ''}`}
+          style={{ width: `${timerProgress * 100}%` }} />
+      </div>
 
       {/* Floating score texts */}
       {floats.map(f => (
@@ -402,33 +408,31 @@ export default function AssiettePage() {
           style={{ left: f.x, top: f.y }}>{f.text}</div>
       ))}
 
-      {/* Stats bar with circular timer */}
-      <div className={styles.statsBar}>
-        <div className={styles.stat}>
-          <span className={styles.statNum}>{score}</span>
-          <span className={styles.statLabel}>Score</span>
+      {/* Score + Combo header */}
+      <div className={styles.scoreHeader}>
+        <div className={styles.scoreBox}>
+          <span className={styles.scoreNum}>{score}</span>
+          <span className={styles.scoreLabel}>pts</span>
         </div>
-        <div className={styles.statDivider} />
 
         {/* Circular timer */}
         <div className={styles.timerCircle}>
-          <svg width="44" height="44" viewBox="0 0 44 44">
-            <circle cx="22" cy="22" r="18" fill="none" stroke="var(--border-subtle)" strokeWidth="3" />
-            <circle cx="22" cy="22" r="18" fill="none"
-              stroke={timeLeft <= 3 ? 'var(--accent-red, #ff3b30)' : 'var(--accent-orange)'}
-              strokeWidth="3" strokeLinecap="round"
+          <svg width="52" height="52" viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="20" fill="none" stroke="var(--border-subtle)" strokeWidth="3" opacity="0.3" />
+            <circle cx="26" cy="26" r="20" fill="none"
+              stroke={isUrgent ? 'var(--accent-red, #ff3b30)' : 'var(--accent-orange)'}
+              strokeWidth="3.5" strokeLinecap="round"
               strokeDasharray={timerStroke} strokeDashoffset={timerOffset}
-              transform="rotate(-90 22 22)"
-              className={timeLeft <= 3 ? styles.timerUrgent : ''}
+              transform="rotate(-90 26 26)"
+              className={isUrgent ? styles.timerUrgent : ''}
             />
           </svg>
-          <span className={`${styles.timerText} ${timeLeft <= 3 ? styles.timerTextDanger : ''}`}>{timeLeft}</span>
+          <span className={`${styles.timerText} ${isUrgent ? styles.timerTextDanger : ''}`}>{timeLeft}</span>
         </div>
 
-        <div className={styles.statDivider} />
-        <div className={`${styles.stat} ${combo >= 3 ? styles.statComboGlow : ''}`}>
-          <span className={styles.statNum}>x{combo}</span>
-          <span className={styles.statLabel}>Combo</span>
+        <div className={`${styles.comboBox} ${combo >= 3 ? styles.comboGlow : ''}`}>
+          <span className={styles.comboNum}>x{combo}</span>
+          <span className={styles.comboLabel}>combo</span>
         </div>
       </div>
 
@@ -439,29 +443,37 @@ export default function AssiettePage() {
         ))}
       </div>
 
-      {/* Plate preview (circular plate shape) */}
+      {/* Plate preview */}
       <div className={styles.plateArea}>
         <div className={`${styles.plate} ${plate.length > 0 ? styles.plateFilled : ''}`}>
-          <div className={styles.plateInner}>
-            {plate.slice(-10).map((p, i) => (
-              <img key={`${p.id}-${i}`} src={assetUrl(p.image)} alt="" className={styles.plateItem}
-                style={{ animationDelay: `${i * 0.05}s` }} />
-            ))}
-            {plate.length === 0 && <span className={styles.plateEmpty}>Tapez les bons aliments !</span>}
+          <div className={styles.plateRim}>
+            <div className={styles.plateInner}>
+              {plate.slice(-12).map((p, i) => (
+                <img key={`${p.id}-${i}`} src={assetUrl(p.image)} alt="" className={styles.plateItem}
+                  style={{ animationDelay: `${i * 0.04}s` }} />
+              ))}
+              {plate.length === 0 && (
+                <span className={styles.plateEmpty}>
+                  <span className={styles.plateEmptyIcon}>🐰</span>
+                  Chipie attend son repas !
+                </span>
+              )}
+            </div>
           </div>
-          {/* Category badges around plate */}
           {categoriesUsed.size > 0 && (
             <div className={styles.plateCats}>
-              {[...categoriesUsed].slice(-5).map(c => (
-                <span key={c} className={styles.plateCat}>{cat(c)?.emoji}</span>
+              {[...categoriesUsed].map(c => (
+                <span key={c} className={styles.plateCat} title={cat(c)?.nom}>{cat(c)?.emoji}</span>
               ))}
+              <span className={styles.plateCatBonus}>+{categoriesUsed.size * 5}</span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Food grid with stagger animation */}
-      <div className={`${styles.foodGrid} ${roundAnim ? styles.foodGridEnter : ''}`} style={{ gridTemplateColumns: `repeat(${level.cols}, 1fr)` }}>
+      {/* Food grid */}
+      <div className={`${styles.foodGrid} ${roundAnim ? styles.foodGridEnter : ''}`}
+        style={{ gridTemplateColumns: `repeat(${level.cols}, 1fr)` }}>
         {roundItems.map((item, idx) => {
           const isSelected = selected.has(item.id)
           const isShaking = shakeItem === item.id
@@ -481,26 +493,26 @@ export default function AssiettePage() {
               key={`${item.id}-${round}`}
               id={`food-${idx}`}
               className={cardClasses}
-              style={{ animationDelay: `${idx * 0.05}s` }}
+              style={{ animationDelay: `${idx * 0.06}s` }}
               onClick={() => selectItem(item, idx)}
               disabled={isSelected}
             >
               <div className={styles.foodImgWrap}>
                 <img src={assetUrl(item.image)} alt="" className={styles.foodImg} />
-                <span className={styles.foodCatBadge}>{itemCat?.emoji}</span>
+                {!isSelected && <span className={styles.foodCatBadge}>{itemCat?.emoji}</span>}
               </div>
               <span className={styles.foodName}>{item.nom}</span>
-              {isSelected && item.restriction === 'a_eviter' && <span className={styles.foodBadge}>❌</span>}
-              {isSelected && item.restriction === 'aucune' && <span className={styles.foodBadge}>✅</span>}
-              {isSelected && item.restriction === 'petite_quantite' && <span className={styles.foodBadge}>⚠️</span>}
+              {isSelected && <span className={styles.foodBadge}>
+                {item.restriction === 'a_eviter' ? '❌' : item.restriction === 'petite_quantite' ? '⚠️' : '✅'}
+              </span>}
             </button>
           )
         })}
       </div>
 
-      {/* Skip round button */}
+      {/* Next round button */}
       <button className={styles.skipBtn} onClick={nextRound}>
-        {round >= level.rounds ? 'Terminer' : `Round suivant (${round}/${level.rounds})`}
+        {round >= level.rounds ? 'Voir le resultat' : `Round suivant`}
       </button>
     </div>
   )
