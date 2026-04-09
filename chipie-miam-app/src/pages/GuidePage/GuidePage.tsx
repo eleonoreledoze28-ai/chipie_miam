@@ -234,6 +234,9 @@ export default function GuidePage() {
           <button className={styles.dangerLink} onClick={() => navigate('/danger')}>
             ⚠️ Voir les aliments dangereux
           </button>
+          <button className={styles.encyclopediaLink} onClick={() => navigate('/encyclopedie')}>
+            📖 Encyclopédie lapin
+          </button>
         </div>
 
         <div className={styles.summaryCard}>
