@@ -50,8 +50,8 @@ function generateMaze(size: number): Cell[][] {
       stack.pop()
     } else {
       const [nr, nc, wall, opposite] = neighbors[Math.floor(Math.random() * neighbors.length)];
-      (grid[r][c] as Record<string, boolean>)[wall] = false;
-      (grid[nr][nc] as Record<string, boolean>)[opposite] = false
+      (grid[r][c] as unknown as Record<string, boolean>)[wall] = false;
+      (grid[nr][nc] as unknown as Record<string, boolean>)[opposite] = false
       grid[nr][nc].visited = true
       stack.push([nr, nc])
     }

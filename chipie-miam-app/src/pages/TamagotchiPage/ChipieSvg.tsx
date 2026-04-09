@@ -93,7 +93,7 @@ export default function ChipieSvg({ mood, accessory, className }: Props) {
 
         {/* Mouth */}
         <div className={css.mouth}>
-          {isHappy || mood === 'excited' ? (
+          {isHappy ? (
             <div className={css.smile} />
           ) : isEating ? (
             <div className={css.mouthOpen} />

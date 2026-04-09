@@ -4,10 +4,9 @@ import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
 import ChipieSvg, { type ChipieMood } from './ChipieSvg'
 import {
-  type Season, type Weather,
   SEASONS, WEATHER_INFO, ACHIEVEMENTS, SHOP_ITEMS, RANDOM_EVENTS,
   getLevel, getMood, getSeason, getWeather, getTimeOfDay, pickDailyQuests,
-  type Quest, type AchievementCheckState,
+  type AchievementCheckState,
 } from './tamagotchiData'
 import styles from './TamagotchiPage.module.css'
 
@@ -207,7 +206,7 @@ export default function TamagotchiPage() {
       if (Math.random() > 0.45) {
         const ev = RANDOM_EVENTS[Math.floor(Math.random() * RANDOM_EVENTS.length)]
         setEvent(ev.text)
-        setState(prev => ({ ...prev, [ev.stat]: clamp((prev as Record<string, number>)[ev.stat] + ev.value) }))
+        setState(prev => ({ ...prev, [ev.stat]: clamp((prev as unknown as Record<string, number>)[ev.stat] + ev.value) }))
         setTimeout(() => setEvent(null), 4000)
       }
     }, 60000)
