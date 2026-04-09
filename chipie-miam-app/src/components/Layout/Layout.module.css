@@ -11,4 +11,28 @@
   flex: 1;
   padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 8px);
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Page transition wrapper */
+.pageWrap {
+  will-change: opacity, transform;
+}
+
+.pageExit {
+  animation: pageOut 120ms ease forwards;
+}
+
+.pageEnter {
+  animation: pageIn 200ms ease both;
+}
+
+@keyframes pageOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(8px); }
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
