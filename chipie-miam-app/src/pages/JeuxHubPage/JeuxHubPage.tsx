@@ -44,6 +44,13 @@ const GAMES = [
     title: 'Assiette de Chipie',
     desc: 'Composez le repas idéal : bons aliments, pas de toxiques !',
   },
+  {
+    id: 'quiz',
+    path: '/jeu/quiz',
+    emoji: '⚡',
+    title: 'Quiz Vrai/Faux',
+    desc: 'Cet aliment est-il bon pour Chipie ? Répondez vite !',
+  },
 ]
 
 export default function JeuxHubPage() {
