@@ -55,7 +55,7 @@ export default function ProfilPage() {
   const handleAddProfile = () => { if (newName.trim()) addProfile(newName.trim()) }
   const handleDeleteProfile = () => {
     if (profiles.length <= 1) return
-    if (confirm(`Supprimer le profil "${profil.nom}" et toutes ses donn\u00e9es ?`)) removeProfile(activeId)
+    if (confirm(`Supprimer le profil "${profil.nom}" et toutes ses données ?`)) removeProfile(activeId)
   }
 
   // ===== Computed stats from journal =====
@@ -113,7 +113,7 @@ export default function ProfilPage() {
       {showNewForm && (
         <div className={styles.newForm}>
           <input className={styles.newInput} value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nom du lapin..." autoFocus />
-          <button className={styles.newOk} onClick={handleAddProfile}>Cr\u00e9er</button>
+          <button className={styles.newOk} onClick={handleAddProfile}>Créer</button>
           <button className={styles.newCancel} onClick={() => { setShowNewForm(false); setNewName('') }}>✕</button>
         </div>
       )}
@@ -150,10 +150,10 @@ export default function ProfilPage() {
         {([
           ['race', 'Race', '🐇'],
           ['couleur', 'Couleur', '🎨'],
-          ['age', '\u00c2ge', '🎂'],
-          ['dateNaissance', 'N\u00e9(e) le', '📅'],
+          ['age', '\u00c2ge', '\uD83C\uDF82'],
+          ['dateNaissance', 'Né(e) le', '📅'],
           ['poids', 'Poids', '⚖️'],
-          ['sterilise', 'St\u00e9rilis\u00e9(e)', '✂️'],
+          ['sterilise', 'Stérilisé(e)', '✂️'],
         ] as const).map(([key, label, emoji]) => (
           <div key={key} className={styles.infoCard}>
             <span className={styles.infoEmoji}>{emoji}</span>
@@ -180,11 +180,11 @@ export default function ProfilPage() {
 
       {/* Veterinaire section */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>🩺 V\u00e9t\u00e9rinaire</h2>
+        <h2 className={styles.sectionTitle}>🩺 Vétérinaire</h2>
         {editing ? (
           <div className={styles.vetForm}>
-            <input className={styles.vetInput} value={draft.veterinaire} onChange={e => set('veterinaire', e.target.value)} placeholder="Nom du v\u00e9t\u00e9rinaire" />
-            <input className={styles.vetInput} value={draft.vetTel} onChange={e => set('vetTel', e.target.value)} placeholder="T\u00e9l\u00e9phone" type="tel" />
+            <input className={styles.vetInput} value={draft.veterinaire} onChange={e => set('veterinaire', e.target.value)} placeholder="Nom du vétérinaire" />
+            <input className={styles.vetInput} value={draft.vetTel} onChange={e => set('vetTel', e.target.value)} placeholder="Téléphone" type="tel" />
           </div>
         ) : (
           <div className={styles.vetInfo}>
@@ -194,7 +194,7 @@ export default function ProfilPage() {
                 {profil.vetTel && <a href={`tel:${profil.vetTel}`} className={styles.vetTel}>📞 {profil.vetTel}</a>}
               </>
             ) : (
-              <span className={styles.vetEmpty}>Aucun v\u00e9t\u00e9rinaire renseign\u00e9</span>
+              <span className={styles.vetEmpty}>Aucun vétérinaire renseigné</span>
             )}
           </div>
         )}
@@ -231,7 +231,7 @@ export default function ProfilPage() {
         <>
           {/* Mini stats */}
           <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>📊 R\u00e9sum\u00e9 alimentaire</h2>
+            <h2 className={styles.sectionTitle}>📊 Résumé alimentaire</h2>
             <div className={styles.miniStats}>
               <div className={styles.miniStat}>
                 <span className={styles.miniStatNum}>{entries.length}</span>
@@ -250,14 +250,14 @@ export default function ProfilPage() {
               <div className={styles.miniStatDivider} />
               <div className={styles.miniStat}>
                 <span className={styles.miniStatNum}>{catBreakdown.length}</span>
-                <span className={styles.miniStatLabel}>cat\u00e9gories</span>
+                <span className={styles.miniStatLabel}>catégories</span>
               </div>
             </div>
           </div>
 
           {/* Top aliments preferes */}
           <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>❤️ Aliments pr\u00e9f\u00e9r\u00e9s</h2>
+            <h2 className={styles.sectionTitle}>❤️ Aliments préférés</h2>
             <div className={styles.topList}>
               {topFoods.map(({ vegetal, count }, i) => {
                 if (!vegetal) return null
@@ -278,7 +278,7 @@ export default function ProfilPage() {
 
           {/* Categories pie (simplified as bars) */}
           <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>🌈 Cat\u00e9gories donn\u00e9es</h2>
+            <h2 className={styles.sectionTitle}>🌈 Catégories données</h2>
             <div className={styles.catBars}>
               {catBreakdown.map(({ cat: c, count }) => {
                 if (!c) return null
