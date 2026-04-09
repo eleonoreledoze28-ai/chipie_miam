@@ -1,38 +1,35 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProfil } from '../../hooks/useProfil'
 import { useProfiles } from '../../hooks/useProfiles'
+import { useJournal } from '../../hooks/useJournal'
+import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
+import { assetUrl } from '../../utils/assetUrl'
 import styles from './ProfilPage.module.css'
 
 const DEFAULT_AVATAR = `${import.meta.env.BASE_URL}chipie-avatar.jpeg`
+const vegetauxMap = new Map(VEGETAUX.map(v => [v.id, v]))
+const catMap = new Map(CATEGORIES.map(c => [c.id, c]))
 
 export default function ProfilPage() {
   const navigate = useNavigate()
   const { profil, updateProfil } = useProfil()
   const { profiles, activeId, switchProfile, addProfile, removeProfile, updateProfileMeta } = useProfiles()
+  const { entries } = useJournal()
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(profil)
   const [showNewForm, setShowNewForm] = useState(false)
   const [newName, setNewName] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const startEdit = () => {
-    setDraft(profil)
-    setEditing(true)
-  }
-
+  const startEdit = () => { setDraft(profil); setEditing(true) }
   const saveEdit = () => {
     updateProfil(draft)
-    // Sync meta
     updateProfileMeta(activeId, { nom: draft.nom, avatar: draft.avatar })
     setEditing(false)
   }
-
   const cancelEdit = () => setEditing(false)
-
-  const set = (key: keyof typeof draft, value: string) => {
-    setDraft(prev => ({ ...prev, [key]: value }))
-  }
+  const set = (key: keyof typeof draft, value: string) => setDraft(prev => ({ ...prev, [key]: value }))
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -43,11 +40,9 @@ export default function ProfilPage() {
       img.onload = () => {
         const canvas = document.createElement('canvas')
         const size = Math.min(img.width, img.height, 200)
-        canvas.width = size
-        canvas.height = size
+        canvas.width = size; canvas.height = size
         const ctx = canvas.getContext('2d')!
-        const sx = (img.width - size) / 2
-        const sy = (img.height - size) / 2
+        const sx = (img.width - size) / 2; const sy = (img.height - size) / 2
         ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size)
         set('avatar', canvas.toDataURL('image/jpeg', 0.8))
       }
@@ -57,18 +52,35 @@ export default function ProfilPage() {
     e.target.value = ''
   }
 
-  const handleAddProfile = () => {
-    if (newName.trim()) {
-      addProfile(newName.trim())
-    }
-  }
-
+  const handleAddProfile = () => { if (newName.trim()) addProfile(newName.trim()) }
   const handleDeleteProfile = () => {
     if (profiles.length <= 1) return
-    if (confirm(`Supprimer le profil "${profil.nom}" et toutes ses données ?`)) {
-      removeProfile(activeId)
-    }
+    if (confirm(`Supprimer le profil "${profil.nom}" et toutes ses donn\u00e9es ?`)) removeProfile(activeId)
   }
+
+  // ===== Computed stats from journal =====
+  const topFoods = useMemo(() => {
+    const counts: Record<string, number> = {}
+    entries.forEach(e => { counts[e.vegetalId] = (counts[e.vegetalId] || 0) + 1 })
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([id, count]) => ({ vegetal: vegetauxMap.get(id), count }))
+  }, [entries])
+
+  const catBreakdown = useMemo(() => {
+    const counts: Record<string, number> = {}
+    entries.forEach(e => {
+      const v = vegetauxMap.get(e.vegetalId)
+      if (v) counts[v.categorie] = (counts[v.categorie] || 0) + 1
+    })
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([catId, count]) => ({ cat: catMap.get(catId as never), count }))
+  }, [entries])
+
+  const totalUnique = useMemo(() => new Set(entries.map(e => e.vegetalId)).size, [entries])
+  const totalDays = useMemo(() => new Set(entries.map(e => e.date)).size, [entries])
 
   const avatarSrc = (editing ? draft.avatar : profil.avatar) || DEFAULT_AVATAR
 
@@ -84,11 +96,9 @@ export default function ProfilPage() {
       {/* Profile selector */}
       <div className={styles.profileSelector}>
         {profiles.map(p => (
-          <button
-            key={p.id}
+          <button key={p.id}
             className={`${styles.profileChip} ${p.id === activeId ? styles.profileChipActive : ''}`}
-            onClick={() => p.id !== activeId && switchProfile(p.id)}
-          >
+            onClick={() => p.id !== activeId && switchProfile(p.id)}>
             <img src={p.avatar || DEFAULT_AVATAR} alt="" className={styles.chipAvatar} />
             <span className={styles.chipName}>{p.nom}</span>
           </button>
@@ -100,17 +110,10 @@ export default function ProfilPage() {
         </button>
       </div>
 
-      {/* New profile form */}
       {showNewForm && (
         <div className={styles.newForm}>
-          <input
-            className={styles.newInput}
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            placeholder="Nom du lapin..."
-            autoFocus
-          />
-          <button className={styles.newOk} onClick={handleAddProfile}>Créer</button>
+          <input className={styles.newInput} value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nom du lapin..." autoFocus />
+          <button className={styles.newOk} onClick={handleAddProfile}>Cr\u00e9er</button>
           <button className={styles.newCancel} onClick={() => { setShowNewForm(false); setNewName('') }}>✕</button>
         </div>
       )}
@@ -144,29 +147,68 @@ export default function ProfilPage() {
 
       {/* Info grid */}
       <div className={styles.infoGrid}>
-        {(['race', 'age', 'poids'] as const).map(key => (
+        {([
+          ['race', 'Race', '🐇'],
+          ['couleur', 'Couleur', '🎨'],
+          ['age', '\u00c2ge', '🎂'],
+          ['dateNaissance', 'N\u00e9(e) le', '📅'],
+          ['poids', 'Poids', '⚖️'],
+          ['sterilise', 'St\u00e9rilis\u00e9(e)', '✂️'],
+        ] as const).map(([key, label, emoji]) => (
           <div key={key} className={styles.infoCard}>
-            <span className={styles.infoLabel}>{key === 'race' ? 'Race' : key === 'age' ? 'Âge' : 'Poids'}</span>
+            <span className={styles.infoEmoji}>{emoji}</span>
+            <span className={styles.infoLabel}>{label}</span>
             {editing ? (
-              <input className={styles.infoInput} value={draft[key]} onChange={(e) => set(key, e.target.value)} placeholder="—" />
+              key === 'sterilise' ? (
+                <div className={styles.toggleRow}>
+                  {['Oui', 'Non'].map(opt => (
+                    <button key={opt} className={`${styles.toggleBtn} ${draft.sterilise === opt ? styles.toggleBtnActive : ''}`}
+                      onClick={() => set('sterilise', opt)}>{opt}</button>
+                  ))}
+                </div>
+              ) : key === 'dateNaissance' ? (
+                <input type="date" className={styles.infoInput} value={draft[key]} onChange={(e) => set(key, e.target.value)} />
+              ) : (
+                <input className={styles.infoInput} value={draft[key]} onChange={(e) => set(key, e.target.value)} placeholder="\u2014" />
+              )
             ) : (
-              <span className={styles.infoValue}>{profil[key] || '—'}</span>
+              <span className={styles.infoValue}>{profil[key] || '\u2014'}</span>
             )}
           </div>
         ))}
-        <div className={styles.infoCard}>
-          <span className={styles.infoLabel}>Stérilisé(e)</span>
-          {editing ? (
-            <div className={styles.toggleRow}>
-              {['Oui', 'Non'].map(opt => (
-                <button key={opt} className={`${styles.toggleBtn} ${draft.sterilise === opt ? styles.toggleBtnActive : ''}`}
-                  onClick={() => set('sterilise', opt)}>{opt}</button>
-              ))}
-            </div>
-          ) : (
-            <span className={styles.infoValue}>{profil.sterilise || '—'}</span>
-          )}
-        </div>
+      </div>
+
+      {/* Veterinaire section */}
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>🩺 V\u00e9t\u00e9rinaire</h2>
+        {editing ? (
+          <div className={styles.vetForm}>
+            <input className={styles.vetInput} value={draft.veterinaire} onChange={e => set('veterinaire', e.target.value)} placeholder="Nom du v\u00e9t\u00e9rinaire" />
+            <input className={styles.vetInput} value={draft.vetTel} onChange={e => set('vetTel', e.target.value)} placeholder="T\u00e9l\u00e9phone" type="tel" />
+          </div>
+        ) : (
+          <div className={styles.vetInfo}>
+            {profil.veterinaire ? (
+              <>
+                <span className={styles.vetName}>{profil.veterinaire}</span>
+                {profil.vetTel && <a href={`tel:${profil.vetTel}`} className={styles.vetTel}>📞 {profil.vetTel}</a>}
+              </>
+            ) : (
+              <span className={styles.vetEmpty}>Aucun v\u00e9t\u00e9rinaire renseign\u00e9</span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Notes */}
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>📝 Notes</h2>
+        {editing ? (
+          <textarea className={styles.notesArea} value={draft.notes} onChange={e => set('notes', e.target.value)}
+            placeholder="Allergies, habitudes, infos utiles..." rows={3} />
+        ) : (
+          <p className={styles.notesText}>{profil.notes || 'Aucune note'}</p>
+        )}
       </div>
 
       {/* Actions */}
@@ -179,11 +221,81 @@ export default function ProfilPage() {
         <div className={styles.editActions}>
           <button className={styles.editBtn} onClick={startEdit}>Modifier le profil</button>
           {profiles.length > 1 && (
-            <button className={styles.deleteProfileBtn} onClick={handleDeleteProfile}>
-              Supprimer ce profil
-            </button>
+            <button className={styles.deleteProfileBtn} onClick={handleDeleteProfile}>Supprimer ce profil</button>
           )}
         </div>
+      )}
+
+      {/* ===== Preferences alimentaires (from journal) ===== */}
+      {entries.length > 0 && !editing && (
+        <>
+          {/* Mini stats */}
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>📊 R\u00e9sum\u00e9 alimentaire</h2>
+            <div className={styles.miniStats}>
+              <div className={styles.miniStat}>
+                <span className={styles.miniStatNum}>{entries.length}</span>
+                <span className={styles.miniStatLabel}>repas</span>
+              </div>
+              <div className={styles.miniStatDivider} />
+              <div className={styles.miniStat}>
+                <span className={styles.miniStatNum}>{totalUnique}</span>
+                <span className={styles.miniStatLabel}>aliments</span>
+              </div>
+              <div className={styles.miniStatDivider} />
+              <div className={styles.miniStat}>
+                <span className={styles.miniStatNum}>{totalDays}</span>
+                <span className={styles.miniStatLabel}>jours</span>
+              </div>
+              <div className={styles.miniStatDivider} />
+              <div className={styles.miniStat}>
+                <span className={styles.miniStatNum}>{catBreakdown.length}</span>
+                <span className={styles.miniStatLabel}>cat\u00e9gories</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Top aliments preferes */}
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>❤️ Aliments pr\u00e9f\u00e9r\u00e9s</h2>
+            <div className={styles.topList}>
+              {topFoods.map(({ vegetal, count }, i) => {
+                if (!vegetal) return null
+                return (
+                  <div key={vegetal.id} className={styles.topItem}>
+                    <span className={styles.topRank}>#{i + 1}</span>
+                    <img src={assetUrl(vegetal.image)} alt="" className={styles.topImg} />
+                    <div className={styles.topInfo}>
+                      <span className={styles.topName}>{vegetal.nom}</span>
+                      <span className={styles.topCat}>{catMap.get(vegetal.categorie as never)?.emoji} {catMap.get(vegetal.categorie as never)?.nom}</span>
+                    </div>
+                    <span className={styles.topCount}>{count}x</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Categories pie (simplified as bars) */}
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>🌈 Cat\u00e9gories donn\u00e9es</h2>
+            <div className={styles.catBars}>
+              {catBreakdown.map(({ cat: c, count }) => {
+                if (!c) return null
+                const maxC = catBreakdown[0]?.count || 1
+                return (
+                  <div key={c.id} className={styles.catRow}>
+                    <span className={styles.catLabel}>{c.emoji} {c.nom}</span>
+                    <div className={styles.catTrack}>
+                      <div className={styles.catFill} style={{ width: `${(count / maxC) * 100}%` }} />
+                    </div>
+                    <span className={styles.catCount}>{count}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </>
       )}
     </div>
   )

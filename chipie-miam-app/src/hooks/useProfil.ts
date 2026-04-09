@@ -9,6 +9,11 @@ export interface Profil {
   poids: string
   sterilise: string
   avatar: string
+  couleur: string
+  dateNaissance: string
+  veterinaire: string
+  vetTel: string
+  notes: string
 }
 
 function getStorageKey() {
@@ -23,6 +28,11 @@ const DEFAULTS: Profil = {
   poids: '',
   sterilise: '',
   avatar: '',
+  couleur: '',
+  dateNaissance: '',
+  veterinaire: '',
+  vetTel: '',
+  notes: '',
 }
 
 function load(): Profil {
