@@ -151,6 +151,8 @@ export default function AssiettePage() {
   const [lastAction, setLastAction] = useState<'good' | 'bad' | 'none'>('none')
   const [perfectRounds, setPerfectRounds] = useState(0)
   const [totalMultiplied, setTotalMultiplied] = useState(0)
+  const [scorePop, setScorePop] = useState(false)
+  const [sparkles, setSparkles] = useState<{ id: string; x: number; y: number }[]>([])
   const roundScoreRef = useRef(0)
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -250,6 +252,18 @@ export default function AssiettePage() {
     const x = rect ? rect.left + rect.width / 2 : 160
     const y = rect ? rect.top : 300
 
+    // Trigger score pop animation
+    const popScore = () => { setScorePop(true); setTimeout(() => setScorePop(false), 300) }
+
+    // Spawn sparkles at selection point
+    const spawnSparkles = (sx: number, sy: number) => {
+      const newSparkles = Array.from({ length: 5 }, (_, i) => ({
+        id: `sp-${Date.now()}-${i}`, x: sx, y: sy,
+      }))
+      setSparkles(prev => [...prev, ...newSparkles])
+      setTimeout(() => setSparkles(prev => prev.filter(s => !newSparkles.includes(s))), 800)
+    }
+
     if (item.restriction === 'a_eviter') {
       // Bad!
       audio.playBad()
@@ -259,6 +273,7 @@ export default function AssiettePage() {
       setCombo(0)
       setMistakesThisRound(m => m + 1)
       setLastAction('bad')
+      popScore()
       setShakeItem(item.id)
       setTimeout(() => setShakeItem(null), 400)
       setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: `-${penalty}`, type: 'bad', x, y }])
@@ -274,6 +289,8 @@ export default function AssiettePage() {
         if (mult > 1) setTotalMultiplied(t => t + pts - 5)
         setCombo(c => { const n = c + 1; if (n > bestCombo) setBestCombo(n); audio.playCombo(n); return n })
         setLastAction('good')
+        popScore()
+        spawnSparkles(x, y)
         const label = mult > 1 ? `+${pts} (x${mult})` : '+5'
         setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: label, type: 'moderate', x, y }])
       } else {
@@ -297,6 +314,8 @@ export default function AssiettePage() {
       if (mult > 1) setTotalMultiplied(t => t + pts - 10)
       setCombo(c => { const n = c + 1; if (n > bestCombo) setBestCombo(n); audio.playCombo(n); return n })
       setLastAction('good')
+      popScore()
+      spawnSparkles(x, y)
       const label = mult > 1 ? `+${pts} (x${mult})` : '+10'
       setFloats(prev => [...prev, { id: `${item.id}-${Date.now()}`, text: label, type: mult > 1 ? 'bonus' : 'good', x, y }])
       setPlate(p => [...p, item])
@@ -452,9 +471,12 @@ export default function AssiettePage() {
   const timerOffset = timerStroke * (1 - timerProgress)
   const isUrgent = timeLeft <= 3
 
+  // Combo tier for background
+  const comboTier = combo >= 8 ? 'fire' : combo >= 5 ? 'hot' : combo >= 3 ? 'warm' : ''
+
   // ===== Play screen =====
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${comboTier ? styles[`bg_${comboTier}`] : ''}`}>
       <div className={styles.topBar}>
         <button className={styles.back} onClick={() => navigate('/jeu')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><path d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
@@ -477,6 +499,18 @@ export default function AssiettePage() {
         </div>
       )}
 
+      {/* Sparkle particles */}
+      {sparkles.map(s => (
+        <div key={s.id} className={styles.sparkle} style={{ left: s.x, top: s.y }}>
+          {'✦✧✦✧✦'.split('').map((ch, i) => (
+            <span key={i} className={styles.sparkleParticle} style={{
+              animationDelay: `${i * 0.06}s`,
+              transform: `rotate(${i * 72}deg) translateY(-${12 + i * 4}px)`,
+            }}>{ch}</span>
+          ))}
+        </div>
+      ))}
+
       {/* Floating score texts */}
       {floats.map(f => (
         <div key={f.id} className={`${styles.floatingText} ${styles[`float_${f.type}`]}`}
@@ -486,7 +520,7 @@ export default function AssiettePage() {
       {/* Score + Combo header */}
       <div className={styles.scoreHeader}>
         <div className={styles.scoreBox}>
-          <span className={styles.scoreNum}>{score}</span>
+          <span className={`${styles.scoreNum} ${scorePop ? styles.scoreNumPop : ''}`}>{score}</span>
           <span className={styles.scoreLabel}>pts</span>
         </div>
 
