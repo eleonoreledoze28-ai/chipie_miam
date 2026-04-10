@@ -1,6 +1,6 @@
 import { useCallback, useSyncExternalStore } from 'react'
 
-export type ThemeId = 'dark' | 'lavender' | 'aqua' | 'aqua-dark' | 'autumn' | 'autumn-dark'
+export type ThemeId = 'dark' | 'lavender' | 'aqua' | 'aqua-dark' | 'autumn' | 'autumn-dark' | 'amalfi'
 
 const STORAGE_KEY = 'chipie_theme'
 

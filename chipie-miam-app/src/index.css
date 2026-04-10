@@ -303,6 +303,56 @@
   --glow-violet-strong: 0 0 18px rgba(98, 195, 235, 0.35);
 }
 
+/* ============================================================================
+   Theme Amalfi — Dolce Vita (Méditerranée solaire, bleu cobalt + citron)
+   ============================================================================ */
+
+[data-theme="amalfi"] {
+  /* Fond & surfaces — crème lumineuse et chaleureuse */
+  --bg-primary: #FFFDF8;
+  --bg-gradient: linear-gradient(135deg, #FFFDF8 0%, #FFF7CC 50%, #F7F1E6 100%);
+  --bg-secondary: #F7F1E6;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FFF7CC;
+  --bg-card-gradient: rgba(255, 247, 204, 0.50);
+  --bg-elevated: #FFFFFF;
+  --bg-nav: #FFFDF8;
+
+  /* Texte — bleu nuit profond pour lisibilité maximale */
+  --text-primary: #16324F;
+  --text-secondary: #5F6F7F;
+  --text-muted: #8A98A5;
+
+  /* Accent principal — bleu cobalt Riviera */
+  --accent-orange: #1F4FA3;
+  --accent-orange-dim: rgba(31, 79, 163, 0.12);
+  --accent-orange-border: #173D80;
+
+  /* Accent secondaire — jaune citron vibrant */
+  --accent-violet: #F4C400;
+  --accent-violet-bright: #FFDB3A;
+  --accent-violet-dim: rgba(244, 196, 0, 0.14);
+  --accent-violet-glow: rgba(255, 219, 58, 0.35);
+
+  /* Etats semantiques */
+  --accent-green: #2E8B57;
+  --accent-green-dim: rgba(46, 139, 87, 0.12);
+  --accent-red: #C94C4C;
+  --accent-red-dim: rgba(201, 76, 76, 0.12);
+  --accent-yellow: #F4C400;
+  --accent-yellow-dim: rgba(244, 196, 0, 0.14);
+
+  /* Bordures — douces, inspirées papier vintage */
+  --border-color: #CFC3AE;
+  --border-subtle: #E7DFCF;
+
+  /* Ombres — douces et éditoriales */
+  --shadow-card: 0 2px 8px rgba(22, 50, 79, 0.08);
+  --shadow-elevated: 0 10px 28px rgba(22, 50, 79, 0.14);
+  --glow-violet: 0 0 12px rgba(244, 196, 0, 0.28);
+  --glow-violet-strong: 0 0 20px rgba(244, 196, 0, 0.45);
+}
+
 /* === Reset === */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
