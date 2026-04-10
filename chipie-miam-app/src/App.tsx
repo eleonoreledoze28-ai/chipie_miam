@@ -17,6 +17,7 @@ import DangerPage from './pages/DangerPage/DangerPage'
 import QuizPage from './pages/QuizPage/QuizPage'
 import EncyclopediePage from './pages/EncyclopediePage/EncyclopediePage'
 import CarnetSantePage from './pages/CarnetSantePage/CarnetSantePage'
+import SnakePage from './pages/SnakePage/SnakePage'
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="danger" element={<DangerPage />} />
         <Route path="encyclopedie" element={<EncyclopediePage />} />
         <Route path="carnet-sante" element={<CarnetSantePage />} />
+        <Route path="jeu/snake" element={<SnakePage />} />
       </Route>
     </Routes>
   )

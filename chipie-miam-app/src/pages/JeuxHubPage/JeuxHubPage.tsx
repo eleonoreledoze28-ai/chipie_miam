@@ -51,6 +51,13 @@ const GAMES = [
     title: 'Quiz Vrai/Faux',
     desc: 'Cet aliment est-il bon pour Chipie ? Répondez vite !',
   },
+  {
+    id: 'snake',
+    path: '/jeu/snake',
+    emoji: '🐍',
+    title: 'Snake Chipie',
+    desc: 'Mange les bons aliments, évite les toxiques et grandit !',
+  },
 ]
 
 export default function JeuxHubPage() {
