@@ -340,9 +340,6 @@ export default function CoursePage() {
       }
 
       // Ground fill
-      const groundG = ctx.createLinearGradient(0, GROUND_Y, 0, CH)
-      groundG.addColorStop(0, '#1e2a0a')
-      groundG.addColorStop(1, '#12180 6')
       ctx.fillStyle = '#1a2a08'
       ctx.fillRect(0, GROUND_Y, CW, CH - GROUND_Y)
 
