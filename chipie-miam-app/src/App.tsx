@@ -25,6 +25,9 @@ import CoursePage from './pages/CoursePage/CoursePage'
 import PlantePage from './pages/PlantePage/PlantePage'
 import TourPage from './pages/TourPage/TourPage'
 import PechePage from './pages/PechePage/PechePage'
+import ColoriePage from './pages/ColoriePage/ColoriePage'
+import MarchePage from './pages/MarchePage/MarchePage'
+import SoinPage from './pages/SoinPage/SoinPage'
 
 function App() {
   const navigate = useNavigate()
@@ -70,6 +73,9 @@ function App() {
         <Route path="jeu/plante" element={<PlantePage />} />
         <Route path="jeu/tour" element={<TourPage />} />
         <Route path="jeu/peche" element={<PechePage />} />
+        <Route path="jeu/colorie" element={<ColoriePage />} />
+        <Route path="jeu/marche" element={<MarchePage />} />
+        <Route path="jeu/soin" element={<SoinPage />} />
       </Route>
     </Routes>
   )

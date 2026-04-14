@@ -39,7 +39,9 @@
       "Bash(curl -s -I \"https://eleonoreledoze28-ai.github.io/chipie_miam/chipie-avatar.jpeg\")",
       "Bash(grep -n \"id: ''fraise\\\\|id: ''pomme\\\\|id: ''banane\" \"/c/Users/dique/Desktop/App/Chipie_Miam/chipie-miam-app/src/data/vegetaux.ts\" -i)",
       "Bash(find /c/Users/dique/Desktop/App/Chipie_Miam/chipie-miam-app/src -type f \\\\\\(-name *.tsx -o -name *.ts -o -name *.css -o -name *.scss \\\\\\))",
-      "Bash(find /c/Users/dique/Desktop/App/Chipie_Miam/chipie-miam-app/src -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))"
+      "Bash(find /c/Users/dique/Desktop/App/Chipie_Miam/chipie-miam-app/src -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))",
+      "Bash(gh api:*)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }
