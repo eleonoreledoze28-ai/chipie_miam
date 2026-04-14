@@ -7,6 +7,9 @@ export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'chipie-avatar.jpeg', 'images/**/*'],
       manifest: {
@@ -30,7 +33,7 @@ export default defineConfig(({ command }) => ({
           },
         ],
       },
-      workbox: {
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg,json}'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
       },

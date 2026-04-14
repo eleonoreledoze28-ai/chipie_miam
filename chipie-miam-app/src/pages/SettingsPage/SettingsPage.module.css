@@ -98,3 +98,137 @@
   color: #e74c3c;
   text-align: center;
 }
+
+/* ===== Notifications ===== */
+.btnNotif {
+  background: var(--accent-orange);
+  color: #000;
+}
+
+.notifUnsupported {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 8px 0;
+}
+
+.notifDenied {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: rgba(255, 59, 48, 0.08);
+  border: 1px solid rgba(255, 59, 48, 0.25);
+  border-radius: var(--radius-md);
+}
+
+.notifDeniedIcon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+.notifDeniedText {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.notifPrompt { display: flex; flex-direction: column; gap: 12px; }
+
+.notifGranted { display: flex; flex-direction: column; gap: 14px; }
+
+.notifStatus {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 2px;
+}
+
+.notifStatusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green, #4cd964);
+  box-shadow: 0 0 6px rgba(76, 217, 100, 0.5);
+}
+
+.notifStatusText {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-green, #4cd964);
+}
+
+.notifRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.notifRowInfo { display: flex; flex-direction: column; gap: 2px; }
+.notifRowLabel { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); }
+.notifRowDesc { font-size: 0.68rem; color: var(--text-muted); }
+
+/* Toggle switch */
+.toggle {
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--border-subtle);
+  position: relative;
+  flex-shrink: 0;
+  transition: background 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toggleOn { background: var(--accent-orange); }
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  transition: transform 200ms ease;
+}
+
+.toggleOn .toggleThumb { transform: translateX(18px); }
+
+.notifTimeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.notifTimeLabel {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.timeInput {
+  background: var(--bg-secondary, var(--bg-card));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 6px 10px;
+}
+
+.notifInfo {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: rgba(240, 165, 58, 0.07);
+  border: 1px solid rgba(240, 165, 58, 0.2);
+  border-radius: var(--radius-md);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}

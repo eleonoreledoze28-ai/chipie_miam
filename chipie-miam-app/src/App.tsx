@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import Layout from './components/Layout/Layout'
 import GuidePage from './pages/GuidePage/GuidePage'
 import DetailPage from './pages/DetailPage/DetailPage'
@@ -18,8 +19,26 @@ import QuizPage from './pages/QuizPage/QuizPage'
 import EncyclopediePage from './pages/EncyclopediePage/EncyclopediePage'
 import CarnetSantePage from './pages/CarnetSantePage/CarnetSantePage'
 import SnakePage from './pages/SnakePage/SnakePage'
+import { checkAndFirePending } from './services/notifications'
 
 function App() {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Fire any pending notifications (carnet santé reminders, daily feeding)
+    void checkAndFirePending()
+
+    // Handle notification clicks: SW sends NAVIGATE message to focus the right page
+    const handler = (event: MessageEvent) => {
+      const data = event.data as { type?: string; url?: string }
+      if (data?.type === 'NAVIGATE' && data.url) {
+        navigate(data.url)
+      }
+    }
+    navigator.serviceWorker?.addEventListener('message', handler)
+    return () => { navigator.serviceWorker?.removeEventListener('message', handler) }
+  }, [navigate])
+
   return (
     <Routes>
       <Route element={<Layout />}>

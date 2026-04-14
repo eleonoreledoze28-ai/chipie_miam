@@ -1,5 +1,13 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  getPermission,
+  requestPermission,
+  getSettings,
+  saveSettings,
+  checkAndFirePending,
+  type NotifSettings,
+} from '../../services/notifications'
 import styles from './SettingsPage.module.css'
 
 // Collect all profile-related keys dynamically
@@ -41,6 +49,14 @@ export default function SettingsPage() {
   const fileRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<{ msg: string; error?: boolean } | null>(null)
 
+  // Notification state
+  const [permission, setPermission] = useState<NotificationPermission>(getPermission)
+  const [notifSettings, setNotifSettings] = useState<NotifSettings>(getSettings)
+
+  useEffect(() => {
+    setPermission(getPermission())
+  }, [])
+
   function handleExport() {
     exportData()
     setStatus({ msg: 'Sauvegarde téléchargée !' })
@@ -69,6 +85,22 @@ export default function SettingsPage() {
     e.target.value = ''
   }
 
+  async function handleRequestPermission() {
+    const perm = await requestPermission()
+    setPermission(perm)
+    if (perm === 'granted') {
+      void checkAndFirePending()
+    }
+  }
+
+  function updateNotifSettings(patch: Partial<NotifSettings>) {
+    const next = { ...notifSettings, ...patch }
+    setNotifSettings(next)
+    saveSettings(next)
+  }
+
+  const notifSupported = 'Notification' in window
+
   return (
     <div className={styles.page}>
       <button className={styles.back} onClick={() => navigate(-1)}>
@@ -80,9 +112,82 @@ export default function SettingsPage() {
 
       <h1 className={styles.title}>Paramètres</h1>
       <p className={styles.subtitle}>
-        Sauvegardez ou restaurez les données de Chipie Miam.
+        Notifications, sauvegarde et restauration des données.
       </p>
 
+      {/* ===== Notifications ===== */}
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Notifications</div>
+
+        {!notifSupported ? (
+          <p className={styles.notifUnsupported}>
+            Les notifications ne sont pas supportées par ce navigateur.
+          </p>
+        ) : permission === 'denied' ? (
+          <div className={styles.notifDenied}>
+            <span className={styles.notifDeniedIcon}>🔕</span>
+            <p className={styles.notifDeniedText}>
+              Notifications bloquées. Pour les activer, modifie les autorisations
+              du site dans les paramètres de ton navigateur.
+            </p>
+          </div>
+        ) : permission === 'default' ? (
+          <div className={styles.notifPrompt}>
+            <p className={styles.sectionDesc}>
+              Reçois des rappels pour nourrir Chipie et tes rendez-vous vétérinaires.
+            </p>
+            <button className={`${styles.btn} ${styles.btnNotif}`} onClick={() => { void handleRequestPermission() }}>
+              🔔 Activer les notifications
+            </button>
+          </div>
+        ) : (
+          /* permission === 'granted' */
+          <div className={styles.notifGranted}>
+            <div className={styles.notifStatus}>
+              <span className={styles.notifStatusDot} />
+              <span className={styles.notifStatusText}>Notifications activées</span>
+            </div>
+
+            {/* Feeding reminder */}
+            <div className={styles.notifRow}>
+              <div className={styles.notifRowInfo}>
+                <span className={styles.notifRowLabel}>🥕 Rappel repas quotidien</span>
+                <span className={styles.notifRowDesc}>Chipie doit manger chaque jour</span>
+              </div>
+              <button
+                className={`${styles.toggle} ${notifSettings.feedingEnabled ? styles.toggleOn : ''}`}
+                onClick={() => updateNotifSettings({ feedingEnabled: !notifSettings.feedingEnabled })}
+                aria-label="Activer rappel repas"
+              >
+                <span className={styles.toggleThumb} />
+              </button>
+            </div>
+
+            {notifSettings.feedingEnabled && (
+              <div className={styles.notifTimeRow}>
+                <label className={styles.notifTimeLabel}>Heure du rappel</label>
+                <input
+                  type="time"
+                  value={notifSettings.feedingTime}
+                  className={styles.timeInput}
+                  onChange={e => updateNotifSettings({
+                    feedingTime: e.target.value,
+                    feedingFiredDate: '', // reset so it fires again today if time is in future
+                  })}
+                />
+              </div>
+            )}
+
+            {/* Carnet santé info */}
+            <div className={styles.notifInfo}>
+              <span>🩺</span>
+              <span>Les rappels du Carnet santé s'affichent automatiquement à la date prévue.</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ===== Sauvegarde ===== */}
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Sauvegarde</div>
         <p className={styles.sectionDesc}>
