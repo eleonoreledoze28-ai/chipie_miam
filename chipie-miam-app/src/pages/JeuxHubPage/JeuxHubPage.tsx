@@ -34,7 +34,7 @@ const ZONES: Zone[] = [
     name: 'La Forêt',
     emoji: '🌲',
     color: '#4a9e40',
-    top: '7%', left: '3%',
+    top: '5%', left: '2%',
     gameIds: ['snake', 'labyrinthe', 'course'],
   },
   {
@@ -42,7 +42,7 @@ const ZONES: Zone[] = [
     name: 'Le Village',
     emoji: '🏡',
     color: '#E8963A',
-    top: '7%', left: '58%',
+    top: '5%', left: '56%',
     gameIds: ['tamagotchi', 'memory', 'devinette'],
   },
   {
@@ -50,7 +50,7 @@ const ZONES: Zone[] = [
     name: 'Le Potager',
     emoji: '🌾',
     color: '#4CD964',
-    top: '56%', left: '3%',
+    top: '52%', left: '2%',
     gameIds: ['plante', 'peche', 'assiette', 'tour'],
   },
   {
@@ -58,7 +58,7 @@ const ZONES: Zone[] = [
     name: "L'École",
     emoji: '📚',
     color: '#5AC8FA',
-    top: '56%', left: '58%',
+    top: '52%', left: '56%',
     gameIds: ['quiz', 'tri-express', 'anagramme'],
   },
 ]
@@ -66,17 +66,17 @@ const ZONES: Zone[] = [
 // Decorative elements scattered on the map
 // anim: 'cloud' | 'breath' | 'bob' | 'spin'
 const DECOS = [
-  { emoji: '☁️', top: '1%',  left: '8%',  size: '1.1rem', anim: 'cloud', delay: 0    },
-  { emoji: '☁️', top: '2%',  left: '44%', size: '0.9rem', anim: 'cloud', delay: 1400 },
-  { emoji: '☁️', top: '1%',  left: '74%', size: '1rem',   anim: 'cloud', delay: 700  },
-  { emoji: '🌳', top: '20%', left: '6%',  size: '1.1rem', anim: 'breath', delay: 0   },
-  { emoji: '🌲', top: '27%', left: '12%', size: '0.9rem', anim: 'breath', delay: 600 },
-  { emoji: '🌸', top: '22%', left: '68%', size: '0.9rem', anim: 'breath', delay: 300 },
-  { emoji: '🏠', top: '28%', left: '76%', size: '0.9rem', anim: 'bob',    delay: 200 },
-  { emoji: '🌻', top: '70%', left: '8%',  size: '0.9rem', anim: 'breath', delay: 900 },
-  { emoji: '🥕', top: '76%', left: '14%', size: '0.85rem',anim: 'bob',    delay: 500 },
-  { emoji: '✏️', top: '70%', left: '72%', size: '0.9rem', anim: 'bob',    delay: 100 },
-  { emoji: '⭐', top: '77%', left: '78%', size: '0.85rem',anim: 'spin',   delay: 0   },
+  { emoji: '☁️', top: '2%',  left: '8%',  size: '1rem',   anim: 'cloud',  delay: 0    },
+  { emoji: '☁️', top: '3%',  left: '44%', size: '0.85rem',anim: 'cloud',  delay: 1400 },
+  { emoji: '☁️', top: '2%',  left: '74%', size: '0.9rem', anim: 'cloud',  delay: 700  },
+  { emoji: '🌳', top: '26%', left: '6%',  size: '1rem',   anim: 'breath', delay: 0    },
+  { emoji: '🌲', top: '34%', left: '13%', size: '0.85rem',anim: 'breath', delay: 600  },
+  { emoji: '🌸', top: '28%', left: '68%', size: '0.85rem',anim: 'breath', delay: 300  },
+  { emoji: '🏠', top: '36%', left: '76%', size: '0.85rem',anim: 'bob',    delay: 200  },
+  { emoji: '🌻', top: '68%', left: '8%',  size: '0.85rem',anim: 'breath', delay: 900  },
+  { emoji: '🥕', top: '76%', left: '14%', size: '0.8rem', anim: 'bob',    delay: 500  },
+  { emoji: '✏️', top: '68%', left: '72%', size: '0.85rem',anim: 'bob',    delay: 100  },
+  { emoji: '⭐', top: '76%', left: '78%', size: '0.8rem', anim: 'spin',   delay: 0    },
 ]
 
 export default function JeuxHubPage() {
@@ -96,10 +96,10 @@ export default function JeuxHubPage() {
       <div className={styles.map}>
 
         {/* Terrain path SVG */}
-        <svg className={styles.pathSvg} viewBox="0 0 360 330" preserveAspectRatio="none">
+        <svg className={styles.pathSvg} viewBox="0 0 360 240" preserveAspectRatio="none">
           {/* Road base — solid dirt bed */}
           <path
-            d="M 80,68 Q 180,18 278,68 Q 334,149 278,230 Q 180,282 80,230 Q 26,149 80,68 Z"
+            d="M 80,50 Q 180,14 278,50 Q 334,108 278,168 Q 180,205 80,168 Q 26,108 80,50 Z"
             fill="none"
             stroke="#5c3a0e"
             strokeWidth="18"
@@ -108,7 +108,7 @@ export default function JeuxHubPage() {
           />
           {/* Road mid layer — warm brown */}
           <path
-            d="M 80,68 Q 180,18 278,68 Q 334,149 278,230 Q 180,282 80,230 Q 26,149 80,68 Z"
+            d="M 80,50 Q 180,14 278,50 Q 334,108 278,168 Q 180,205 80,168 Q 26,108 80,50 Z"
             fill="none"
             stroke="#c8903a"
             strokeWidth="12"
@@ -117,7 +117,7 @@ export default function JeuxHubPage() {
           />
           {/* Road dashes — sandy highlights */}
           <path
-            d="M 80,68 Q 180,18 278,68 Q 334,149 278,230 Q 180,282 80,230 Q 26,149 80,68 Z"
+            d="M 80,50 Q 180,14 278,50 Q 334,108 278,168 Q 180,205 80,168 Q 26,108 80,50 Z"
             fill="none"
             stroke="#f0d080"
             strokeWidth="4"
