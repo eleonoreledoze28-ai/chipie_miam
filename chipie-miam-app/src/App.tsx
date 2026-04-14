@@ -1,6 +1,8 @@
-import { useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import Layout from './components/Layout/Layout'
+import SplashScreen from './components/SplashScreen/SplashScreen'
+import Tutorial from './components/Tutorial/Tutorial'
 import GuidePage from './pages/GuidePage/GuidePage'
 import DetailPage from './pages/DetailPage/DetailPage'
 import JournalPage from './pages/JournalPage/JournalPage'
@@ -29,8 +31,22 @@ import ColoriePage from './pages/ColoriePage/ColoriePage'
 import MarchePage from './pages/MarchePage/MarchePage'
 import SoinPage from './pages/SoinPage/SoinPage'
 
+const TUTORIAL_KEY = 'chipie-tutorial-done'
+
 function App() {
   const navigate = useNavigate()
+  const [showSplash,    setShowSplash]    = useState(true)
+  const [showTutorial,  setShowTutorial]  = useState(false)
+
+  const handleSplashDone = useCallback(() => {
+    setShowSplash(false)
+    if (!localStorage.getItem(TUTORIAL_KEY)) setShowTutorial(true)
+  }, [])
+
+  const handleTutorialDone = useCallback(() => {
+    localStorage.setItem(TUTORIAL_KEY, '1')
+    setShowTutorial(false)
+  }, [])
 
   useEffect(() => {
     // Fire any pending notifications (carnet santé reminders, daily feeding)
@@ -48,6 +64,9 @@ function App() {
   }, [navigate])
 
   return (
+    <>
+      {showSplash   && <SplashScreen onDone={handleSplashDone} />}
+      {showTutorial && <Tutorial onDone={handleTutorialDone} />}
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<GuidePage />} />
@@ -78,6 +97,7 @@ function App() {
         <Route path="jeu/soin" element={<SoinPage />} />
       </Route>
     </Routes>
+    </>
   )
 }
 

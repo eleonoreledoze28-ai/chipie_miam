@@ -1,0 +1,146 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  z-index: 998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 350ms ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.card {
+  background: var(--bg-card, #1e1e2e);
+  border-radius: 20px;
+  padding: 28px 24px 20px;
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  animation: popIn 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Progress dots */
+.progress {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 24px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  transition: background 300ms, transform 300ms;
+}
+
+.dotActive {
+  background: var(--accent-orange, #F0A53A);
+  transform: scale(1.45);
+}
+
+.dotDone {
+  background: rgba(240, 165, 58, 0.35);
+}
+
+/* Emoji */
+.emoji {
+  display: block;
+  font-size: 3.8rem;
+  margin-bottom: 14px;
+  animation: emojiPop 450ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms both;
+}
+
+@keyframes emojiPop {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* Text */
+.title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  margin-bottom: 10px;
+}
+
+.desc {
+  font-size: 0.84rem;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.65));
+  line-height: 1.62;
+  margin-bottom: 20px;
+}
+
+/* Nav hint */
+.navHint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.navArrow {
+  font-size: 1.1rem;
+  color: var(--accent-orange, #F0A53A);
+  animation: bounceDown 700ms ease-in-out infinite alternate;
+}
+
+@keyframes bounceDown {
+  from { transform: translateY(-4px); }
+  to   { transform: translateY(4px); }
+}
+
+.navBadge {
+  padding: 5px 16px;
+  background: rgba(240, 165, 58, 0.12);
+  border: 1px solid rgba(240, 165, 58, 0.3);
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-orange, #F0A53A);
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nextBtn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--accent-orange, #F0A53A), #E8963A);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(240, 165, 58, 0.35);
+  transition: transform 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nextBtn:active {
+  transform: scale(0.96);
+}
+
+.skipBtn {
+  font-size: 0.73rem;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 8px;
+}
