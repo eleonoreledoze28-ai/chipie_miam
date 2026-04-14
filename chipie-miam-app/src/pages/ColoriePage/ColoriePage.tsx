@@ -18,44 +18,36 @@ const PALETTE = [
 ]
 
 const DEFAULTS: Record<string, string> = {
-  leftEar:       '#f5f0e8',
-  rightEar:      '#f5f0e8',
-  leftEarIn:     '#ffb3c8',
-  rightEarIn:    '#ffb3c8',
-  head:          '#f5f0e8',
-  body:          '#f5f0e8',
-  belly:         '#ede8e0',
-  tail:          '#f5f0e8',
-  nose:          '#f06080',
-  leftCheek:     '#ffb3c8',
-  rightCheek:    '#ffb3c8',
+  leftEar:    '#f5f0e8',
+  rightEar:   '#f5f0e8',
+  leftEarIn:  '#ffb3c8',
+  rightEarIn: '#ffb3c8',
+  head:       '#f5f0e8',
+  body:       '#f5f0e8',
+  belly:      '#ede8e0',
+  tail:       '#f5f0e8',
+  nose:       '#f06080',
+  leftCheek:  '#ffb3c8',
+  rightCheek: '#ffb3c8',
 }
 
-const NON_COLORABLE = new Set(['leftEye', 'rightEye'])
+const cl = styles.region
 
 export default function ColoriePage() {
   const navigate = useNavigate()
-  const [colors, setColors] = useState<Record<string, string>>({ ...DEFAULTS })
-  const [selected, setSelected] = useState('#ffb3c8')
-  const [filled, setFilled] = useState(0)
+  const [c, setC] = useState<Record<string, string>>({ ...DEFAULTS })
+  const [sel, setSel] = useState('#ffb3c8')
+  const [done, setDone] = useState(false)
 
   const fill = (id: string) => {
-    if (NON_COLORABLE.has(id)) return
-    setColors(prev => {
-      const next = { ...prev, [id]: selected }
-      setFilled(Object.keys(DEFAULTS).filter(k => next[k] !== DEFAULTS[k]).length)
+    setC(prev => {
+      const next = { ...prev, [id]: sel }
+      if (Object.keys(DEFAULTS).every(k => next[k] !== DEFAULTS[k])) setDone(true)
       return next
     })
   }
 
-  const reset = () => { setColors({ ...DEFAULTS }); setFilled(0) }
-
-  const R = (id: string, props: React.SVGProps<SVGElement>) => ({
-    ...props,
-    fill: colors[id] ?? (props.fill as string),
-    onClick: () => fill(id),
-    className: styles.region,
-  })
+  const reset = () => { setC({ ...DEFAULTS }); setDone(false) }
 
   return (
     <div className={styles.page}>
@@ -66,42 +58,40 @@ export default function ColoriePage() {
         <p className={styles.subtitle}>Choisis une couleur, puis tape une zone</p>
       </div>
 
-      {filled >= Object.keys(DEFAULTS).length && (
-        <div className={styles.badge}>✨ Chef-d'œuvre terminé !</div>
-      )}
+      {done && <div className={styles.badge}>✨ Chef-d'œuvre terminé !</div>}
 
       <div className={styles.canvasWrap}>
         <svg viewBox="0 0 200 270" className={styles.svg}>
-          {/* ── Ears outer ── */}
-          <ellipse {...R('leftEar',  { cx: 68,  cy: 52, rx: 24, ry: 48 })} stroke="#2a1a10" strokeWidth="2" />
-          <ellipse {...R('rightEar', { cx: 132, cy: 52, rx: 24, ry: 48 })} stroke="#2a1a10" strokeWidth="2" />
-          {/* ── Ear inners ── */}
-          <ellipse {...R('leftEarIn',  { cx: 68,  cy: 55, rx: 13, ry: 33 })} />
-          <ellipse {...R('rightEarIn', { cx: 132, cy: 55, rx: 13, ry: 33 })} />
-          {/* ── Body ── */}
-          <ellipse {...R('body', { cx: 100, cy: 212, rx: 58, ry: 54 })} stroke="#2a1a10" strokeWidth="2" />
-          {/* ── Belly ── */}
-          <ellipse {...R('belly', { cx: 100, cy: 218, rx: 34, ry: 38 })} />
-          {/* ── Tail ── */}
-          <circle {...R('tail', { cx: 153, cy: 197, r: 20 } as any)} stroke="#2a1a10" strokeWidth="1.5" />
-          {/* ── Head ── */}
-          <circle {...R('head', { cx: 100, cy: 128, r: 58 } as any)} stroke="#2a1a10" strokeWidth="2" />
-          {/* ── Cheeks ── */}
-          <ellipse {...R('leftCheek',  { cx: 70,  cy: 140, rx: 15, ry: 10 })} opacity={0.65} />
-          <ellipse {...R('rightCheek', { cx: 130, cy: 140, rx: 15, ry: 10 })} opacity={0.65} />
-          {/* ── Eyes (non-colorable) ── */}
+          {/* Ears outer */}
+          <ellipse cx="68"  cy="52" rx="24" ry="48" fill={c.leftEar}  stroke="#2a1a10" strokeWidth="2" className={cl} onClick={() => fill('leftEar')} />
+          <ellipse cx="132" cy="52" rx="24" ry="48" fill={c.rightEar} stroke="#2a1a10" strokeWidth="2" className={cl} onClick={() => fill('rightEar')} />
+          {/* Ear inners */}
+          <ellipse cx="68"  cy="55" rx="13" ry="33" fill={c.leftEarIn}  className={cl} onClick={() => fill('leftEarIn')} />
+          <ellipse cx="132" cy="55" rx="13" ry="33" fill={c.rightEarIn} className={cl} onClick={() => fill('rightEarIn')} />
+          {/* Body */}
+          <ellipse cx="100" cy="212" rx="58" ry="54" fill={c.body} stroke="#2a1a10" strokeWidth="2" className={cl} onClick={() => fill('body')} />
+          {/* Belly */}
+          <ellipse cx="100" cy="218" rx="34" ry="38" fill={c.belly} className={cl} onClick={() => fill('belly')} />
+          {/* Tail */}
+          <circle  cx="153" cy="197" r="20" fill={c.tail} stroke="#2a1a10" strokeWidth="1.5" className={cl} onClick={() => fill('tail')} />
+          {/* Head */}
+          <circle  cx="100" cy="128" r="58" fill={c.head} stroke="#2a1a10" strokeWidth="2" className={cl} onClick={() => fill('head')} />
+          {/* Cheeks */}
+          <ellipse cx="70"  cy="140" rx="15" ry="10" fill={c.leftCheek}  opacity={0.65} className={cl} onClick={() => fill('leftCheek')} />
+          <ellipse cx="130" cy="140" rx="15" ry="10" fill={c.rightCheek} opacity={0.65} className={cl} onClick={() => fill('rightCheek')} />
+          {/* Eyes (not colorable) */}
           <circle cx="80"  cy="118" r="13" fill="#fff" stroke="#2a1a10" strokeWidth="1.5" />
           <circle cx="120" cy="118" r="13" fill="#fff" stroke="#2a1a10" strokeWidth="1.5" />
           <circle cx="82"  cy="119" r="6"  fill="#1a0808" />
           <circle cx="122" cy="119" r="6"  fill="#1a0808" />
           <circle cx="84"  cy="116" r="2"  fill="#fff" />
           <circle cx="124" cy="116" r="2"  fill="#fff" />
-          {/* ── Nose ── */}
-          <ellipse {...R('nose', { cx: 100, cy: 146, rx: 8, ry: 5.5 })} />
-          {/* ── Mouth ── */}
-          <path d="M100,152 Q92,160 88,164" fill="none" stroke="#2a1a10" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Nose */}
+          <ellipse cx="100" cy="146" rx="8" ry="5.5" fill={c.nose} className={cl} onClick={() => fill('nose')} />
+          {/* Mouth */}
+          <path d="M100,152 Q92,160 88,164"  fill="none" stroke="#2a1a10" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M100,152 Q108,160 112,164" fill="none" stroke="#2a1a10" strokeWidth="1.5" strokeLinecap="round" />
-          {/* ── Whiskers ── */}
+          {/* Whiskers */}
           <line x1="48"  y1="144" x2="86"  y2="147" stroke="#8a7060" strokeWidth="1" opacity={0.5} />
           <line x1="48"  y1="151" x2="86"  y2="150" stroke="#8a7060" strokeWidth="1" opacity={0.5} />
           <line x1="152" y1="144" x2="114" y2="147" stroke="#8a7060" strokeWidth="1" opacity={0.5} />
@@ -111,12 +101,12 @@ export default function ColoriePage() {
 
       {/* Palette */}
       <div className={styles.palette}>
-        {PALETTE.map(c => (
+        {PALETTE.map(p => (
           <button
-            key={c.id}
-            className={`${styles.swatch} ${selected === c.hex ? styles.swatchActive : ''}`}
-            style={{ background: c.hex }}
-            onClick={() => setSelected(c.hex)}
+            key={p.id}
+            className={`${styles.swatch} ${sel === p.hex ? styles.swatchActive : ''}`}
+            style={{ background: p.hex }}
+            onClick={() => setSel(p.hex)}
           />
         ))}
       </div>
