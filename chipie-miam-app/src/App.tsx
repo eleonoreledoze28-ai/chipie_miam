@@ -23,6 +23,8 @@ import { checkAndFirePending } from './services/notifications'
 import TriExpressPage from './pages/TriExpressPage/TriExpressPage'
 import CoursePage from './pages/CoursePage/CoursePage'
 import PlantePage from './pages/PlantePage/PlantePage'
+import TourPage from './pages/TourPage/TourPage'
+import PechePage from './pages/PechePage/PechePage'
 
 function App() {
   const navigate = useNavigate()
@@ -66,6 +68,8 @@ function App() {
         <Route path="jeu/tri-express" element={<TriExpressPage />} />
         <Route path="jeu/course" element={<CoursePage />} />
         <Route path="jeu/plante" element={<PlantePage />} />
+        <Route path="jeu/tour" element={<TourPage />} />
+        <Route path="jeu/peche" element={<PechePage />} />
       </Route>
     </Routes>
   )

@@ -79,6 +79,20 @@ const GAMES = [
     title: 'Plante & Pousse',
     desc: 'Cultive le potager de Chipie, récolte et améliore ton jardin !',
   },
+  {
+    id: 'tour',
+    path: '/jeu/tour',
+    emoji: '🏗️',
+    title: 'Tour de légumes',
+    desc: 'Empile les blocs le plus haut possible sans les rater !',
+  },
+  {
+    id: 'peche',
+    path: '/jeu/peche',
+    emoji: '🎣',
+    title: 'Pêche au foin',
+    desc: 'Lance l\'hameçon et trouve les légumes cachés dans le foin !',
+  },
 ]
 
 export default function JeuxHubPage() {
