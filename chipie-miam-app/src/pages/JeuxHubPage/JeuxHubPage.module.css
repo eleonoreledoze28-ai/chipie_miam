@@ -59,7 +59,45 @@
   position: absolute;
   pointer-events: none;
   user-select: none;
-  opacity: 0.85;
+  opacity: 0.88;
+}
+
+/* Cloud — slow horizontal drift */
+@keyframes decoCloud {
+  0%   { transform: translateX(0px); }
+  100% { transform: translateX(14px); }
+}
+.deco_cloud {
+  animation: decoCloud 4s ease-in-out infinite alternate;
+}
+
+/* Trees / flowers — gentle breathing scale */
+@keyframes decoBreath {
+  0%   { transform: scale(1) translateY(0px); }
+  100% { transform: scale(1.14) translateY(-2px); }
+}
+.deco_breath {
+  animation: decoBreath 2.6s ease-in-out infinite alternate;
+  transform-origin: bottom center;
+}
+
+/* Small items — subtle vertical bob */
+@keyframes decoBob {
+  0%   { transform: translateY(0px); }
+  100% { transform: translateY(-4px); }
+}
+.deco_bob {
+  animation: decoBob 1.8s ease-in-out infinite alternate;
+}
+
+/* Star — slow spin */
+@keyframes decoSpin {
+  0%   { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(20deg) scale(1.15); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+.deco_spin {
+  animation: decoSpin 3s ease-in-out infinite;
 }
 
 /* Chipie in the center */
