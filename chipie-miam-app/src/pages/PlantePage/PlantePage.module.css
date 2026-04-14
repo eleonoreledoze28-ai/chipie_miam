@@ -42,7 +42,26 @@
 .sub {
   font-size: 0.75rem;
   color: var(--text-muted);
-  margin-bottom: 18px;
+  margin-bottom: 10px;
+}
+
+/* ===== Weather badge ===== */
+.weatherBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+}
+
+.weatherLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 /* ===== Plots ===== */
@@ -68,6 +87,7 @@
   cursor: pointer;
   transition: all 150ms ease;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
 }
 
 .plot:active { transform: scale(0.96); }
@@ -107,6 +127,68 @@
   0%   { transform: scale(1); }
   40%  { transform: scale(1.12); }
   100% { transform: scale(1); }
+}
+
+/* Locked plot */
+.plotLocked {
+  border-style: dashed;
+  opacity: 0.5;
+  cursor: default;
+}
+
+.plotLockReady {
+  opacity: 0.85;
+  cursor: pointer;
+  border-color: #f9d64a;
+}
+
+.plotLockReady:hover { opacity: 1; }
+
+.plotUnlockCost {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f9d64a;
+}
+
+.plotUnlockBroke {
+  color: #ff3b30;
+}
+
+/* Bug state */
+.plotBug {
+  border-color: rgba(255, 59, 48, 0.5) !important;
+  background: rgba(255, 59, 48, 0.04) !important;
+  animation: bugAlert 1s ease-in-out infinite alternate;
+}
+
+@keyframes bugAlert {
+  from { box-shadow: 0 0 4px rgba(255, 59, 48, 0.15); }
+  to   { box-shadow: 0 0 14px rgba(255, 59, 48, 0.4); }
+}
+
+.bugBtn {
+  margin-top: 2px;
+  padding: 5px 12px;
+  background: rgba(255, 59, 48, 0.15);
+  border: 1.5px solid rgba(255, 59, 48, 0.5);
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #ff3b30;
+  animation: bugWiggle 300ms ease-in-out infinite alternate;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+@keyframes bugWiggle {
+  from { transform: rotate(-6deg) scale(1); }
+  to   { transform: rotate(6deg) scale(1.05); }
+}
+
+.bugWarning {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #ff3b30;
 }
 
 .plotIcon {
@@ -333,4 +415,29 @@
   color: var(--text-muted);
   text-align: center;
   margin-top: 4px;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 8px 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  z-index: 100;
+  pointer-events: none;
+  animation: toastIn 200ms ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
