@@ -9,7 +9,6 @@ const INIT_H = 44
 const MIN_H = 30
 const MAX_H = 56
 const PERFECT_TOL = 6
-const MAX_LEAN = 0.07        // max tilt in radians
 const GHOST_INTERVAL = 10    // ghost every N blocks
 const GHOST_DURATION = 130   // frames ghost lasts
 const BOMB_INTERVAL = 10     // bomb every N blocks
@@ -75,31 +74,17 @@ export default function TourPage() {
   const mspeedRef      = useRef(2.5)
   const scoreRef       = useRef(0)
   const gsRef          = useRef<Screen>('menu')
-  const leanRef        = useRef(0)           // tower lean angle (radians)
-  const ghostFramesRef = useRef(0)           // frames remaining in ghost mode
+  const ghostFramesRef = useRef(0)
   const timerRef       = useRef(getMaxTimer(0))
-  const wantPlaceRef   = useRef(false)       // tap requested
-  const isBombRef      = useRef(false)       // current moving block is bomb
-  const mrotRef        = useRef(0)           // moving block tilt angle
-  const balanceRef     = useRef(0)           // CoM offset ratio [-1..1]
-  const topplingRef    = useRef(false)       // tower is falling over
-  const frameRef       = useRef(0)           // frame counter for wobble
+  const wantPlaceRef   = useRef(false)
+  const isBombRef      = useRef(false)
+  const mrotRef        = useRef(0)
 
   const [screen,    setScreen]    = useState<Screen>('menu')
   const [dispScore, setDispScore] = useState(0)
   const [newRecord, setNewRecord] = useState(false)
 
   // ── helpers ──────────────────────────────────────────────────────────────
-  // Returns balance ratio: 0=perfect, ±1=about to fall, >±1=falling
-  function computeBalance(blocks: Block[]): number {
-    if (blocks.length <= 1) return 0
-    const totalMass = blocks.reduce((s, b) => s + b.w * b.h, 0)
-    const com       = blocks.reduce((s, b) => s + (b.x + b.w / 2) * b.w * b.h, 0) / totalMass
-    const base      = blocks[0]
-    const maxOffset = base.w * 0.48   // falls when CoM exits 48% of base width
-    return (com - (base.x + base.w / 2)) / maxOffset
-  }
-
   function nextBlockDims(baseW: number, score: number) {
     const nw = score < 3 ? baseW : Math.max(22, Math.min(CW - 10, Math.round(baseW * (0.82 + Math.random() * 0.36))))
     const nh = score < 3 ? INIT_H : MIN_H + Math.floor(Math.random() * (MAX_H - MIN_H + 1))
@@ -134,15 +119,11 @@ export default function TourPage() {
     mspeedRef.current      = 2.5
     scoreRef.current       = 0
     gsRef.current          = 'play'
-    leanRef.current        = 0
     ghostFramesRef.current = 0
     timerRef.current       = getMaxTimer(0)
     wantPlaceRef.current   = false
     isBombRef.current      = false
     mrotRef.current        = 0
-    balanceRef.current     = 0
-    topplingRef.current    = false
-    frameRef.current       = 0
     setDispScore(0)
     setNewRecord(false)
     setScreen('play')
@@ -196,6 +177,20 @@ export default function TourPage() {
         return
       }
 
+      // ── Balance check: center of block must be over the block below ────
+      const blockCenter = mx + mw / 2
+      if (blockCenter < last.x || blockCenter > last.x + last.w) {
+        spawnExplosion(mx, MOVING_Y, mw, mh, ci, 8)
+        playFail()
+        gsRef.current = 'dying'
+        setTimeout(() => {
+          const isNew = saveBest(scoreRef.current)
+          setNewRecord(isNew); setDispScore(scoreRef.current)
+          gsRef.current = 'end'; setScreen('end')
+        }, 750)
+        return
+      }
+
       const perfect = Math.abs(mx - last.x) < PERFECT_TOL
 
       // Overhang pieces
@@ -235,23 +230,6 @@ export default function TourPage() {
       scoreRef.current++
       setDispScore(scoreRef.current)
 
-      // ── physics balance update ──────────────────────────────────────────
-      const ratio = computeBalance(blocksRef.current)
-      balanceRef.current = ratio
-      leanRef.current    = ratio * MAX_LEAN
-
-      // Topple if CoM exits the base footprint
-      if (Math.abs(ratio) >= 1.0) {
-        topplingRef.current = true
-        gsRef.current = 'dying'
-        setTimeout(() => {
-          const isNew = saveBest(scoreRef.current)
-          setNewRecord(isNew); setDispScore(scoreRef.current)
-          gsRef.current = 'end'; setScreen('end')
-        }, 1400)
-        return
-      }
-
       // ── floats ──────────────────────────────────────────────────────────
       const cx = nb.x + nb.w / 2
       if (perfect) {
@@ -289,33 +267,12 @@ export default function TourPage() {
         doPlace()
       }
 
-      frameRef.current++
       ctx!.clearRect(0, 0, CW, CH)
-
-      // ── Topple animation ─────────────────────────────────────────────────
-      if (topplingRef.current) {
-        const sign = leanRef.current >= 0 ? 1 : -1
-        leanRef.current += sign * (0.006 + Math.abs(leanRef.current) * 0.08)
-      }
-
-      // ── Danger wobble (warning before topple) ────────────────────────────
-      const ratio = balanceRef.current
-      if (!topplingRef.current && Math.abs(ratio) > 0.65) {
-        const wobbleAmt = (Math.abs(ratio) - 0.65) * 0.06
-        leanRef.current += Math.sin(frameRef.current * 0.18) * wobbleAmt
-      }
 
       // ── Background ───────────────────────────────────────────────────────
       const bg = ctx!.createLinearGradient(0, 0, 0, CH)
       bg.addColorStop(0, '#0f0c29'); bg.addColorStop(1, '#1a1a3e')
       ctx!.fillStyle = bg; ctx!.fillRect(0, 0, CW, CH)
-
-      // Danger tint when unbalanced
-      if (Math.abs(ratio) > 0.55) {
-        const danger = Math.min(1, (Math.abs(ratio) - 0.55) / 0.45)
-        ctx!.fillStyle = `rgba(255,60,60,${danger * 0.18})`
-        ctx!.fillRect(0, 0, CW, CH)
-      }
 
       // Stars
       ctx!.fillStyle = 'rgba(255,255,255,0.45)'
@@ -349,12 +306,6 @@ export default function TourPage() {
         blockY[n - 1] = MOVING_Y + mhRef.current
         for (let i = n - 2; i >= 0; i--) blockY[i] = blockY[i + 1] + blocks[i + 1].h
       }
-
-      // ── Apply lean transform ──────────────────────────────────────────────
-      ctx!.save()
-      ctx!.translate(CW / 2, CH)
-      ctx!.rotate(leanRef.current)
-      ctx!.translate(-CW / 2, -CH)
 
       // ── Placed blocks ─────────────────────────────────────────────────────
       for (let i = 0; i < n; i++) {
@@ -427,44 +378,7 @@ export default function TourPage() {
         if (mxRef.current + mwRef.current >= CW) { mxRef.current = CW - mwRef.current; mdirRef.current = -1 }
       }
 
-      ctx!.restore() // end lean transform
-
-      // ── Balance meter ────────────────────────────────────────────────────
-      if (!topplingRef.current) {
-        const meterW = 140, meterH = 8
-        const meterX = (CW - meterW) / 2, meterY = CH - 18
-        const clampedRatio = Math.max(-1, Math.min(1, ratio))
-        const danger = Math.abs(clampedRatio)
-
-        // Track
-        ctx!.fillStyle = 'rgba(255,255,255,0.08)'
-        ctx!.beginPath(); ctx!.roundRect(meterX, meterY, meterW, meterH, 4); ctx!.fill()
-
-        // Danger zones (left & right red)
-        ctx!.fillStyle = 'rgba(255,80,80,0.25)'
-        ctx!.beginPath(); ctx!.roundRect(meterX, meterY, meterW * 0.18, meterH, [4,0,0,4]); ctx!.fill()
-        ctx!.beginPath(); ctx!.roundRect(meterX + meterW * 0.82, meterY, meterW * 0.18, meterH, [0,4,4,0]); ctx!.fill()
-
-        // Indicator dot
-        const dotX = meterX + meterW / 2 + clampedRatio * (meterW / 2 - 6)
-        const dotColor = danger < 0.55 ? '#4CD964' : danger < 0.80 ? '#FF9F0A' : '#FF4444'
-        ctx!.fillStyle = dotColor
-        ctx!.shadowColor = dotColor; ctx!.shadowBlur = danger > 0.6 ? 8 : 0
-        ctx!.beginPath(); ctx!.arc(dotX, meterY + meterH / 2, 6, 0, Math.PI * 2); ctx!.fill()
-        ctx!.shadowBlur = 0
-
-        // Label
-        if (danger > 0.55) {
-          ctx!.globalAlpha = 0.7 + 0.3 * Math.abs(Math.sin(frameRef.current * 0.15))
-          ctx!.fillStyle   = dotColor
-          ctx!.font        = 'bold 10px sans-serif'
-          ctx!.textAlign   = 'center'; ctx!.textBaseline = 'bottom'
-          ctx!.fillText(danger > 0.80 ? '⚠️ DANGER !' : '⚠️ Instable', CW / 2, meterY - 2)
-          ctx!.globalAlpha = 1
-        }
-      }
-
-      // ── Falling pieces (outside lean) ──────────────────────────────────
+      // ── Falling pieces ──────────────────────────────────────────────────
       piecesRef.current = piecesRef.current.filter(p => p.alpha > 0 && p.y < CH + 80)
       for (const p of piecesRef.current) {
         const pcx = p.x + p.w / 2, pcy = p.y + p.h / 2
