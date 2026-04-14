@@ -20,6 +20,9 @@ import EncyclopediePage from './pages/EncyclopediePage/EncyclopediePage'
 import CarnetSantePage from './pages/CarnetSantePage/CarnetSantePage'
 import SnakePage from './pages/SnakePage/SnakePage'
 import { checkAndFirePending } from './services/notifications'
+import TriExpressPage from './pages/TriExpressPage/TriExpressPage'
+import CoursePage from './pages/CoursePage/CoursePage'
+import PlantePage from './pages/PlantePage/PlantePage'
 
 function App() {
   const navigate = useNavigate()
@@ -60,6 +63,9 @@ function App() {
         <Route path="encyclopedie" element={<EncyclopediePage />} />
         <Route path="carnet-sante" element={<CarnetSantePage />} />
         <Route path="jeu/snake" element={<SnakePage />} />
+        <Route path="jeu/tri-express" element={<TriExpressPage />} />
+        <Route path="jeu/course" element={<CoursePage />} />
+        <Route path="jeu/plante" element={<PlantePage />} />
       </Route>
     </Routes>
   )

@@ -1,0 +1,336 @@
+.page {
+  padding: 10px 16px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-orange);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.coins {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #f9d64a;
+  background: rgba(249, 214, 74, 0.12);
+  border: 1px solid rgba(249, 214, 74, 0.3);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 6px 0 2px;
+}
+
+.sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+/* ===== Plots ===== */
+.plots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 20px;
+}
+
+.plot {
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 120px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.plot:active { transform: scale(0.96); }
+
+.plot_empty {
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.plot_empty:hover, .plot_empty:active {
+  border-color: var(--accent-orange);
+  opacity: 1;
+}
+
+.plot_growing {
+  border-color: rgba(76, 217, 100, 0.3);
+  background: rgba(76, 217, 100, 0.04);
+  cursor: default;
+}
+
+.plot_ready {
+  border-color: #f9d64a;
+  background: rgba(249, 214, 74, 0.06);
+  animation: readyPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes readyPulse {
+  from { box-shadow: 0 0 6px rgba(249, 214, 74, 0.2); }
+  to   { box-shadow: 0 0 18px rgba(249, 214, 74, 0.5); }
+}
+
+.plotHarvest {
+  animation: harvestPop 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes harvestPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.plotIcon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.plotReady {
+  animation: iconBounce 800ms ease-in-out infinite alternate;
+}
+
+@keyframes iconBounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-4px); }
+}
+
+.plotLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.plotName {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.progressBar {
+  width: 100%;
+  height: 5px;
+  background: var(--border-subtle);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent-green, #4cd964);
+  border-radius: 3px;
+  transition: width 1s linear;
+}
+
+.plotTimer {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.plotReadyLabel {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #f9d64a;
+}
+
+.plotYield {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* ===== Upgrades ===== */
+.upgrades {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.upgradeTitle {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.upgradeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.upgradeInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.upgradeEmoji { font-size: 1.4rem; margin-top: 2px; }
+
+.upgradeName {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.upgradeDesc {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.upgradeStars {
+  font-size: 0.75rem;
+  color: #f9d64a;
+  letter-spacing: 2px;
+}
+
+.upgradeBtn {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  background: var(--accent-orange);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #000;
+  transition: all 120ms ease;
+  white-space: nowrap;
+}
+
+.upgradeBtn:active { transform: scale(0.95); }
+
+.upgradeBtnDisabled {
+  background: var(--border-subtle);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.upgradeMax {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--accent-green, #4cd964);
+  padding: 6px 10px;
+  border: 1px solid rgba(76, 217, 100, 0.3);
+  border-radius: var(--radius-md);
+}
+
+/* ===== Seed picker modal ===== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-top: 1px solid var(--border-subtle);
+  padding: 20px 16px 32px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalTitle {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.seedList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seedCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-secondary, var(--bg-card));
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: all 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.seedCard:active { background: var(--accent-orange-dim); border-color: var(--accent-orange); }
+
+.seedCardDisabled { opacity: 0.4; cursor: not-allowed; }
+
+.seedEmoji { font-size: 1.6rem; }
+
+.seedInfo { flex: 1; display: flex; flex-direction: column; gap: 2px; text-align: left; }
+.seedName { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
+.seedDetails { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; }
+
+.seedCost {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #f9d64a;
+  white-space: nowrap;
+}
+
+.seedCostBroke { color: #ff3b30; }
+
+.modalClose {
+  padding: 12px;
+  background: var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 4px;
+}

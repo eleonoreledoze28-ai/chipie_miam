@@ -58,6 +58,27 @@ const GAMES = [
     title: 'Snake Chipie',
     desc: 'Mange les bons aliments, évite les toxiques et grandit !',
   },
+  {
+    id: 'tri-express',
+    path: '/jeu/tri-express',
+    emoji: '⚡',
+    title: 'Tri Express',
+    desc: 'Bon ou toxique ? Glisse la carte avant que le chrono expire !',
+  },
+  {
+    id: 'course',
+    path: '/jeu/course',
+    emoji: '🏃',
+    title: "Course d'obstacles",
+    desc: 'Chipie court — saute pour esquiver les toxiques et attraper les bons !',
+  },
+  {
+    id: 'plante',
+    path: '/jeu/plante',
+    emoji: '🌱',
+    title: 'Plante & Pousse',
+    desc: 'Cultive le potager de Chipie, récolte et améliore ton jardin !',
+  },
 ]
 
 export default function JeuxHubPage() {
