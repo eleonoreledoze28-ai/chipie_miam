@@ -9,9 +9,9 @@ const INIT_H = 44
 const MIN_H = 30
 const MAX_H = 56
 const PERFECT_TOL = 6
-const GHOST_INTERVAL = 10    // ghost every N blocks
-const GHOST_DURATION = 130   // frames ghost lasts
-const BOMB_INTERVAL = 10     // bomb every N blocks
+const GHOST_INTERVAL = 10
+const GHOST_DURATION = 130
+const BOMB_INTERVAL = 10
 const MOVING_Y = 26
 const BEST_KEY = 'chipie-tour-best'
 
@@ -30,7 +30,7 @@ function saveBest(s: number) { const p = loadBest(); if (s > p) { localStorage.s
 
 interface Block { x: number; w: number; h: number; colorIdx: number; emojiIdx: number; isBomb: boolean; rot: number }
 interface Piece { x: number; y: number; w: number; h: number; vy: number; vx: number; rot: number; vrot: number; alpha: number; colorIdx: number }
-interface Float { x: number; y: number; text: string; alpha: number; vy: number; color: string }
+interface Float { x: number; y: number; text: string; alpha: number; vy: number; color: string; size: number }
 
 function useTowerAudio() {
   const ctxRef = useRef<AudioContext | null>(null)
@@ -50,16 +50,17 @@ function useTowerAudio() {
   }, [getCtx])
   const playPlace   = useCallback((acc: number) => { beep(330 + acc * 200, 0.09); try { navigator.vibrate(15) } catch { /**/ } }, [beep])
   const playPerfect = useCallback(() => { beep(523,0.07); setTimeout(()=>beep(659,0.07),70); setTimeout(()=>beep(784,0.10),140); try { navigator.vibrate([15,10,30]) } catch { /**/ } }, [beep])
+  const playCombo   = useCallback((n: number) => { beep(440 + n * 60, 0.12, 'sine', 0.3); try { navigator.vibrate([10,5,20]) } catch { /**/ } }, [beep])
   const playFail    = useCallback(() => { beep(160,0.35,'sawtooth',0.2); try { navigator.vibrate([80,30,80]) } catch { /**/ } }, [beep])
   const playBomb    = useCallback(() => { beep(80,0.5,'sawtooth',0.35); beep(120,0.3,'square',0.2); try { navigator.vibrate([40,20,80,20,40]) } catch { /**/ } }, [beep])
-  return { playPlace, playPerfect, playFail, playBomb }
+  return { playPlace, playPerfect, playCombo, playFail, playBomb }
 }
 
 type Screen = 'menu' | 'play' | 'dying' | 'end'
 
 export default function TourPage() {
   const navigate  = useNavigate()
-  const { playPlace, playPerfect, playFail, playBomb } = useTowerAudio()
+  const { playPlace, playPerfect, playCombo, playFail, playBomb } = useTowerAudio()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef    = useRef(0)
 
@@ -79,6 +80,10 @@ export default function TourPage() {
   const wantPlaceRef   = useRef(false)
   const isBombRef      = useRef(false)
   const mrotRef        = useRef(0)
+  // juice refs
+  const shakeRef       = useRef(0)
+  const flashRef       = useRef({ alpha: 0, color: '#f9d64a' })
+  const comboRef       = useRef(0)
 
   const [screen,    setScreen]    = useState<Screen>('menu')
   const [dispScore, setDispScore] = useState(0)
@@ -108,6 +113,25 @@ export default function TourPage() {
     }
   }
 
+  function spawnConfetti(cx: number, count = 18) {
+    for (let k = 0; k < count; k++) {
+      const angle = (Math.PI * 2 * k) / count + (Math.random() - 0.5) * 0.4
+      const speed = 3 + Math.random() * 5
+      piecesRef.current.push({
+        x: cx - 5,
+        y: MOVING_Y + 4,
+        w: 6 + Math.random() * 8,
+        h: 5 + Math.random() * 6,
+        vy: Math.sin(angle) * speed - 2,
+        vx: Math.cos(angle) * speed,
+        rot:  Math.random() * Math.PI * 2,
+        vrot: (Math.random() - 0.5) * 0.3,
+        alpha: 1,
+        colorIdx: k % COLORS.length,
+      })
+    }
+  }
+
   const startGame = useCallback(() => {
     blocksRef.current      = [{ x: (CW - INIT_W) / 2, w: INIT_W, h: INIT_H, colorIdx: 0, emojiIdx: 0, isBomb: false, rot: 0 }]
     piecesRef.current      = []
@@ -124,6 +148,9 @@ export default function TourPage() {
     wantPlaceRef.current   = false
     isBombRef.current      = false
     mrotRef.current        = 0
+    shakeRef.current       = 0
+    flashRef.current       = { alpha: 0, color: '#f9d64a' }
+    comboRef.current       = 0
     setDispScore(0)
     setNewRecord(false)
     setScreen('play')
@@ -152,7 +179,6 @@ export default function TourPage() {
       ctx!.closePath()
     }
 
-    // Inline placement logic (called from loop)
     function doPlace() {
       if (gsRef.current !== 'play') return
       const blocks = blocksRef.current
@@ -166,20 +192,7 @@ export default function TourPage() {
       const ci = blocks.length % COLORS.length
 
       if (overlap <= 0) {
-        spawnExplosion(mx, MOVING_Y, mw, mh, ci, 8)
-        playFail()
-        gsRef.current = 'dying'
-        setTimeout(() => {
-          const isNew = saveBest(scoreRef.current)
-          setNewRecord(isNew); setDispScore(scoreRef.current)
-          gsRef.current = 'end'; setScreen('end')
-        }, 750)
-        return
-      }
-
-      // ── Balance check: center of block must be over the block below ────
-      const blockCenter = mx + mw / 2
-      if (blockCenter < last.x || blockCenter > last.x + last.w) {
+        comboRef.current = 0
         spawnExplosion(mx, MOVING_Y, mw, mh, ci, 8)
         playFail()
         gsRef.current = 'dying'
@@ -215,14 +228,13 @@ export default function TourPage() {
       if (nb.isBomb && blocks.length > 1) {
         blocksRef.current.push(nb)
         const victim = blocksRef.current[blocksRef.current.length - 2]
-        // compute victim screen Y quickly
         let yAcc = MOVING_Y + nb.h
-        const victimY = yAcc + nb.h  // rough position for explosion
+        const victimY = yAcc + nb.h
         spawnExplosion(victim.x, victimY, victim.w, victim.h, victim.colorIdx, 12)
-        blocksRef.current.splice(blocksRef.current.length - 2, 1) // remove victim
+        blocksRef.current.splice(blocksRef.current.length - 2, 1)
         playBomb()
-        const cx = nb.x + nb.w / 2
-        floatsRef.current.push({ x: cx, y: MOVING_Y + 12, text: '💥 BOOM !', alpha: 1, vy: -1.8, color: '#ff4444' })
+        shakeRef.current = 10
+        floatsRef.current.push({ x: nb.x + nb.w / 2, y: MOVING_Y + 12, text: '💥 BOOM !', alpha: 1, vy: -1.8, color: '#ff4444', size: 16 })
       } else {
         blocksRef.current.push(nb)
       }
@@ -230,16 +242,31 @@ export default function TourPage() {
       scoreRef.current++
       setDispScore(scoreRef.current)
 
-      // ── floats ──────────────────────────────────────────────────────────
       const cx = nb.x + nb.w / 2
+
+      // ── Perfect placement ───────────────────────────────────────────────
       if (perfect) {
-        floatsRef.current.push({ x: cx, y: MOVING_Y + 10, text: '⭐ PARFAIT !', alpha: 1, vy: -1.5, color: '#f9d64a' })
+        comboRef.current++
+        shakeRef.current = 9
+        flashRef.current = { alpha: 0.55, color: '#f9d64a' }
+        spawnConfetti(cx)
         playPerfect()
+
+        if (comboRef.current >= 3) {
+          floatsRef.current.push({ x: cx, y: MOVING_Y - 4, text: `🔥 x${comboRef.current} COMBO !`, alpha: 1, vy: -2.2, color: '#FF9F0A', size: 18 })
+          playCombo(Math.min(comboRef.current, 8))
+        } else {
+          floatsRef.current.push({ x: cx, y: MOVING_Y + 8, text: '⭐ PARFAIT !', alpha: 1, vy: -1.8, color: '#f9d64a', size: 18 })
+        }
+
+      // ── Normal placement ────────────────────────────────────────────────
       } else {
+        comboRef.current = 0
         const acc = overlap / Math.max(mw, last.w)
         playPlace(acc)
+        shakeRef.current = 3
         if (scoreRef.current % 5 === 0)
-          floatsRef.current.push({ x: cx, y: MOVING_Y + 10, text: `🔥 ${scoreRef.current} !`, alpha: 1, vy: -1.2, color: '#ff9f0a' })
+          floatsRef.current.push({ x: cx, y: MOVING_Y + 10, text: `🔥 ${scoreRef.current} !`, alpha: 1, vy: -1.2, color: '#ff9f0a', size: 14 })
       }
 
       // ── next block setup ─────────────────────────────────────────────────
@@ -250,18 +277,15 @@ export default function TourPage() {
       mspeedRef.current = Math.min(10, 2.5 + scoreRef.current * 0.22)
       timerRef.current = getMaxTimer(scoreRef.current)
 
-      // ── ghost trigger ────────────────────────────────────────────────────
       if (scoreRef.current > 0 && scoreRef.current % GHOST_INTERVAL === 0)
         ghostFramesRef.current = GHOST_DURATION
 
-      // ── bomb trigger ─────────────────────────────────────────────────────
       isBombRef.current = (scoreRef.current >= 5 && scoreRef.current % BOMB_INTERVAL === 0)
     }
 
     function loop() {
       if (gsRef.current !== 'play' && gsRef.current !== 'dying') return
 
-      // ── Handle placement ─────────────────────────────────────────────────
       if (wantPlaceRef.current && gsRef.current === 'play') {
         wantPlaceRef.current = false
         doPlace()
@@ -269,10 +293,30 @@ export default function TourPage() {
 
       ctx!.clearRect(0, 0, CW, CH)
 
+      // ── Screen shake ─────────────────────────────────────────────────────
+      ctx!.save()
+      if (shakeRef.current > 0) {
+        ctx!.translate(
+          (Math.random() - 0.5) * shakeRef.current,
+          (Math.random() - 0.5) * shakeRef.current
+        )
+        shakeRef.current *= 0.68
+        if (shakeRef.current < 0.15) shakeRef.current = 0
+      }
+
       // ── Background ───────────────────────────────────────────────────────
       const bg = ctx!.createLinearGradient(0, 0, 0, CH)
       bg.addColorStop(0, '#0f0c29'); bg.addColorStop(1, '#1a1a3e')
       ctx!.fillStyle = bg; ctx!.fillRect(0, 0, CW, CH)
+
+      // ── Flash overlay ────────────────────────────────────────────────────
+      if (flashRef.current.alpha > 0) {
+        ctx!.globalAlpha = flashRef.current.alpha
+        ctx!.fillStyle   = flashRef.current.color
+        ctx!.fillRect(0, 0, CW, CH)
+        ctx!.globalAlpha = 1
+        flashRef.current.alpha = Math.max(0, flashRef.current.alpha - 0.055)
+      }
 
       // Stars
       ctx!.fillStyle = 'rgba(255,255,255,0.45)'
@@ -284,15 +328,12 @@ export default function TourPage() {
       if (gsRef.current === 'play') {
         const maxT = getMaxTimer(scoreRef.current)
         const pct  = timerRef.current / maxT
-        // BG
         ctx!.fillStyle = 'rgba(255,255,255,0.08)'
         ctx!.fillRect(0, 0, CW, 5)
-        // Fill
         const tc = pct > 0.5 ? '#4CD964' : pct > 0.25 ? '#FF9F0A' : '#FF6B6B'
         ctx!.fillStyle = tc
         ctx!.fillRect(0, 0, CW * pct, 5)
 
-        // ── Countdown ──────────────────────────────────────────────────────
         timerRef.current = Math.max(0, timerRef.current - 1)
         if (timerRef.current === 0) wantPlaceRef.current = true
       }
@@ -341,11 +382,9 @@ export default function TourPage() {
         const mx = mxRef.current, mw = mwRef.current, mh = mhRef.current
         const mc = isBombRef.current ? '#FF3333' : COLORS[n % COLORS.length]
 
-        // Smooth tilt toward movement direction
         const targetRot = mdirRef.current * 0.09
         mrotRef.current += (targetRot - mrotRef.current) * 0.07
 
-        // Ghost flicker
         const ghostAlpha = ghostFramesRef.current > 0
           ? 0.12 + 0.18 * Math.abs(Math.sin(ghostFramesRef.current * 0.25))
           : 1
@@ -372,7 +411,6 @@ export default function TourPage() {
         ctx!.globalAlpha = 1
         ctx!.restore()
 
-        // Move block
         mxRef.current += mdirRef.current * mspeedRef.current
         if (mxRef.current <= 0)            { mxRef.current = 0;             mdirRef.current =  1 }
         if (mxRef.current + mwRef.current >= CW) { mxRef.current = CW - mwRef.current; mdirRef.current = -1 }
@@ -389,7 +427,7 @@ export default function TourPage() {
         rr(p.x, p.y, p.w, p.h, 5); ctx!.fill()
         ctx!.restore()
         ctx!.globalAlpha = 1
-        p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.rot += p.vrot; p.alpha -= 0.026
+        p.x += p.vx; p.y += p.vy; p.vy += 0.4; p.rot += p.vrot; p.alpha -= 0.022
       }
 
       // ── Float texts ───────────────────────────────────────────────────
@@ -397,11 +435,14 @@ export default function TourPage() {
       for (const f of floatsRef.current) {
         ctx!.globalAlpha = f.alpha
         ctx!.fillStyle   = f.color
-        ctx!.font        = 'bold 14px sans-serif'
+        ctx!.font        = `bold ${f.size}px sans-serif`
         ctx!.textAlign   = 'center'; ctx!.textBaseline = 'top'
+        // subtle shadow for readability
+        ctx!.shadowColor = 'rgba(0,0,0,0.6)'; ctx!.shadowBlur = 4
         ctx!.fillText(f.text, f.x, f.y)
+        ctx!.shadowBlur  = 0
         ctx!.globalAlpha = 1
-        f.y += f.vy; f.alpha -= 0.022
+        f.y += f.vy; f.alpha -= 0.020
       }
 
       // ── Ghost warning ─────────────────────────────────────────────────
@@ -424,12 +465,14 @@ export default function TourPage() {
         ctx!.globalAlpha = 1
       }
 
+      ctx!.restore() // end shake transform
+
       rafRef.current = requestAnimationFrame(loop)
     }
 
     rafRef.current = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [screen, playPlace, playPerfect, playFail, playBomb])
+  }, [screen, playPlace, playPerfect, playCombo, playFail, playBomb])
 
   const best = loadBest()
 
@@ -446,9 +489,9 @@ export default function TourPage() {
         <div className={styles.rules}>
           <div className={styles.rule}><span>👆</span>Tape pour poser le bloc</div>
           <div className={styles.rule}><span>⏱️</span>Pose avant que le chrono expire</div>
+          <div className={styles.rule}><span>⭐</span>3 parfaits d'affilée = Combo !</div>
           <div className={styles.rule}><span>👻</span>Tous les 10 blocs : bloc fantôme !</div>
           <div className={styles.rule}><span>💣</span>Bombe tous les 10 blocs — détruit un bloc !</div>
-          <div className={styles.rule}><span>⭐</span>Placement parfait = taille conservée</div>
         </div>
         {best > 0 && <div className={styles.menuBest}>Record : {best} blocs</div>}
         <button className={styles.playBtn} onClick={startGame}>Jouer</button>
