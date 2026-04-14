@@ -82,7 +82,7 @@
   margin-bottom: 16px;
 }
 
-/* ===== Play ===== */
+/* ===== Play HUD ===== */
 .topBar {
   display: flex;
   align-items: center;
@@ -150,6 +150,7 @@
 
 /* ===== Card ===== */
 .card {
+  position: relative;
   width: 100%;
   max-width: 280px;
   background: var(--bg-card);
@@ -162,21 +163,68 @@
   gap: 12px;
   margin-bottom: 24px;
   box-shadow: var(--shadow-elevated);
-  transition: transform 200ms ease, border-color 150ms ease, box-shadow 150ms ease;
   touch-action: none;
   user-select: none;
+  cursor: grab;
+  will-change: transform;
 }
 
-.cardLeft  { transform: translateX(-120%) rotate(-15deg); }
-.cardRight { transform: translateX(120%) rotate(15deg); }
-.cardCorrect { border-color: var(--accent-green, #4cd964); box-shadow: 0 0 20px rgba(76, 217, 100, 0.25); }
-.cardWrong   { border-color: #ff3b30; box-shadow: 0 0 20px rgba(255, 59, 48, 0.25); }
+.cardCorrect { border-color: var(--accent-green, #4cd964); box-shadow: 0 0 22px rgba(76, 217, 100, 0.3); }
+.cardWrong   { border-color: #ff3b30; box-shadow: 0 0 22px rgba(255, 59, 48, 0.3); }
+
+.cardDoubt {
+  border-color: #ff9f0a;
+  box-shadow: 0 0 22px rgba(255, 159, 10, 0.3);
+  animation: doubtShake 400ms ease;
+}
+
+@keyframes doubtShake {
+  0%, 100% { transform: translateX(0); }
+  15%  { transform: translateX(-10px) rotate(-2deg); }
+  35%  { transform: translateX(10px) rotate(2deg); }
+  55%  { transform: translateX(-6px) rotate(-1deg); }
+  75%  { transform: translateX(6px) rotate(1deg); }
+}
+
+/* Badge overlay while dragging */
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  animation: badgeIn 80ms ease;
+  z-index: 5;
+}
+
+@keyframes badgeIn {
+  from { opacity: 0; transform: translateX(-50%) scale(0.75); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+.badgeGood {
+  background: rgba(76, 217, 100, 0.88);
+  color: #fff;
+  border: 1.5px solid rgba(76, 217, 100, 0.5);
+}
+
+.badgeBad {
+  background: rgba(255, 59, 48, 0.88);
+  color: #fff;
+  border: 1.5px solid rgba(255, 59, 48, 0.5);
+}
 
 .cardImg {
   width: 140px;
   height: 140px;
   border-radius: var(--radius-md);
   object-fit: cover;
+  pointer-events: none;
 }
 
 .cardName {
@@ -184,6 +232,7 @@
   font-weight: 800;
   color: var(--text-primary);
   text-align: center;
+  pointer-events: none;
 }
 
 .cardLatin {
@@ -191,6 +240,7 @@
   color: var(--text-muted);
   font-style: italic;
   text-align: center;
+  pointer-events: none;
 }
 
 /* ===== Feedback flash ===== */
@@ -202,12 +252,13 @@
   font-size: 3rem;
   font-weight: 900;
   pointer-events: none;
-  animation: flashAnim 320ms ease forwards;
+  animation: flashAnim 380ms ease forwards;
   z-index: 20;
 }
 
-.flashOk  { color: var(--accent-green, #4cd964); }
-.flashKo  { color: #ff3b30; }
+.flashOk    { color: var(--accent-green, #4cd964); }
+.flashKo    { color: #ff3b30; }
+.flashDoubt { color: #ff9f0a; }
 
 @keyframes flashAnim {
   0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -218,20 +269,22 @@
 /* ===== Action buttons ===== */
 .btnRow {
   display: flex;
-  gap: 16px;
+  gap: 10px;
   width: 100%;
   max-width: 320px;
+  align-items: stretch;
 }
 
 .badBtn, .goodBtn {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 16px 12px;
+  gap: 6px;
+  padding: 14px 10px;
   border-radius: var(--radius-lg);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 800;
   transition: all 120ms ease;
   -webkit-tap-highlight-color: transparent;
@@ -251,6 +304,27 @@
 
 .badBtn:active  { transform: scale(0.93); background: rgba(255, 59, 48, 0.22); }
 .goodBtn:active { transform: scale(0.93); background: rgba(76, 217, 100, 0.22); }
+
+.doubtBtn {
+  flex: 0 0 auto;
+  width: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 6px;
+  border-radius: var(--radius-lg);
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(255, 159, 10, 0.1);
+  border: 2px solid rgba(255, 159, 10, 0.35);
+  color: #ff9f0a;
+  transition: all 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.doubtBtn:active { transform: scale(0.93); background: rgba(255, 159, 10, 0.22); }
 
 .hint {
   font-size: 0.65rem;
