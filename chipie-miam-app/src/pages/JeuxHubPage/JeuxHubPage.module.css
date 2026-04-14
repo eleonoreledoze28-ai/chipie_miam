@@ -321,3 +321,77 @@
   color: var(--text-muted);
   flex-shrink: 0;
 }
+
+/* ===== Quick access grid ===== */
+.quickSection {
+  width: 100%;
+  max-width: 360px;
+  margin-top: 18px;
+}
+
+.quickTitle {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+
+.quickGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.quickCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 6px 10px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 14px;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 100ms ease, background 100ms ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Colored top accent bar */
+.quickCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--qc, #888);
+  border-radius: 14px 14px 0 0;
+}
+
+.quickCard:active {
+  transform: scale(0.94);
+  background: var(--bg-secondary);
+}
+
+.quickEmoji {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.quickName {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.quickZoneDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--qc, #888);
+  opacity: 0.8;
+}

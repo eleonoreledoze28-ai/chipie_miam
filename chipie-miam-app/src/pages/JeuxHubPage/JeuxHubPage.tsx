@@ -168,6 +168,30 @@ export default function JeuxHubPage() {
         ))}
       </div>
 
+      {/* ── Quick access grid ── */}
+      <div className={styles.quickSection}>
+        <h2 className={styles.quickTitle}>Tous les jeux</h2>
+        <div className={styles.quickGrid}>
+          {ZONES.map(zone =>
+            zone.gameIds.map(id => {
+              const game = GAME_DATA[id]
+              return (
+                <button
+                  key={id}
+                  className={styles.quickCard}
+                  style={{ '--qc': zone.color } as React.CSSProperties}
+                  onClick={() => navigate(game.path)}
+                >
+                  <span className={styles.quickEmoji}>{game.emoji}</span>
+                  <span className={styles.quickName}>{game.title}</span>
+                  <span className={styles.quickZoneDot} />
+                </button>
+              )
+            })
+          )}
+        </div>
+      </div>
+
       {/* ── Bottom sheet ── */}
       {selectedZone && activeZone && (
         <div className={styles.overlay} onClick={() => setSelectedZone(null)}>
