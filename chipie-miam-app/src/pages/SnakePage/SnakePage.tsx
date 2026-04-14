@@ -24,17 +24,23 @@ function useSnakeAudio() {
   const playModerate = useCallback(() => { tone(660, 0.1, 'triangle', 0.08); vibrate(15) }, [tone, vibrate])
   const playGameOver = useCallback(() => { tone(400, 0.2, 'sawtooth', 0.08); setTimeout(() => tone(300, 0.25, 'sawtooth', 0.06), 150); setTimeout(() => tone(200, 0.3, 'sawtooth', 0.05), 350); vibrate([100, 50, 200]) }, [tone, vibrate])
   const playStart = useCallback(() => { tone(523, 0.08); setTimeout(() => tone(659, 0.08, 'sine', 0.06), 80); setTimeout(() => tone(784, 0.12, 'sine', 0.06), 160) }, [tone])
-  return useMemo(() => ({ playEat, playBadEat, playModerate, playGameOver, playStart, isMuted, MUTE_KEY }),
-    [playEat, playBadEat, playModerate, playGameOver, playStart, isMuted, MUTE_KEY])
+  const playPause = useCallback(() => { tone(440, 0.06); setTimeout(() => tone(330, 0.08), 70) }, [tone])
+  return useMemo(() => ({ playEat, playBadEat, playModerate, playGameOver, playStart, playPause, isMuted, MUTE_KEY }),
+    [playEat, playBadEat, playModerate, playGameOver, playStart, playPause, isMuted, MUTE_KEY])
 }
 
 // ===== Game constants =====
 const GRID_W = 13
 const GRID_H = 15
-const BASE_SPEED = 220 // ms per tick
-const MIN_SPEED = 90
-const SPEED_STEP = 8 // reduce speed every food eaten
 const BEST_KEY = 'chipie-snake-best'
+const STREAK_KEY = 'chipie-snake-streak'
+
+type Difficulty = 'easy' | 'normal' | 'hard'
+const DIFFICULTY_CONFIG: Record<Difficulty, { baseSpeed: number; minSpeed: number; speedStep: number; badChance: number; label: string; emoji: string }> = {
+  easy:   { baseSpeed: 280, minSpeed: 120, speedStep: 5,  badChance: 0.05, label: 'Facile',   emoji: '🌱' },
+  normal: { baseSpeed: 220, minSpeed: 90,  speedStep: 8,  badChance: 0.10, label: 'Normal',   emoji: '🥕' },
+  hard:   { baseSpeed: 150, minSpeed: 70,  speedStep: 12, badChance: 0.18, label: 'Difficile', emoji: '🌶️' },
+}
 
 type Cell = [number, number]
 type Direction = 'up' | 'down' | 'left' | 'right'
@@ -75,6 +81,30 @@ function saveBest(score: number): boolean {
   return false
 }
 
+function getTodayStr() { return new Date().toISOString().slice(0, 10) }
+
+function loadStreak(): { date: string; count: number } {
+  try { const s = localStorage.getItem(STREAK_KEY); if (!s) return { date: '', count: 0 }; return JSON.parse(s) } catch { return { date: '', count: 0 } }
+}
+
+function updateStreak(): number {
+  const today = getTodayStr()
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+  const streak = loadStreak()
+  if (streak.date === today) return streak.count
+  const newCount = streak.date === yesterday ? streak.count + 1 : 1
+  try { localStorage.setItem(STREAK_KEY, JSON.stringify({ date: today, count: newCount })) } catch { /* */ }
+  return newCount
+}
+
+function lockOrientation() {
+  try { (screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> }).lock?.('portrait-primary')?.catch(() => {/* */}) } catch { /* */ }
+}
+
+function unlockOrientation() {
+  try { screen.orientation.unlock() } catch { /* */ }
+}
+
 // ===== Component =====
 export default function SnakePage() {
   const navigate = useNavigate()
@@ -83,56 +113,78 @@ export default function SnakePage() {
   const pool = useMemo(getPool, [])
 
   const [screen, setScreen] = useState<Screen>('menu')
+  const [difficulty, setDifficulty] = useState<Difficulty>('normal')
   const [snake, setSnake] = useState<Cell[]>([])
   const [direction, setDirection] = useState<Direction>('right')
   const [food, setFood] = useState<Food | null>(null)
   const [score, setScore] = useState(0)
   const [foodEaten, setFoodEaten] = useState(0)
-  const [speed, setSpeed] = useState(BASE_SPEED)
+  const [speed, setSpeed] = useState(220)
   const [isNewRecord, setIsNewRecord] = useState(false)
   const [flashCell, setFlashCell] = useState<string | null>(null)
+  const [paused, setPaused] = useState(false)
+  const [showExitConfirm, setShowExitConfirm] = useState(false)
+  const [scoreBump, setScoreBump] = useState(false)
+  const [streak, setStreak] = useState(() => loadStreak().count)
 
   const directionRef = useRef<Direction>('right')
   const nextDirRef = useRef<Direction>('right')
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const touchRef = useRef<{ x: number; y: number } | null>(null)
+  const pausedRef = useRef(false)
 
   const toggleMute = useCallback(() => {
     setMuted(prev => { const n = !prev; try { localStorage.setItem(audio.MUTE_KEY, n ? '1' : '0') } catch { /* */ } return n })
   }, [audio.MUTE_KEY])
 
-  const pickFood = useCallback((currentSnake: Cell[]): Food => {
+  const togglePause = useCallback(() => {
+    setPaused(prev => {
+      const next = !prev
+      pausedRef.current = next
+      audio.playPause()
+      return next
+    })
+  }, [audio])
+
+  const pickFood = useCallback((currentSnake: Cell[], diff: Difficulty): Food => {
     const [x, y] = randomEmptyCell(currentSnake)
-    // Weighted: 70% good, 20% moderate, 10% bad
+    const cfg = DIFFICULTY_CONFIG[diff]
     const r = Math.random()
     let kind: FoodKind = 'good'
-    if (r < 0.10 && pool.bad.length > 0) kind = 'bad'
-    else if (r < 0.30 && pool.moderate.length > 0) kind = 'moderate'
+    if (r < cfg.badChance && pool.bad.length > 0) kind = 'bad'
+    else if (r < cfg.badChance + 0.20 && pool.moderate.length > 0) kind = 'moderate'
     const list = kind === 'good' ? pool.good : kind === 'moderate' ? pool.moderate : pool.bad
     const vegetal = list[Math.floor(Math.random() * list.length)]
     return { x, y, vegetal, kind }
   }, [pool])
 
-  const startGame = useCallback(() => {
+  const startGame = useCallback((diff: Difficulty) => {
+    const cfg = DIFFICULTY_CONFIG[diff]
     const initialSnake: Cell[] = [[6, 7], [5, 7], [4, 7]]
     setSnake(initialSnake)
     setDirection('right')
     directionRef.current = 'right'
     nextDirRef.current = 'right'
-    setFood(pickFood(initialSnake))
+    setFood(pickFood(initialSnake, diff))
     setScore(0)
     setFoodEaten(0)
-    setSpeed(BASE_SPEED)
+    setSpeed(cfg.baseSpeed)
     setIsNewRecord(false)
     setFlashCell(null)
+    setPaused(false)
+    pausedRef.current = false
+    setShowExitConfirm(false)
+    const newStreak = updateStreak()
+    setStreak(newStreak)
     setScreen('play')
     audio.playStart()
+    lockOrientation()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pickFood])
 
   const changeDirection = useCallback((dir: Direction) => {
+    if (pausedRef.current) return
     const current = directionRef.current
-    // Prevent 180° reversal
     if (
       (dir === 'up' && current === 'down') ||
       (dir === 'down' && current === 'up') ||
@@ -142,14 +194,47 @@ export default function SnakePage() {
     nextDirRef.current = dir
   }, [])
 
+  const handleBack = useCallback(() => {
+    if (screen === 'play') {
+      setPaused(true)
+      pausedRef.current = true
+      setShowExitConfirm(true)
+    } else {
+      navigate('/jeu')
+    }
+  }, [screen, navigate])
+
+  const confirmExit = useCallback(() => {
+    unlockOrientation()
+    navigate('/jeu')
+  }, [navigate])
+
+  const cancelExit = useCallback(() => {
+    setShowExitConfirm(false)
+    setPaused(false)
+    pausedRef.current = false
+  }, [])
+
+  // Score animation
+  useEffect(() => {
+    if (score > 0) {
+      setScoreBump(true)
+      const t = setTimeout(() => setScoreBump(false), 350)
+      return () => clearTimeout(t)
+    }
+  }, [score])
+
   // Game tick
   useEffect(() => {
-    if (screen !== 'play') {
+    if (screen !== 'play' || paused) {
       if (tickRef.current) clearInterval(tickRef.current)
       return
     }
+    const cfg = DIFFICULTY_CONFIG[difficulty]
 
     tickRef.current = setInterval(() => {
+      if (pausedRef.current) return
+
       setSnake(prevSnake => {
         directionRef.current = nextDirRef.current
         setDirection(nextDirRef.current)
@@ -161,16 +246,16 @@ export default function SnakePage() {
         else if (nextDirRef.current === 'left') nx--
         else nx++
 
-        // Wall collision
         if (nx < 0 || nx >= GRID_W || ny < 0 || ny >= GRID_H) {
           audio.playGameOver()
+          unlockOrientation()
           setScreen('end')
           return prevSnake
         }
 
-        // Self collision
         if (prevSnake.some(([x, y]) => x === nx && y === ny)) {
           audio.playGameOver()
+          unlockOrientation()
           setScreen('end')
           return prevSnake
         }
@@ -178,29 +263,26 @@ export default function SnakePage() {
         const newHead: Cell = [nx, ny]
         let newSnake = [newHead, ...prevSnake]
 
-        // Eat food?
         if (food && nx === food.x && ny === food.y) {
           if (food.kind === 'good') {
             audio.playEat()
             setScore(s => s + 10)
             setFoodEaten(n => n + 1)
-            setSpeed(s => Math.max(MIN_SPEED, s - SPEED_STEP))
+            setSpeed(s => Math.max(cfg.minSpeed, s - cfg.speedStep))
           } else if (food.kind === 'moderate') {
             audio.playModerate()
             setScore(s => s + 5)
             setFoodEaten(n => n + 1)
-            // grow but no speed change
             newSnake = [newHead, ...prevSnake]
           } else {
-            // BAD - game over
             audio.playBadEat()
             setFlashCell(`${nx}-${ny}`)
+            unlockOrientation()
             setTimeout(() => setScreen('end'), 400)
             return newSnake
           }
-          setFood(pickFood(newSnake))
+          setFood(pickFood(newSnake, difficulty))
         } else {
-          // No food eaten = remove tail
           newSnake.pop()
         }
 
@@ -210,7 +292,7 @@ export default function SnakePage() {
 
     return () => { if (tickRef.current) clearInterval(tickRef.current) }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screen, speed, food])
+  }, [screen, speed, food, paused, difficulty])
 
   // End game effect
   useEffect(() => {
@@ -224,6 +306,7 @@ export default function SnakePage() {
   useEffect(() => {
     if (screen !== 'play') return
     const handler = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.key === 'Escape') { e.preventDefault(); togglePause(); return }
       if (e.key === 'ArrowUp') { e.preventDefault(); changeDirection('up') }
       if (e.key === 'ArrowDown') { e.preventDefault(); changeDirection('down') }
       if (e.key === 'ArrowLeft') { e.preventDefault(); changeDirection('left') }
@@ -231,7 +314,7 @@ export default function SnakePage() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [screen, changeDirection])
+  }, [screen, changeDirection, togglePause])
 
   // Touch swipe
   const onTouchStart = useCallback((e: React.TouchEvent) => {
@@ -253,9 +336,8 @@ export default function SnakePage() {
 
   const best = loadBest()
 
-  // Render grid as snake cell map
   const snakeCellMap = useMemo(() => {
-    const map = new Map<string, number>() // index in snake (0 = head)
+    const map = new Map<string, number>()
     snake.forEach(([x, y], i) => map.set(`${x}-${y}`, i))
     return map
   }, [snake])
@@ -278,6 +360,20 @@ export default function SnakePage() {
           <h1 className={styles.menuTitle}>Snake Chipie</h1>
           <p className={styles.menuSubtitle}>Guide Chipie dans le jardin !</p>
 
+          {/* Difficulty selector */}
+          <div className={styles.difficultyRow}>
+            {(['easy', 'normal', 'hard'] as Difficulty[]).map(d => (
+              <button
+                key={d}
+                className={`${styles.diffBtn} ${difficulty === d ? styles.diffBtnActive : ''} ${styles[`diffBtn_${d}`]}`}
+                onClick={() => setDifficulty(d)}
+              >
+                <span className={styles.diffEmoji}>{DIFFICULTY_CONFIG[d].emoji}</span>
+                <span className={styles.diffLabel}>{DIFFICULTY_CONFIG[d].label}</span>
+              </button>
+            ))}
+          </div>
+
           <div className={styles.menuRules}>
             <div className={styles.ruleItem}><span>✅</span> Bons aliments : +10 pts, Chipie grandit</div>
             <div className={styles.ruleItem}><span>⚠️</span> Modérés : +5 pts, à donner avec modération</div>
@@ -286,8 +382,12 @@ export default function SnakePage() {
             <div className={styles.ruleItem}><span>💥</span> Évite les murs et ton propre corps</div>
           </div>
 
-          {best > 0 && <div className={styles.menuBest}>Record : {best} pts</div>}
-          <button className={styles.playBtn} onClick={startGame}>Jouer</button>
+          <div className={styles.menuFooter}>
+            {best > 0 && <div className={styles.menuBest}>🏆 Record : {best} pts</div>}
+            {streak >= 2 && <div className={styles.menuStreak}>🔥 {streak} jours de suite !</div>}
+          </div>
+
+          <button className={styles.playBtn} onClick={() => startGame(difficulty)}>Jouer</button>
         </div>
       </div>
     )
@@ -324,8 +424,8 @@ export default function SnakePage() {
           )}
 
           <div className={styles.endActions}>
-            <button className={styles.playBtn} onClick={startGame}>Rejouer</button>
-            <button className={styles.menuBtn} onClick={() => navigate('/jeu')}>Retour aux jeux</button>
+            <button className={styles.playBtn} onClick={() => startGame(difficulty)}>Rejouer</button>
+            <button className={styles.menuBtn} onClick={() => { unlockOrientation(); navigate('/jeu') }}>Retour aux jeux</button>
           </div>
         </div>
       </div>
@@ -335,24 +435,52 @@ export default function SnakePage() {
   // ===== Play screen =====
   return (
     <div className={styles.page}>
+      {/* Exit confirmation modal */}
+      {showExitConfirm && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <p className={styles.modalText}>Quitter la partie ?</p>
+            <p className={styles.modalSub}>Ta progression sera perdue.</p>
+            <div className={styles.modalActions}>
+              <button className={styles.modalConfirm} onClick={confirmExit}>Quitter</button>
+              <button className={styles.modalCancel} onClick={cancelExit}>Continuer</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.topBar}>
-        <button className={styles.back} onClick={() => navigate('/jeu')}>
+        <button className={styles.back} onClick={handleBack}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><path d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
           <span>Retour</span>
         </button>
-        <span className={styles.scoreLabel}>{score} pts</span>
-        <button className={styles.muteBtn} onClick={toggleMute}>{muted ? '🔇' : '🔊'}</button>
+        <span className={`${styles.scoreLabel} ${scoreBump ? styles.scoreBump : ''}`}>{score} pts</span>
+        <div className={styles.topRight}>
+          <button className={styles.pauseBtn} onClick={togglePause} aria-label={paused ? 'Reprendre' : 'Pause'}>
+            {paused
+              ? <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg>
+              : <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            }
+          </button>
+          <button className={styles.muteBtn} onClick={toggleMute}>{muted ? '🔇' : '🔊'}</button>
+        </div>
       </div>
 
-      {/* Info row */}
       <div className={styles.infoRow}>
         <span className={styles.infoItem}>🍽️ {foodEaten}</span>
         <span className={styles.infoItem}>📏 {snake.length}</span>
-        <span className={styles.infoItem}>⚡ {Math.round((BASE_SPEED - speed) / SPEED_STEP)}</span>
+        <span className={`${styles.infoItem} ${styles[`diffTag_${difficulty}`]}`}>
+          {DIFFICULTY_CONFIG[difficulty].emoji} {DIFFICULTY_CONFIG[difficulty].label}
+        </span>
       </div>
 
-      {/* Game grid */}
       <div className={styles.gridWrap} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        {paused && !showExitConfirm && (
+          <div className={styles.pauseOverlay}>
+            <span className={styles.pauseText}>⏸ Pause</span>
+            <span className={styles.pauseHint}>Appuie pour reprendre</span>
+          </div>
+        )}
         <div className={styles.grid}
           style={{ gridTemplateColumns: `repeat(${GRID_W}, 1fr)`, gridTemplateRows: `repeat(${GRID_H}, 1fr)` }}>
           {Array.from({ length: GRID_W * GRID_H }, (_, i) => {
@@ -365,8 +493,14 @@ export default function SnakePage() {
             const isFood = food && food.x === x && food.y === y
             const isFlash = flashCell === key
 
+            // Tail gradient: head zone is bright, tail fades out
+            const bodyOpacity = isBody ? Math.max(0.18, 0.85 - (snakeIdx! / Math.max(snake.length, 1)) * 0.67) : undefined
+
             return (
               <div key={key} className={`${styles.cell} ${isBody ? styles.cellBody : ''} ${isHead ? styles.cellHead : ''} ${isFlash ? styles.cellFlash : ''}`}>
+                {isBody && (
+                  <div className={styles.bodyDot} style={{ opacity: bodyOpacity }} />
+                )}
                 {isHead && <span className={`${styles.head} ${styles[`head_${direction}`]}`}>🐰</span>}
                 {isFood && food && (
                   <img src={assetUrl(food.vegetal.image)} alt=""
@@ -378,7 +512,6 @@ export default function SnakePage() {
         </div>
       </div>
 
-      {/* D-pad controls */}
       <div className={styles.controls}>
         <div className={styles.controlRow}>
           <button className={styles.dirBtn} onClick={() => changeDirection('up')}>
