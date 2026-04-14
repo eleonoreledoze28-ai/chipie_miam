@@ -88,7 +88,57 @@
   align-items: center;
   width: 100%;
   max-width: 360px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+/* ===== Speed + status row ===== */
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 6px;
+}
+
+.speedIcon {
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.speedTrack {
+  flex: 1;
+  height: 5px;
+  background: var(--border-subtle);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.speedFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-orange), #f9d64a);
+  border-radius: 3px;
+  transition: width 600ms ease;
+}
+
+.nightBadge {
+  font-size: 0.8rem;
+  animation: nightPulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes nightPulse {
+  from { opacity: 0.6; }
+  to   { opacity: 1; }
+}
+
+.windBadge {
+  font-size: 0.8rem;
+  animation: windShake 200ms ease-in-out infinite alternate;
+}
+
+@keyframes windShake {
+  from { transform: translateX(-2px); }
+  to   { transform: translateX(2px); }
 }
 
 .hudScore {
@@ -193,8 +243,12 @@
   background: rgba(176, 124, 255, 0.1);
   border: 1px solid rgba(176, 124, 255, 0.3);
   border-radius: var(--radius-pill);
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
+
+.medalGold   { color: #f9d64a; background: rgba(249,214,74,0.12); border-color: rgba(249,214,74,0.4); }
+.medalSilver { color: #b0b8c8; background: rgba(176,184,200,0.12); border-color: rgba(176,184,200,0.4); }
+.medalBronze { color: #cd8050; background: rgba(205,128,80,0.12); border-color: rgba(205,128,80,0.4); }
 
 .endStats {
   background: var(--bg-card);
