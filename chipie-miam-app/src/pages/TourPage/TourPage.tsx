@@ -4,20 +4,33 @@ import styles from './TourPage.module.css'
 
 const CW = 320
 const CH = 400
-const BLOCK_H = 44
 const INIT_W = 200
-const MOVING_Y = 28
+const INIT_H = 44
+const MIN_H = 30
+const MAX_H = 56
 const PERFECT_TOL = 6
+const MAX_LEAN = 0.07        // max tilt in radians
+const GHOST_INTERVAL = 10    // ghost every N blocks
+const GHOST_DURATION = 130   // frames ghost lasts
+const BOMB_INTERVAL = 10     // bomb every N blocks
+const MOVING_Y = 26
 const BEST_KEY = 'chipie-tour-best'
 
-const COLORS = ['#F0A53A', '#4CD964', '#FF9F0A', '#5AC8FA', '#B07CFF', '#F9D64A', '#FF6B6B', '#48C774']
-const EMOJIS = ['🥕', '🌿', '🍃', '🥬', '🌸', '🍅', '🌼', '🫘', '🫑', '🌺']
+const COLORS = ['#F0A53A','#4CD964','#FF9F0A','#5AC8FA','#B07CFF','#F9D64A','#FF6B6B','#48C774']
+const EMOJIS = ['🥕','🌿','🍃','🥬','🌸','🍅','🌼','🫘','🫑','🌺']
+
+function getMaxTimer(score: number) {
+  if (score < 5)  return 300
+  if (score < 12) return 240
+  if (score < 22) return 180
+  return 120
+}
 
 function loadBest() { try { return parseInt(localStorage.getItem(BEST_KEY) || '0', 10) } catch { return 0 } }
 function saveBest(s: number) { const p = loadBest(); if (s > p) { localStorage.setItem(BEST_KEY, String(s)); return true } return false }
 
-interface Block { x: number; w: number; colorIdx: number; emojiIdx: number }
-interface Piece { x: number; y: number; w: number; vy: number; alpha: number; colorIdx: number }
+interface Block { x: number; w: number; h: number; colorIdx: number; emojiIdx: number; isBomb: boolean }
+interface Piece { x: number; y: number; w: number; h: number; vy: number; vx: number; alpha: number; colorIdx: number }
 interface Float { x: number; y: number; text: string; alpha: number; vy: number; color: string }
 
 function useTowerAudio() {
@@ -28,61 +41,88 @@ function useTowerAudio() {
   }, [])
   const beep = useCallback((freq: number, dur: number, type: OscillatorType = 'sine', gain = 0.25) => {
     try {
-      const ac = getCtx(); const osc = ac.createOscillator(); const g = ac.createGain()
-      osc.connect(g); g.connect(ac.destination)
-      osc.type = type; osc.frequency.value = freq
+      const ac = getCtx(); const o = ac.createOscillator(); const g = ac.createGain()
+      o.connect(g); g.connect(ac.destination)
+      o.type = type; o.frequency.value = freq
       g.gain.setValueAtTime(gain, ac.currentTime)
       g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + dur)
-      osc.start(); osc.stop(ac.currentTime + dur)
-    } catch { /* */ }
+      o.start(); o.stop(ac.currentTime + dur)
+    } catch { /**/ }
   }, [getCtx])
-  const playPlace = useCallback((accuracy: number) => {
-    beep(330 + accuracy * 200, 0.09)
-    try { navigator.vibrate(15) } catch { /* */ }
-  }, [beep])
-  const playPerfect = useCallback(() => {
-    beep(523, 0.07); setTimeout(() => beep(659, 0.07), 70); setTimeout(() => beep(784, 0.10), 140)
-    try { navigator.vibrate([15, 10, 30]) } catch { /* */ }
-  }, [beep])
-  const playFail = useCallback(() => {
-    beep(160, 0.35, 'sawtooth', 0.2)
-    try { navigator.vibrate([80, 30, 80]) } catch { /* */ }
-  }, [beep])
-  return { playPlace, playPerfect, playFail }
+  const playPlace   = useCallback((acc: number) => { beep(330 + acc * 200, 0.09); try { navigator.vibrate(15) } catch { /**/ } }, [beep])
+  const playPerfect = useCallback(() => { beep(523,0.07); setTimeout(()=>beep(659,0.07),70); setTimeout(()=>beep(784,0.10),140); try { navigator.vibrate([15,10,30]) } catch { /**/ } }, [beep])
+  const playFail    = useCallback(() => { beep(160,0.35,'sawtooth',0.2); try { navigator.vibrate([80,30,80]) } catch { /**/ } }, [beep])
+  const playBomb    = useCallback(() => { beep(80,0.5,'sawtooth',0.35); beep(120,0.3,'square',0.2); try { navigator.vibrate([40,20,80,20,40]) } catch { /**/ } }, [beep])
+  return { playPlace, playPerfect, playFail, playBomb }
 }
 
 type Screen = 'menu' | 'play' | 'dying' | 'end'
 
 export default function TourPage() {
-  const navigate = useNavigate()
-  const { playPlace, playPerfect, playFail } = useTowerAudio()
+  const navigate  = useNavigate()
+  const { playPlace, playPerfect, playFail, playBomb } = useTowerAudio()
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const rafRef = useRef(0)
+  const rafRef    = useRef(0)
 
-  const blocksRef = useRef<Block[]>([])
-  const piecesRef = useRef<Piece[]>([])
-  const floatsRef = useRef<Float[]>([])
-  const mxRef = useRef((CW - INIT_W) / 2)
-  const mwRef = useRef(INIT_W)
-  const mdirRef = useRef(1)
-  const mspeedRef = useRef(2.5)
-  const scoreRef = useRef(0)
-  const gsRef = useRef<Screen>('menu')
+  // game state refs
+  const blocksRef      = useRef<Block[]>([])
+  const piecesRef      = useRef<Piece[]>([])
+  const floatsRef      = useRef<Float[]>([])
+  const mxRef          = useRef((CW - INIT_W) / 2)
+  const mwRef          = useRef(INIT_W)
+  const mhRef          = useRef(INIT_H)
+  const mdirRef        = useRef(1)
+  const mspeedRef      = useRef(2.5)
+  const scoreRef       = useRef(0)
+  const gsRef          = useRef<Screen>('menu')
+  const leanRef        = useRef(0)           // tower lean angle (radians)
+  const ghostFramesRef = useRef(0)           // frames remaining in ghost mode
+  const timerRef       = useRef(getMaxTimer(0))
+  const wantPlaceRef   = useRef(false)       // tap requested
+  const isBombRef      = useRef(false)       // current moving block is bomb
 
-  const [screen, setScreen] = useState<Screen>('menu')
+  const [screen,    setScreen]    = useState<Screen>('menu')
   const [dispScore, setDispScore] = useState(0)
   const [newRecord, setNewRecord] = useState(false)
 
+  // ── helpers ──────────────────────────────────────────────────────────────
+  function nextBlockDims(baseW: number, score: number) {
+    const nw = score < 3 ? baseW : Math.max(22, Math.min(CW - 10, Math.round(baseW * (0.82 + Math.random() * 0.36))))
+    const nh = score < 3 ? INIT_H : MIN_H + Math.floor(Math.random() * (MAX_H - MIN_H + 1))
+    return { nw, nh }
+  }
+
+  function spawnExplosion(bx: number, by: number, bw: number, bh: number, ci: number, count = 6) {
+    for (let k = 0; k < count; k++) {
+      piecesRef.current.push({
+        x: bx + Math.random() * bw,
+        y: by + Math.random() * bh,
+        w: 14 + Math.random() * 18,
+        h: 10 + Math.random() * 14,
+        vy: -3 - Math.random() * 4,
+        vx: (Math.random() - 0.5) * 6,
+        alpha: 1,
+        colorIdx: ci,
+      })
+    }
+  }
+
   const startGame = useCallback(() => {
-    blocksRef.current = [{ x: (CW - INIT_W) / 2, w: INIT_W, colorIdx: 0, emojiIdx: 0 }]
-    piecesRef.current = []
-    floatsRef.current = []
-    mxRef.current = (CW - INIT_W) / 2
-    mwRef.current = INIT_W
-    mdirRef.current = 1
-    mspeedRef.current = 2.5
-    scoreRef.current = 0
-    gsRef.current = 'play'
+    blocksRef.current      = [{ x: (CW - INIT_W) / 2, w: INIT_W, h: INIT_H, colorIdx: 0, emojiIdx: 0, isBomb: false }]
+    piecesRef.current      = []
+    floatsRef.current      = []
+    mxRef.current          = (CW - INIT_W) / 2
+    mwRef.current          = INIT_W
+    mhRef.current          = INIT_H
+    mdirRef.current        = 1
+    mspeedRef.current      = 2.5
+    scoreRef.current       = 0
+    gsRef.current          = 'play'
+    leanRef.current        = 0
+    ghostFramesRef.current = 0
+    timerRef.current       = getMaxTimer(0)
+    wantPlaceRef.current   = false
+    isBombRef.current      = false
     setDispScore(0)
     setNewRecord(false)
     setScreen('play')
@@ -90,64 +130,8 @@ export default function TourPage() {
 
   const handleTap = useCallback(() => {
     if (gsRef.current !== 'play') return
-
-    const blocks = blocksRef.current
-    const last = blocks[blocks.length - 1]
-    const mx = mxRef.current
-    const mw = mwRef.current
-
-    const ol = Math.max(mx, last.x)
-    const or_ = Math.min(mx + mw, last.x + last.w)
-    const overlap = or_ - ol
-
-    if (overlap <= 0) {
-      piecesRef.current.push({ x: mx, y: MOVING_Y, w: mw, vy: 2, alpha: 1, colorIdx: blocks.length % COLORS.length })
-      playFail()
-      gsRef.current = 'dying'
-      setTimeout(() => {
-        const isNew = saveBest(scoreRef.current)
-        setNewRecord(isNew)
-        setDispScore(scoreRef.current)
-        gsRef.current = 'end'
-        setScreen('end')
-      }, 750)
-      return
-    }
-
-    const perfect = Math.abs(mx - last.x) < PERFECT_TOL
-
-    // Spawn falling overhang pieces
-    const ci = blocks.length % COLORS.length
-    if (!perfect) {
-      if (mx < last.x) piecesRef.current.push({ x: mx, y: MOVING_Y, w: last.x - mx, vy: 2, alpha: 1, colorIdx: ci })
-      if (mx + mw > last.x + last.w) piecesRef.current.push({ x: last.x + last.w, y: MOVING_Y, w: (mx + mw) - (last.x + last.w), vy: 2, alpha: 1, colorIdx: ci })
-    }
-
-    const nb: Block = {
-      x: perfect ? last.x : ol,
-      w: perfect ? last.w : overlap,
-      colorIdx: ci,
-      emojiIdx: blocks.length % EMOJIS.length,
-    }
-    blocksRef.current.push(nb)
-    scoreRef.current++
-
-    const cx = nb.x + nb.w / 2
-    if (perfect) {
-      floatsRef.current.push({ x: cx, y: MOVING_Y + 12, text: '⭐ PARFAIT !', alpha: 1, vy: -1.5, color: '#f9d64a' })
-      playPerfect()
-    } else {
-      const acc = overlap / Math.max(mw, last.w)
-      playPlace(acc)
-      if (scoreRef.current % 5 === 0)
-        floatsRef.current.push({ x: cx, y: MOVING_Y + 12, text: `🔥 ${scoreRef.current} !`, alpha: 1, vy: -1.2, color: '#ff9f0a' })
-    }
-
-    mxRef.current = nb.x
-    mwRef.current = nb.w
-    mspeedRef.current = Math.min(9, 2.5 + scoreRef.current * 0.2)
-    setDispScore(scoreRef.current)
-  }, [playPlace, playPerfect, playFail])
+    wantPlaceRef.current = true
+  }, [])
 
   useEffect(() => {
     if (screen !== 'play' && screen !== 'dying') return
@@ -157,105 +141,271 @@ export default function TourPage() {
     if (!ctx) return
 
     function rr(x: number, y: number, w: number, h: number, r: number) {
+      const R = Math.min(r, w / 2, h / 2)
       ctx!.beginPath()
-      ctx!.moveTo(x + r, y)
-      ctx!.lineTo(x + w - r, y); ctx!.arcTo(x + w, y, x + w, y + h, r)
-      ctx!.lineTo(x + w, y + h - r); ctx!.arcTo(x + w, y + h, x, y + h, r)
-      ctx!.lineTo(x + r, y + h); ctx!.arcTo(x, y + h, x, y, r)
-      ctx!.lineTo(x, y + r); ctx!.arcTo(x, y, x + w, y, r)
+      ctx!.moveTo(x + R, y)
+      ctx!.lineTo(x + w - R, y); ctx!.arcTo(x + w, y, x + w, y + h, R)
+      ctx!.lineTo(x + w, y + h - R); ctx!.arcTo(x + w, y + h, x, y + h, R)
+      ctx!.lineTo(x + R, y + h); ctx!.arcTo(x, y + h, x, y, R)
+      ctx!.lineTo(x, y + R); ctx!.arcTo(x, y, x + w, y, R)
       ctx!.closePath()
+    }
+
+    // Inline placement logic (called from loop)
+    function doPlace() {
+      if (gsRef.current !== 'play') return
+      const blocks = blocksRef.current
+      const last   = blocks[blocks.length - 1]
+      const mx = mxRef.current, mw = mwRef.current, mh = mhRef.current
+
+      const ol = Math.max(mx, last.x)
+      const or_ = Math.min(mx + mw, last.x + last.w)
+      const overlap = or_ - ol
+
+      const ci = blocks.length % COLORS.length
+
+      if (overlap <= 0) {
+        spawnExplosion(mx, MOVING_Y, mw, mh, ci, 8)
+        playFail()
+        gsRef.current = 'dying'
+        setTimeout(() => {
+          const isNew = saveBest(scoreRef.current)
+          setNewRecord(isNew); setDispScore(scoreRef.current)
+          gsRef.current = 'end'; setScreen('end')
+        }, 750)
+        return
+      }
+
+      const perfect = Math.abs(mx - last.x) < PERFECT_TOL
+
+      // Overhang pieces
+      if (!perfect) {
+        if (mx < last.x)
+          piecesRef.current.push({ x: mx, y: MOVING_Y, w: last.x - mx, h: mh, vy: 2, vx: 0, alpha: 1, colorIdx: ci })
+        if (mx + mw > last.x + last.w)
+          piecesRef.current.push({ x: last.x + last.w, y: MOVING_Y, w: (mx + mw) - (last.x + last.w), h: mh, vy: 2, vx: 0, alpha: 1, colorIdx: ci })
+      }
+
+      const nb: Block = {
+        x:        perfect ? last.x : ol,
+        w:        perfect ? last.w : overlap,
+        h:        mh,
+        colorIdx: ci,
+        emojiIdx: blocks.length % EMOJIS.length,
+        isBomb:   isBombRef.current,
+      }
+
+      // ── BOMB explosion ──────────────────────────────────────────────────
+      if (nb.isBomb && blocks.length > 1) {
+        blocksRef.current.push(nb)
+        const victim = blocksRef.current[blocksRef.current.length - 2]
+        // compute victim screen Y quickly
+        let yAcc = MOVING_Y + nb.h
+        const victimY = yAcc + nb.h  // rough position for explosion
+        spawnExplosion(victim.x, victimY, victim.w, victim.h, victim.colorIdx, 12)
+        blocksRef.current.splice(blocksRef.current.length - 2, 1) // remove victim
+        playBomb()
+        const cx = nb.x + nb.w / 2
+        floatsRef.current.push({ x: cx, y: MOVING_Y + 12, text: '💥 BOOM !', alpha: 1, vy: -1.8, color: '#ff4444' })
+      } else {
+        blocksRef.current.push(nb)
+      }
+
+      scoreRef.current++
+      setDispScore(scoreRef.current)
+
+      // ── lean update ─────────────────────────────────────────────────────
+      const baseCenter = blocks[0].x + blocks[0].w / 2
+      const nbCenter   = nb.x + nb.w / 2
+      const leanDelta  = (nbCenter - baseCenter) / CW * 0.012
+      leanRef.current  = Math.max(-MAX_LEAN, Math.min(MAX_LEAN, leanRef.current + leanDelta))
+      if (perfect) leanRef.current *= 0.6   // perfect placements straighten
+
+      // ── floats ──────────────────────────────────────────────────────────
+      const cx = nb.x + nb.w / 2
+      if (perfect) {
+        floatsRef.current.push({ x: cx, y: MOVING_Y + 10, text: '⭐ PARFAIT !', alpha: 1, vy: -1.5, color: '#f9d64a' })
+        playPerfect()
+      } else {
+        const acc = overlap / Math.max(mw, last.w)
+        playPlace(acc)
+        if (scoreRef.current % 5 === 0)
+          floatsRef.current.push({ x: cx, y: MOVING_Y + 10, text: `🔥 ${scoreRef.current} !`, alpha: 1, vy: -1.2, color: '#ff9f0a' })
+      }
+
+      // ── next block setup ─────────────────────────────────────────────────
+      const { nw, nh } = nextBlockDims(nb.w, scoreRef.current)
+      mxRef.current    = Math.max(0, Math.min(CW - nw, nb.x + (nb.w - nw) / 2))
+      mwRef.current    = nw
+      mhRef.current    = nh
+      mspeedRef.current = Math.min(10, 2.5 + scoreRef.current * 0.22)
+      timerRef.current = getMaxTimer(scoreRef.current)
+
+      // ── ghost trigger ────────────────────────────────────────────────────
+      if (scoreRef.current > 0 && scoreRef.current % GHOST_INTERVAL === 0)
+        ghostFramesRef.current = GHOST_DURATION
+
+      // ── bomb trigger ─────────────────────────────────────────────────────
+      isBombRef.current = (scoreRef.current >= 5 && scoreRef.current % BOMB_INTERVAL === 0)
     }
 
     function loop() {
       if (gsRef.current !== 'play' && gsRef.current !== 'dying') return
+
+      // ── Handle placement ─────────────────────────────────────────────────
+      if (wantPlaceRef.current && gsRef.current === 'play') {
+        wantPlaceRef.current = false
+        doPlace()
+      }
+
       ctx!.clearRect(0, 0, CW, CH)
 
-      // Background
+      // ── Background ───────────────────────────────────────────────────────
       const bg = ctx!.createLinearGradient(0, 0, 0, CH)
-      bg.addColorStop(0, '#0f0c29')
-      bg.addColorStop(1, '#1a1a3e')
-      ctx!.fillStyle = bg
-      ctx!.fillRect(0, 0, CW, CH)
+      bg.addColorStop(0, '#0f0c29'); bg.addColorStop(1, '#1a1a3e')
+      ctx!.fillStyle = bg; ctx!.fillRect(0, 0, CW, CH)
 
       // Stars
-      ctx!.fillStyle = 'rgba(255,255,255,0.5)'
-      for (let i = 0; i < 18; i++) {
-        const sx = ((i * 73.1 + 11.3) % 1) * CW
-        const sy = ((i * 47.7 + 3.1) % 1) * CH
-        ctx!.fillRect(sx, sy, 1.5, 1.5)
+      ctx!.fillStyle = 'rgba(255,255,255,0.45)'
+      for (let i = 0; i < 20; i++) {
+        ctx!.fillRect(((i * 73.1 + 11.3) % 1) * CW, ((i * 47.7 + 3.1) % 1) * CH, 1.5, 1.5)
+      }
+
+      // ── Timer bar ────────────────────────────────────────────────────────
+      if (gsRef.current === 'play') {
+        const maxT = getMaxTimer(scoreRef.current)
+        const pct  = timerRef.current / maxT
+        // BG
+        ctx!.fillStyle = 'rgba(255,255,255,0.08)'
+        ctx!.fillRect(0, 0, CW, 5)
+        // Fill
+        const tc = pct > 0.5 ? '#4CD964' : pct > 0.25 ? '#FF9F0A' : '#FF6B6B'
+        ctx!.fillStyle = tc
+        ctx!.fillRect(0, 0, CW * pct, 5)
+
+        // ── Countdown ──────────────────────────────────────────────────────
+        timerRef.current = Math.max(0, timerRef.current - 1)
+        if (timerRef.current === 0) wantPlaceRef.current = true
       }
 
       const blocks = blocksRef.current
       const n = blocks.length
 
-      // Placed blocks
+      // ── Compute variable-height Y positions ───────────────────────────────
+      const blockY: number[] = new Array(n)
+      if (n > 0) {
+        blockY[n - 1] = MOVING_Y + mhRef.current
+        for (let i = n - 2; i >= 0; i--) blockY[i] = blockY[i + 1] + blocks[i + 1].h
+      }
+
+      // ── Apply lean transform ──────────────────────────────────────────────
+      ctx!.save()
+      ctx!.translate(CW / 2, CH)
+      ctx!.rotate(leanRef.current)
+      ctx!.translate(-CW / 2, -CH)
+
+      // ── Placed blocks ─────────────────────────────────────────────────────
       for (let i = 0; i < n; i++) {
-        const b = blocks[i]
-        const sy = MOVING_Y + BLOCK_H * (n - i)
-        if (sy > CH + BLOCK_H || sy < -BLOCK_H) continue
+        const b  = blocks[i]
+        const sy = blockY[i]
+        if (sy > CH + b.h || sy + b.h < -10) continue
 
+        const color = b.isBomb ? '#FF3333' : COLORS[b.colorIdx]
+
+        // Shadow
         ctx!.fillStyle = 'rgba(0,0,0,0.3)'
-        rr(b.x + 3, sy + 3, b.w, BLOCK_H, 8); ctx!.fill()
+        rr(b.x + 3, sy + 3, b.w, b.h, 8); ctx!.fill()
 
-        ctx!.fillStyle = COLORS[b.colorIdx]
-        rr(b.x, sy, b.w, BLOCK_H, 8); ctx!.fill()
+        ctx!.fillStyle = color
+        rr(b.x, sy, b.w, b.h, 8); ctx!.fill()
 
         ctx!.fillStyle = 'rgba(255,255,255,0.13)'
-        rr(b.x + 2, sy + 2, b.w - 4, 14, 5); ctx!.fill()
+        rr(b.x + 2, sy + 2, b.w - 4, Math.min(14, b.h * 0.4), 5); ctx!.fill()
 
-        if (b.w >= 28) {
+        if (b.w >= 26) {
+          const em = b.isBomb ? '💣' : EMOJIS[b.emojiIdx]
           ctx!.font = `${Math.min(20, b.w * 0.28)}px serif`
           ctx!.textAlign = 'center'; ctx!.textBaseline = 'middle'
-          ctx!.fillText(EMOJIS[b.emojiIdx], b.x + b.w / 2, sy + BLOCK_H / 2)
+          ctx!.fillText(em, b.x + b.w / 2, sy + b.h / 2)
         }
       }
 
-      // Moving block (only during 'play')
+      // ── Moving block ──────────────────────────────────────────────────────
       if (gsRef.current === 'play') {
-        const mx = mxRef.current
-        const mw = mwRef.current
-        const mc = COLORS[n % COLORS.length]
+        const mx = mxRef.current, mw = mwRef.current, mh = mhRef.current
+        const mc = isBombRef.current ? '#FF3333' : COLORS[n % COLORS.length]
 
+        // Ghost flicker
+        const ghostAlpha = ghostFramesRef.current > 0
+          ? 0.12 + 0.18 * Math.abs(Math.sin(ghostFramesRef.current * 0.25))
+          : 1
+        if (ghostFramesRef.current > 0) ghostFramesRef.current--
+
+        ctx!.globalAlpha = ghostAlpha
         ctx!.shadowColor = mc; ctx!.shadowBlur = 14
-        ctx!.fillStyle = mc
-        rr(mx, MOVING_Y, mw, BLOCK_H, 8); ctx!.fill()
-        ctx!.shadowBlur = 0
+        ctx!.fillStyle   = mc
+        rr(mx, MOVING_Y, mw, mh, 8); ctx!.fill()
+        ctx!.shadowBlur  = 0
 
         ctx!.fillStyle = 'rgba(255,255,255,0.18)'
-        rr(mx + 2, MOVING_Y + 2, mw - 4, 14, 5); ctx!.fill()
+        rr(mx + 2, MOVING_Y + 2, mw - 4, Math.min(14, mh * 0.4), 5); ctx!.fill()
 
-        if (mw >= 28) {
+        if (mw >= 26) {
+          const em = isBombRef.current ? '💣' : EMOJIS[n % EMOJIS.length]
           ctx!.font = `${Math.min(20, mw * 0.28)}px serif`
           ctx!.textAlign = 'center'; ctx!.textBaseline = 'middle'
-          ctx!.fillText(EMOJIS[n % EMOJIS.length], mx + mw / 2, MOVING_Y + BLOCK_H / 2)
+          ctx!.fillText(em, mx + mw / 2, MOVING_Y + mh / 2)
         }
+        ctx!.globalAlpha = 1
 
         // Move block
         mxRef.current += mdirRef.current * mspeedRef.current
-        if (mxRef.current <= 0) { mxRef.current = 0; mdirRef.current = 1 }
+        if (mxRef.current <= 0)            { mxRef.current = 0;             mdirRef.current =  1 }
         if (mxRef.current + mwRef.current >= CW) { mxRef.current = CW - mwRef.current; mdirRef.current = -1 }
       }
 
-      // Falling pieces
-      piecesRef.current = piecesRef.current.filter(p => p.alpha > 0 && p.y < CH + 60)
+      ctx!.restore() // end lean transform
+
+      // ── Falling pieces (outside lean) ──────────────────────────────────
+      piecesRef.current = piecesRef.current.filter(p => p.alpha > 0 && p.y < CH + 80)
       for (const p of piecesRef.current) {
         ctx!.globalAlpha = p.alpha
-        ctx!.fillStyle = COLORS[p.colorIdx]
-        rr(p.x, p.y, p.w, BLOCK_H - 4, 6); ctx!.fill()
+        ctx!.fillStyle   = COLORS[p.colorIdx]
+        rr(p.x, p.y, p.w, p.h, 5); ctx!.fill()
         ctx!.globalAlpha = 1
-        p.y += p.vy; p.vy += 0.45; p.alpha -= 0.028
+        p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.alpha -= 0.026
       }
 
-      // Float texts
+      // ── Float texts ───────────────────────────────────────────────────
       floatsRef.current = floatsRef.current.filter(f => f.alpha > 0)
       for (const f of floatsRef.current) {
         ctx!.globalAlpha = f.alpha
-        ctx!.fillStyle = f.color
-        ctx!.font = 'bold 13px sans-serif'
-        ctx!.textAlign = 'center'; ctx!.textBaseline = 'top'
+        ctx!.fillStyle   = f.color
+        ctx!.font        = 'bold 14px sans-serif'
+        ctx!.textAlign   = 'center'; ctx!.textBaseline = 'top'
         ctx!.fillText(f.text, f.x, f.y)
         ctx!.globalAlpha = 1
         f.y += f.vy; f.alpha -= 0.022
+      }
+
+      // ── Ghost warning ─────────────────────────────────────────────────
+      if (ghostFramesRef.current > 0 && ghostFramesRef.current > GHOST_DURATION - 40) {
+        ctx!.globalAlpha = (GHOST_DURATION - ghostFramesRef.current) / 40
+        ctx!.fillStyle   = '#B07CFF'
+        ctx!.font        = 'bold 12px sans-serif'
+        ctx!.textAlign   = 'center'; ctx!.textBaseline = 'top'
+        ctx!.fillText('👻 Bloc fantôme !', CW / 2, 10)
+        ctx!.globalAlpha = 1
+      }
+
+      // ── Bomb warning ─────────────────────────────────────────────────
+      if (isBombRef.current) {
+        ctx!.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(Date.now() * 0.008))
+        ctx!.fillStyle   = '#FF3333'
+        ctx!.font        = 'bold 11px sans-serif'
+        ctx!.textAlign   = 'center'; ctx!.textBaseline = 'top'
+        ctx!.fillText('💣 BOMBE !', CW / 2, 10)
+        ctx!.globalAlpha = 1
       }
 
       rafRef.current = requestAnimationFrame(loop)
@@ -263,14 +413,14 @@ export default function TourPage() {
 
     rafRef.current = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [screen])
+  }, [screen, playPlace, playPerfect, playFail, playBomb])
 
   const best = loadBest()
 
   if (screen === 'menu') return (
     <div className={styles.page}>
       <button className={styles.back} onClick={() => navigate('/jeu')}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><path d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><path d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
         Retour
       </button>
       <div className={styles.menuScreen}>
@@ -278,10 +428,11 @@ export default function TourPage() {
         <h1 className={styles.menuTitle}>Tour de légumes</h1>
         <p className={styles.menuSub}>Empile le plus haut possible !</p>
         <div className={styles.rules}>
-          <div className={styles.rule}><span>👆</span> Tape pour poser le bloc</div>
-          <div className={styles.rule}><span>✂️</span> L'excédent tombe — le bloc rétrécit</div>
-          <div className={styles.rule}><span>⭐</span> Placement parfait = taille conservée</div>
-          <div className={styles.rule}><span>💀</span> Rate complètement → c'est fini !</div>
+          <div className={styles.rule}><span>👆</span>Tape pour poser le bloc</div>
+          <div className={styles.rule}><span>⏱️</span>Pose avant que le chrono expire</div>
+          <div className={styles.rule}><span>👻</span>Tous les 10 blocs : bloc fantôme !</div>
+          <div className={styles.rule}><span>💣</span>Bombe tous les 10 blocs — détruit un bloc !</div>
+          <div className={styles.rule}><span>⭐</span>Placement parfait = taille conservée</div>
         </div>
         {best > 0 && <div className={styles.menuBest}>Record : {best} blocs</div>}
         <button className={styles.playBtn} onClick={startGame}>Jouer</button>
@@ -314,6 +465,8 @@ export default function TourPage() {
     <div className={styles.page}>
       <div className={styles.hud}>
         <span className={styles.hudScore}>{dispScore} bloc{dispScore !== 1 ? 's' : ''}</span>
+        {isBombRef.current && <span className={styles.hudBomb}>💣 BOMBE</span>}
+        {ghostFramesRef.current > 0 && <span className={styles.hudGhost}>👻 FANTÔME</span>}
       </div>
       <div className={styles.canvasWrap}>
         <canvas

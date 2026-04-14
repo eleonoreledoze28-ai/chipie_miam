@@ -86,15 +86,49 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 10px;
   width: 100%;
   max-width: 360px;
   margin-bottom: 8px;
+  flex-wrap: wrap;
 }
 
 .hudScore {
   font-size: 1.1rem;
   font-weight: 800;
   color: var(--text-primary);
+}
+
+.hudBomb {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #FF3333;
+  background: rgba(255,51,51,0.12);
+  border: 1px solid rgba(255,51,51,0.3);
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+  animation: bombPulse 600ms ease-in-out infinite alternate;
+}
+
+@keyframes bombPulse {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0.7; transform: scale(1.06); }
+}
+
+.hudGhost {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #B07CFF;
+  background: rgba(176,124,255,0.12);
+  border: 1px solid rgba(176,124,255,0.3);
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+  animation: ghostPulse 800ms ease-in-out infinite alternate;
+}
+
+@keyframes ghostPulse {
+  from { opacity: 1; }
+  to   { opacity: 0.4; }
 }
 
 /* ===== Canvas ===== */
