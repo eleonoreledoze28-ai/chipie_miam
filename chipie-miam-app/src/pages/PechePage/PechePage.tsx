@@ -6,16 +6,24 @@ const CW = 360
 const CH = 230
 const ROD_X = CW / 2
 const ROD_Y = 14
-const HAY_Y = 88
-const HOOK_AIM_Y = HAY_Y - 8
+const HAY_Y = 90
+const HOOK_AIM_Y = HAY_Y - 9
 const DROP_SPEED = 3.2
-const REEL_SPEED = 5
-const HOOK_MIN_X = 38
-const HOOK_MAX_X = CW - 38
-const HOOK_SPEED = 2.8
+const REEL_SPEED = 5.2
+const HOOK_MIN_X = 36
+const HOOK_MAX_X = CW - 36
+const BASE_SPEED = 2.6
+const SPEED_INC = 0.30   // +speed per cast used
 const GRAB_R = 28
 const TOTAL_CASTS = 10
 const BEST_KEY = 'chipie-peche-best'
+
+// Cloud templates (start offscreen left or at position, drift right)
+const CLOUD_TMPL = [
+  { startX: 50,  y: 16, speed: 0.14, w: 62, h: 26 },
+  { startX: 200, y: 32, speed: 0.09, w: 46, h: 19 },
+  { startX: 295, y: 10, speed: 0.19, w: 72, h: 28 },
+]
 
 function loadBest() { try { return parseInt(localStorage.getItem(BEST_KEY) || '0', 10) } catch { return 0 } }
 function saveBest(s: number) { const p = loadBest(); if (s > p) { localStorage.setItem(BEST_KEY, String(s)); return true } return false }
@@ -30,7 +38,12 @@ const ITEM_POOL = [
   { emoji: '🪨', pts: -5 }, { emoji: '🪨', pts: -5 },
 ]
 
-interface FishItem { x: number; depth: number; emoji: string; pts: number; grabbed: boolean }
+interface FishItem {
+  baseX: number; x: number; depth: number
+  emoji: string; pts: number; grabbed: boolean
+  driftPhase: number; driftAmp: number
+}
+
 interface FloatPop { x: number; y: number; text: string; alpha: number; vy: number; good: boolean }
 
 function shuffle<T>(a: T[]): T[] {
@@ -40,13 +53,22 @@ function shuffle<T>(a: T[]): T[] {
 }
 
 function generateItems(): FishItem[] {
-  return shuffle(ITEM_POOL).slice(0, 14).map(t => ({
-    x: HOOK_MIN_X + Math.random() * (HOOK_MAX_X - HOOK_MIN_X),
-    depth: HAY_Y + 14 + Math.random() * (CH - HAY_Y - 28),
-    emoji: t.emoji,
-    pts: t.pts,
-    grabbed: false,
-  }))
+  return shuffle(ITEM_POOL).slice(0, 14).map(t => {
+    const bx = HOOK_MIN_X + Math.random() * (HOOK_MAX_X - HOOK_MIN_X)
+    return {
+      baseX: bx, x: bx,
+      depth: HAY_Y + 14 + Math.random() * (CH - HAY_Y - 28),
+      emoji: t.emoji, pts: t.pts, grabbed: false,
+      driftPhase: Math.random() * Math.PI * 2,
+      driftAmp: 5 + Math.random() * 10,
+    }
+  })
+}
+
+function getMultiplier(combo: number): number {
+  if (combo >= 5) return 2
+  if (combo >= 3) return 1.5
+  return 1
 }
 
 function useFishAudio() {
@@ -65,17 +87,22 @@ function useFishAudio() {
       osc.start(); osc.stop(ac.currentTime + dur)
     } catch { /* */ }
   }, [getCtx])
-  const playCast = useCallback(() => beep(330, 0.12, 'sine', 0.15), [beep])
-  const playCatch = useCallback((good: boolean) => {
+  const playCast = useCallback(() => {
+    beep(330, 0.1, 'sine', 0.12)
+    setTimeout(() => beep(260, 0.08), 90)
+  }, [beep])
+  const playCatch = useCallback((good: boolean, combo: number) => {
     if (good) {
-      beep(523, 0.07); setTimeout(() => beep(659, 0.08), 70)
+      const freq = 440 + combo * 40
+      beep(freq, 0.07); setTimeout(() => beep(freq * 1.25, 0.09), 70)
+      if (combo >= 3) setTimeout(() => beep(freq * 1.5, 0.1), 140)
       try { navigator.vibrate(25) } catch { /* */ }
     } else {
-      beep(200, 0.2, 'sawtooth', 0.18)
-      try { navigator.vibrate(50) } catch { /* */ }
+      beep(200, 0.22, 'sawtooth', 0.18)
+      try { navigator.vibrate(55) } catch { /* */ }
     }
   }, [beep])
-  const playEmpty = useCallback(() => beep(260, 0.15, 'sine', 0.12), [beep])
+  const playEmpty = useCallback(() => beep(260, 0.15, 'sine', 0.10), [beep])
   return { playCast, playCatch, playEmpty }
 }
 
@@ -88,22 +115,24 @@ export default function PechePage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef(0)
 
-  // Game refs
   const itemsRef = useRef<FishItem[]>([])
   const popsRef = useRef<FloatPop[]>([])
   const hookXRef = useRef(ROD_X)
   const hookYRef = useRef(HOOK_AIM_Y)
-  const hookVXRef = useRef(HOOK_SPEED)
+  const hookDirRef = useRef(1)
   const fixedXRef = useRef(ROD_X)
   const caughtRef = useRef<FishItem | null>(null)
   const fishStateRef = useRef<FishState>('aiming')
   const castsRef = useRef(TOTAL_CASTS)
   const scoreRef = useRef(0)
+  const comboRef = useRef(0)
+  const frameRef = useRef(0)
   const gsRef = useRef<Screen>('menu')
 
   const [screen, setScreen] = useState<Screen>('menu')
   const [dispScore, setDispScore] = useState(0)
   const [dispCasts, setDispCasts] = useState(TOTAL_CASTS)
+  const [combo, setCombo] = useState(0)
   const [newRecord, setNewRecord] = useState(false)
 
   const startGame = useCallback(() => {
@@ -111,15 +140,18 @@ export default function PechePage() {
     popsRef.current = []
     hookXRef.current = ROD_X
     hookYRef.current = HOOK_AIM_Y
-    hookVXRef.current = HOOK_SPEED
+    hookDirRef.current = 1
     fixedXRef.current = ROD_X
     caughtRef.current = null
     fishStateRef.current = 'aiming'
     castsRef.current = TOTAL_CASTS
     scoreRef.current = 0
+    comboRef.current = 0
+    frameRef.current = 0
     gsRef.current = 'play'
     setDispScore(0)
     setDispCasts(TOTAL_CASTS)
+    setCombo(0)
     setNewRecord(false)
     setScreen('play')
   }, [])
@@ -139,82 +171,143 @@ export default function PechePage() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Pre-compute static hay texture lines once
+    // Pre-compute hay texture lines (static)
     const hayLines: [number, number, number, number][] = []
-    for (let i = 0; i < 42; i++) {
+    for (let i = 0; i < 44; i++) {
       const lx = ((i * 47.3 + 11) % 1.0) * CW
-      const ly = HAY_Y + 6 + ((i * 31.7 + 5) % 1.0) * (CH - HAY_Y - 12)
-      hayLines.push([lx, ly, lx + 14 + ((i * 13.1) % 12), ly + 7])
+      const ly = HAY_Y + 8 + ((i * 31.7 + 5) % 1.0) * (CH - HAY_Y - 14)
+      hayLines.push([lx, ly, lx + 12 + ((i * 13.1) % 11), ly + 7])
+    }
+
+    function drawCloud(cx: number, cy: number, w: number, h: number) {
+      const c = ctx!
+      c.fillStyle = 'rgba(255,255,255,0.82)'
+      c.beginPath()
+      c.ellipse(cx + w * 0.5, cy + h * 0.85, w * 0.48, h * 0.42, 0, Math.PI, 0)
+      c.ellipse(cx + w * 0.28, cy + h * 0.55, w * 0.23, h * 0.48, 0, Math.PI, 0)
+      c.ellipse(cx + w * 0.55, cy + h * 0.42, w * 0.28, h * 0.52, 0, Math.PI, 0)
+      c.ellipse(cx + w * 0.76, cy + h * 0.6, w * 0.20, h * 0.42, 0, Math.PI, 0)
+      c.fill()
     }
 
     function loop() {
       if (gsRef.current !== 'play') return
+      const frame = frameRef.current++
       ctx!.clearRect(0, 0, CW, CH)
 
-      // Sky
+      // ── Sky ──
       const sky = ctx!.createLinearGradient(0, 0, 0, HAY_Y)
-      sky.addColorStop(0, '#87ceeb')
-      sky.addColorStop(1, '#d0eecc')
+      sky.addColorStop(0, '#5db8e8')
+      sky.addColorStop(0.5, '#90d4f0')
+      sky.addColorStop(1, '#c8edcc')
       ctx!.fillStyle = sky
       ctx!.fillRect(0, 0, CW, HAY_Y)
 
-      // Sun
-      ctx!.fillStyle = 'rgba(255,220,50,0.7)'
-      ctx!.beginPath(); ctx!.arc(CW - 40, 22, 14, 0, Math.PI * 2); ctx!.fill()
+      // Animated clouds
+      for (const tmpl of CLOUD_TMPL) {
+        const cx = ((tmpl.startX + frame * tmpl.speed) % (CW + tmpl.w + 20)) - tmpl.w
+        drawCloud(cx, tmpl.y, tmpl.w, tmpl.h)
+      }
 
-      // Hay body
+      // Sun
+      ctx!.fillStyle = 'rgba(255,215,40,0.88)'
+      ctx!.beginPath(); ctx!.arc(CW - 38, 22, 13, 0, Math.PI * 2); ctx!.fill()
+      ctx!.fillStyle = 'rgba(255,215,40,0.25)'
+      ctx!.beginPath(); ctx!.arc(CW - 38, 22, 19, 0, Math.PI * 2); ctx!.fill()
+
+      // ── Hay ──
       const hay = ctx!.createLinearGradient(0, HAY_Y, 0, CH)
-      hay.addColorStop(0, '#d4a54a')
-      hay.addColorStop(0.4, '#c08838')
+      hay.addColorStop(0, '#d8aa4e')
+      hay.addColorStop(0.35, '#c08838')
       hay.addColorStop(1, '#8a6020')
       ctx!.fillStyle = hay
       ctx!.fillRect(0, HAY_Y, CW, CH - HAY_Y)
 
-      // Hay surface edge
-      ctx!.strokeStyle = '#e8c060'
+      // Wavy hay surface
+      ctx!.strokeStyle = '#eac864'
       ctx!.lineWidth = 2.5
-      ctx!.beginPath(); ctx!.moveTo(0, HAY_Y); ctx!.lineTo(CW, HAY_Y); ctx!.stroke()
+      ctx!.beginPath()
+      ctx!.moveTo(0, HAY_Y)
+      for (let x = 0; x <= CW; x += 6) {
+        ctx!.lineTo(x, HAY_Y + Math.sin(x * 0.07 + frame * 0.025) * 2.2)
+      }
+      ctx!.stroke()
 
-      // Hay texture strokes
-      ctx!.strokeStyle = 'rgba(180,130,30,0.45)'
+      // Hay texture
+      ctx!.strokeStyle = 'rgba(170,120,25,0.4)'
       ctx!.lineWidth = 1
       for (const [x1, y1, x2, y2] of hayLines) {
         ctx!.beginPath(); ctx!.moveTo(x1, y1); ctx!.lineTo(x2, y2); ctx!.stroke()
       }
 
-      // Draw items (semi-visible in hay)
+      // Depth guide lines (faint)
+      ctx!.strokeStyle = 'rgba(255,220,80,0.12)'
+      ctx!.lineWidth = 1
+      ctx!.setLineDash([4, 6])
+      for (const dy of [HAY_Y + 38, HAY_Y + 80, HAY_Y + 122]) {
+        ctx!.beginPath(); ctx!.moveTo(0, dy); ctx!.lineTo(CW, dy); ctx!.stroke()
+      }
+      ctx!.setLineDash([])
+
+      // ── Items (with drift) ──
       const items = itemsRef.current
+      const fxHook = fixedXRef.current
+      const dropping = fishStateRef.current === 'dropping'
+
       ctx!.font = '18px serif'
       ctx!.textAlign = 'center'; ctx!.textBaseline = 'middle'
+
       for (const item of items) {
         if (item.grabbed) continue
-        ctx!.globalAlpha = 0.75
+
+        // Apply drift
+        item.x = item.baseX + Math.sin(frame * 0.016 + item.driftPhase) * item.driftAmp
+
+        // Depth-based opacity
+        const depthFactor = (item.depth - HAY_Y) / (CH - HAY_Y)
+        const baseAlpha = 0.85 - depthFactor * 0.32
+
+        // Glow when hook is aligned during drop
+        const inRange = dropping && Math.abs(fxHook - item.x) < GRAB_R * 1.4
+        if (inRange) {
+          ctx!.shadowColor = item.pts > 0 ? '#4cd964' : '#ff3b30'
+          ctx!.shadowBlur = 14
+        }
+        ctx!.globalAlpha = inRange ? Math.min(1, baseAlpha + 0.2) : baseAlpha
         ctx!.fillText(item.emoji, item.x, item.depth)
+        ctx!.shadowBlur = 0
         ctx!.globalAlpha = 1
       }
 
-      // Hook & rope
+      // ── Rope ──
       const hx = fishStateRef.current === 'aiming' ? hookXRef.current : fixedXRef.current
       const hy = hookYRef.current
 
-      // Rope
-      ctx!.strokeStyle = '#a0784a'
+      ctx!.strokeStyle = '#a07840'
       ctx!.lineWidth = 1.5
-      ctx!.beginPath(); ctx!.moveTo(ROD_X, ROD_Y + 4); ctx!.lineTo(hx, hy); ctx!.stroke()
+      ctx!.beginPath(); ctx!.moveTo(ROD_X, ROD_Y + 5); ctx!.lineTo(hx, hy - 6); ctx!.stroke()
 
-      // Rod
-      ctx!.strokeStyle = '#6b4226'
-      ctx!.lineWidth = 4
+      // ── Rod ──
+      ctx!.strokeStyle = '#5a3010'
+      ctx!.lineWidth = 4.5
       ctx!.lineCap = 'round'
-      ctx!.beginPath(); ctx!.moveTo(ROD_X - 12, 2); ctx!.lineTo(ROD_X + 8, ROD_Y + 4); ctx!.stroke()
+      ctx!.beginPath(); ctx!.moveTo(ROD_X - 14, 2); ctx!.lineTo(ROD_X + 8, ROD_Y + 5); ctx!.stroke()
       ctx!.lineCap = 'butt'
 
-      // Hook circle
-      ctx!.fillStyle = '#d0d0d0'
-      ctx!.beginPath(); ctx!.arc(hx, hy, 5, 0, Math.PI * 2); ctx!.fill()
-      ctx!.strokeStyle = '#888'
-      ctx!.lineWidth = 1.5
-      ctx!.beginPath(); ctx!.arc(hx, hy, 5, 0, Math.PI * 2); ctx!.stroke()
+      // ── Hook (J-shape) ──
+      ctx!.strokeStyle = '#c8c8c8'
+      ctx!.lineWidth = 2.2
+      ctx!.lineCap = 'round'
+      ctx!.beginPath()
+      ctx!.moveTo(hx, hy - 7)
+      ctx!.lineTo(hx, hy + 4)
+      ctx!.arc(hx - 4.5, hy + 4, 4.5, 0, Math.PI * 0.9)
+      ctx!.stroke()
+      ctx!.lineCap = 'butt'
+
+      // Hook tip dot
+      ctx!.fillStyle = '#aaa'
+      ctx!.beginPath(); ctx!.arc(hx, hy - 7, 2, 0, Math.PI * 2); ctx!.fill()
 
       // Caught item follows hook during reel
       const caught = caughtRef.current
@@ -222,41 +315,42 @@ export default function PechePage() {
         ctx!.font = '20px serif'
         ctx!.textAlign = 'center'; ctx!.textBaseline = 'middle'
         ctx!.globalAlpha = 1
-        ctx!.fillText(caught.emoji, hx, hy + 14)
+        ctx!.fillText(caught.emoji, hx, hy + 15)
       }
 
-      // Float pops
+      // ── Float pops ──
       popsRef.current = popsRef.current.filter(p => p.alpha > 0)
       for (const p of popsRef.current) {
         ctx!.globalAlpha = p.alpha
-        ctx!.fillStyle = p.good ? '#4cd964' : '#ff3b30'
-        ctx!.font = 'bold 13px sans-serif'
+        ctx!.fillStyle = p.good ? '#4cd964' : '#ff4444'
+        ctx!.font = 'bold 14px sans-serif'
         ctx!.textAlign = 'center'; ctx!.textBaseline = 'top'
         ctx!.fillText(p.text, p.x, p.y)
         ctx!.globalAlpha = 1
-        p.y += p.vy; p.alpha -= 0.025
+        p.y += p.vy; p.alpha -= 0.024
       }
 
-      // === Update game logic ===
+      // ── Update logic ──
+      const castsUsed = TOTAL_CASTS - castsRef.current
+      const hookSpeed = BASE_SPEED + castsUsed * SPEED_INC
+
       if (fishStateRef.current === 'aiming') {
-        hookXRef.current += hookVXRef.current
-        if (hookXRef.current <= HOOK_MIN_X) { hookXRef.current = HOOK_MIN_X; hookVXRef.current = HOOK_SPEED }
-        if (hookXRef.current >= HOOK_MAX_X) { hookXRef.current = HOOK_MAX_X; hookVXRef.current = -HOOK_SPEED }
+        hookXRef.current += hookDirRef.current * hookSpeed
+        if (hookXRef.current <= HOOK_MIN_X) { hookXRef.current = HOOK_MIN_X; hookDirRef.current = 1 }
+        if (hookXRef.current >= HOOK_MAX_X) { hookXRef.current = HOOK_MAX_X; hookDirRef.current = -1 }
         hookYRef.current = HOOK_AIM_Y
 
       } else if (fishStateRef.current === 'dropping') {
         hookYRef.current += DROP_SPEED
-        // Check collisions
         for (const item of items) {
           if (!item.grabbed && Math.abs(fixedXRef.current - item.x) < GRAB_R && hookYRef.current >= item.depth) {
             item.grabbed = true
             caughtRef.current = item
             fishStateRef.current = 'reeling'
-            playCatch(item.pts > 0)
+            playCatch(item.pts > 0, comboRef.current)
             break
           }
         }
-        // Hit bottom
         if (hookYRef.current >= CH - 4) {
           fishStateRef.current = 'reeling'
           playEmpty()
@@ -266,19 +360,29 @@ export default function PechePage() {
         hookYRef.current -= REEL_SPEED
         if (hookYRef.current <= HOOK_AIM_Y) {
           hookYRef.current = HOOK_AIM_Y
-          // Score caught item
+
           if (caughtRef.current) {
-            const pts = caughtRef.current.pts
-            scoreRef.current = Math.max(0, scoreRef.current + pts)
-            popsRef.current.push({
-              x: fixedXRef.current,
-              y: HOOK_AIM_Y - 10,
-              text: pts > 0 ? `+${pts}` : `${pts}`,
-              alpha: 1, vy: -1.2,
-              good: pts > 0,
-            })
+            const base = caughtRef.current.pts
+            if (base > 0) {
+              comboRef.current++
+              const mult = getMultiplier(comboRef.current)
+              const pts = Math.round(base * mult)
+              scoreRef.current = Math.max(0, scoreRef.current + pts)
+              const label = mult > 1 ? `+${pts} ×${mult}🔥` : `+${pts}`
+              popsRef.current.push({ x: fixedXRef.current, y: HOOK_AIM_Y - 12, text: label, alpha: 1, vy: -1.3, good: true })
+            } else {
+              comboRef.current = 0
+              scoreRef.current = Math.max(0, scoreRef.current + base)
+              popsRef.current.push({ x: fixedXRef.current, y: HOOK_AIM_Y - 12, text: `${base}`, alpha: 1, vy: -1.2, good: false })
+            }
+            setCombo(comboRef.current)
             setDispScore(scoreRef.current)
+          } else {
+            // Empty cast — reset combo
+            comboRef.current = 0
+            setCombo(0)
           }
+
           caughtRef.current = null
           castsRef.current--
           setDispCasts(castsRef.current)
@@ -319,7 +423,8 @@ export default function PechePage() {
           <div className={styles.rule}><span>🎣</span> Tape pour lancer l'hameçon</div>
           <div className={styles.rule}><span>🥕</span> Attrape les légumes sains → points</div>
           <div className={styles.rule}><span>☠️</span> Plante toxique → points négatifs !</div>
-          <div className={styles.rule}><span>🪨</span> Pierre → pénalité légère</div>
+          <div className={styles.rule}><span>🔥</span> Combo ×1.5 (3 bons) et ×2 (5 bons)</div>
+          <div className={styles.rule}><span>⚡</span> La canne accélère au fil des lancers !</div>
           <div className={styles.rule}><span>🎯</span> {TOTAL_CASTS} lancers par partie</div>
         </div>
         {best > 0 && <div className={styles.menuBest}>Record : {best} pts</div>}
@@ -353,6 +458,11 @@ export default function PechePage() {
     <div className={styles.page}>
       <div className={styles.hud}>
         <span className={styles.hudScore}>{dispScore} pts</span>
+        {combo >= 3 && (
+          <span className={styles.combo}>
+            🔥 ×{getMultiplier(combo)}
+          </span>
+        )}
         <div className={styles.casts}>
           {Array.from({ length: TOTAL_CASTS }).map((_, i) => (
             <span key={i} className={i < dispCasts ? styles.castDot : styles.castDotUsed}>🎣</span>
@@ -360,12 +470,7 @@ export default function PechePage() {
         </div>
       </div>
       <div className={styles.canvasWrap} onClick={handleTap}>
-        <canvas
-          ref={canvasRef}
-          width={CW}
-          height={CH}
-          className={styles.canvas}
-        />
+        <canvas ref={canvasRef} width={CW} height={CH} className={styles.canvas} />
       </div>
       <p className={styles.hint}>Tape pour lancer l'hameçon !</p>
     </div>

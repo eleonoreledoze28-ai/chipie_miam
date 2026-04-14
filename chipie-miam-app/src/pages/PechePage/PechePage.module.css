@@ -113,6 +113,21 @@
   filter: grayscale(1);
 }
 
+.combo {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ff9f0a;
+  background: rgba(255, 159, 10, 0.14);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  animation: comboPulse 600ms ease-in-out infinite alternate;
+}
+
+@keyframes comboPulse {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+
 /* ===== Canvas ===== */
 .canvasWrap {
   width: 100%;
