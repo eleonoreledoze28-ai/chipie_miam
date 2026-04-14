@@ -29,8 +29,8 @@ function getMaxTimer(score: number) {
 function loadBest() { try { return parseInt(localStorage.getItem(BEST_KEY) || '0', 10) } catch { return 0 } }
 function saveBest(s: number) { const p = loadBest(); if (s > p) { localStorage.setItem(BEST_KEY, String(s)); return true } return false }
 
-interface Block { x: number; w: number; h: number; colorIdx: number; emojiIdx: number; isBomb: boolean }
-interface Piece { x: number; y: number; w: number; h: number; vy: number; vx: number; alpha: number; colorIdx: number }
+interface Block { x: number; w: number; h: number; colorIdx: number; emojiIdx: number; isBomb: boolean; rot: number }
+interface Piece { x: number; y: number; w: number; h: number; vy: number; vx: number; rot: number; vrot: number; alpha: number; colorIdx: number }
 interface Float { x: number; y: number; text: string; alpha: number; vy: number; color: string }
 
 function useTowerAudio() {
@@ -80,6 +80,7 @@ export default function TourPage() {
   const timerRef       = useRef(getMaxTimer(0))
   const wantPlaceRef   = useRef(false)       // tap requested
   const isBombRef      = useRef(false)       // current moving block is bomb
+  const mrotRef        = useRef(0)           // moving block tilt angle
 
   const [screen,    setScreen]    = useState<Screen>('menu')
   const [dispScore, setDispScore] = useState(0)
@@ -101,6 +102,8 @@ export default function TourPage() {
         h: 10 + Math.random() * 14,
         vy: -3 - Math.random() * 4,
         vx: (Math.random() - 0.5) * 6,
+        rot:  (Math.random() - 0.5) * 0.6,
+        vrot: (Math.random() - 0.5) * 0.18,
         alpha: 1,
         colorIdx: ci,
       })
@@ -108,7 +111,7 @@ export default function TourPage() {
   }
 
   const startGame = useCallback(() => {
-    blocksRef.current      = [{ x: (CW - INIT_W) / 2, w: INIT_W, h: INIT_H, colorIdx: 0, emojiIdx: 0, isBomb: false }]
+    blocksRef.current      = [{ x: (CW - INIT_W) / 2, w: INIT_W, h: INIT_H, colorIdx: 0, emojiIdx: 0, isBomb: false, rot: 0 }]
     piecesRef.current      = []
     floatsRef.current      = []
     mxRef.current          = (CW - INIT_W) / 2
@@ -123,6 +126,7 @@ export default function TourPage() {
     timerRef.current       = getMaxTimer(0)
     wantPlaceRef.current   = false
     isBombRef.current      = false
+    mrotRef.current        = 0
     setDispScore(0)
     setNewRecord(false)
     setScreen('play')
@@ -181,9 +185,9 @@ export default function TourPage() {
       // Overhang pieces
       if (!perfect) {
         if (mx < last.x)
-          piecesRef.current.push({ x: mx, y: MOVING_Y, w: last.x - mx, h: mh, vy: 2, vx: 0, alpha: 1, colorIdx: ci })
+          piecesRef.current.push({ x: mx, y: MOVING_Y, w: last.x - mx, h: mh, vy: 2, vx: -1.5, rot: mrotRef.current, vrot: -0.08, alpha: 1, colorIdx: ci })
         if (mx + mw > last.x + last.w)
-          piecesRef.current.push({ x: last.x + last.w, y: MOVING_Y, w: (mx + mw) - (last.x + last.w), h: mh, vy: 2, vx: 0, alpha: 1, colorIdx: ci })
+          piecesRef.current.push({ x: last.x + last.w, y: MOVING_Y, w: (mx + mw) - (last.x + last.w), h: mh, vy: 2, vx: 1.5, rot: mrotRef.current, vrot: 0.08, alpha: 1, colorIdx: ci })
       }
 
       const nb: Block = {
@@ -193,6 +197,7 @@ export default function TourPage() {
         colorIdx: ci,
         emojiIdx: blocks.length % EMOJIS.length,
         isBomb:   isBombRef.current,
+        rot:      perfect ? 0 : (Math.random() - 0.5) * 0.10,
       }
 
       // ── BOMB explosion ──────────────────────────────────────────────────
@@ -311,9 +316,12 @@ export default function TourPage() {
         if (sy > CH + b.h || sy + b.h < -10) continue
 
         const color = b.isBomb ? '#FF3333' : COLORS[b.colorIdx]
+        const cx = b.x + b.w / 2, cy = sy + b.h / 2
 
-        // Shadow
-        ctx!.fillStyle = 'rgba(0,0,0,0.3)'
+        ctx!.save()
+        ctx!.translate(cx, cy); ctx!.rotate(b.rot); ctx!.translate(-cx, -cy)
+
+        ctx!.fillStyle = 'rgba(0,0,0,0.28)'
         rr(b.x + 3, sy + 3, b.w, b.h, 8); ctx!.fill()
 
         ctx!.fillStyle = color
@@ -323,11 +331,11 @@ export default function TourPage() {
         rr(b.x + 2, sy + 2, b.w - 4, Math.min(14, b.h * 0.4), 5); ctx!.fill()
 
         if (b.w >= 26) {
-          const em = b.isBomb ? '💣' : EMOJIS[b.emojiIdx]
           ctx!.font = `${Math.min(20, b.w * 0.28)}px serif`
           ctx!.textAlign = 'center'; ctx!.textBaseline = 'middle'
-          ctx!.fillText(em, b.x + b.w / 2, sy + b.h / 2)
+          ctx!.fillText(b.isBomb ? '💣' : EMOJIS[b.emojiIdx], cx, cy)
         }
+        ctx!.restore()
       }
 
       // ── Moving block ──────────────────────────────────────────────────────
@@ -335,11 +343,19 @@ export default function TourPage() {
         const mx = mxRef.current, mw = mwRef.current, mh = mhRef.current
         const mc = isBombRef.current ? '#FF3333' : COLORS[n % COLORS.length]
 
+        // Smooth tilt toward movement direction
+        const targetRot = mdirRef.current * 0.09
+        mrotRef.current += (targetRot - mrotRef.current) * 0.07
+
         // Ghost flicker
         const ghostAlpha = ghostFramesRef.current > 0
           ? 0.12 + 0.18 * Math.abs(Math.sin(ghostFramesRef.current * 0.25))
           : 1
         if (ghostFramesRef.current > 0) ghostFramesRef.current--
+
+        const mcx = mx + mw / 2, mcy = MOVING_Y + mh / 2
+        ctx!.save()
+        ctx!.translate(mcx, mcy); ctx!.rotate(mrotRef.current); ctx!.translate(-mcx, -mcy)
 
         ctx!.globalAlpha = ghostAlpha
         ctx!.shadowColor = mc; ctx!.shadowBlur = 14
@@ -351,12 +367,12 @@ export default function TourPage() {
         rr(mx + 2, MOVING_Y + 2, mw - 4, Math.min(14, mh * 0.4), 5); ctx!.fill()
 
         if (mw >= 26) {
-          const em = isBombRef.current ? '💣' : EMOJIS[n % EMOJIS.length]
           ctx!.font = `${Math.min(20, mw * 0.28)}px serif`
           ctx!.textAlign = 'center'; ctx!.textBaseline = 'middle'
-          ctx!.fillText(em, mx + mw / 2, MOVING_Y + mh / 2)
+          ctx!.fillText(isBombRef.current ? '💣' : EMOJIS[n % EMOJIS.length], mcx, mcy)
         }
         ctx!.globalAlpha = 1
+        ctx!.restore()
 
         // Move block
         mxRef.current += mdirRef.current * mspeedRef.current
@@ -369,11 +385,15 @@ export default function TourPage() {
       // ── Falling pieces (outside lean) ──────────────────────────────────
       piecesRef.current = piecesRef.current.filter(p => p.alpha > 0 && p.y < CH + 80)
       for (const p of piecesRef.current) {
+        const pcx = p.x + p.w / 2, pcy = p.y + p.h / 2
+        ctx!.save()
+        ctx!.translate(pcx, pcy); ctx!.rotate(p.rot); ctx!.translate(-pcx, -pcy)
         ctx!.globalAlpha = p.alpha
         ctx!.fillStyle   = COLORS[p.colorIdx]
         rr(p.x, p.y, p.w, p.h, 5); ctx!.fill()
+        ctx!.restore()
         ctx!.globalAlpha = 1
-        p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.alpha -= 0.026
+        p.x += p.vx; p.y += p.vy; p.vy += 0.5; p.rot += p.vrot; p.alpha -= 0.026
       }
 
       // ── Float texts ───────────────────────────────────────────────────
