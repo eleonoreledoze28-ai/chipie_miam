@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getActiveProfileId } from './useProfiles'
 
+export type Appetit = 'tout' | 'moitie' | 'refuse'
+
 export interface JournalEntry {
   id: string
   vegetalId: string
   date: string       // YYYY-MM-DD
   quantite: string
   notes: string
+  appetit?: Appetit
   timestamp: number
 }
 

@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useJournal } from '../../hooks/useJournal'
+import type { Appetit } from '../../hooks/useJournal'
+import { useProfil } from '../../hooks/useProfil'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
 import AddEntryModal from '../../components/AddEntryModal/AddEntryModal'
@@ -18,6 +20,7 @@ const JOURS_HEADER = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
 export default function JournalPage() {
   const { entries, addEntry, removeEntry, getEntriesForDate, getEntriesForWeek, getUniqueVegetauxCount } = useJournal()
+  const { profil } = useProfil()
   const [selectedDate, setSelectedDate] = useState(todayStr())
   const [showModal, setShowModal] = useState(false)
   const [modalVegetalId, setModalVegetalId] = useState<string | null>(null)
@@ -77,8 +80,32 @@ export default function JournalPage() {
       .filter(f => f.veg)
   }, [entries])
 
-  const handleAdd = (vegetalId: string, quantite: string, notes: string) => {
-    addEntry({ vegetalId, date: selectedDate, quantite, notes })
+  // === Birthday detection ===
+  const isBirthday = useMemo(() => {
+    if (!profil.dateNaissance) return false
+    const today = todayStr()
+    const bday = profil.dateNaissance // YYYY-MM-DD
+    return bday.slice(5) === today.slice(5) // compare MM-DD
+  }, [profil.dateNaissance])
+
+  const birthdayAge = useMemo(() => {
+    if (!profil.dateNaissance) return null
+    const today = new Date(todayStr() + 'T00:00:00')
+    const bday = new Date(profil.dateNaissance + 'T00:00:00')
+    return today.getFullYear() - bday.getFullYear()
+  }, [profil.dateNaissance])
+
+  // === Ce jour-là l'an dernier ===
+  const lastYearDate = useMemo(() => {
+    const d = new Date(selectedDate + 'T00:00:00')
+    d.setFullYear(d.getFullYear() - 1)
+    return d.toISOString().split('T')[0]
+  }, [selectedDate])
+
+  const lastYearEntries = useMemo(() => getEntriesForDate(lastYearDate), [lastYearDate, entries])
+
+  const handleAdd = (vegetalId: string, quantite: string, notes: string, appetit: Appetit) => {
+    addEntry({ vegetalId, date: selectedDate, quantite, notes, appetit })
   }
 
   const handleQuickAdd = (vegetalId: string) => {
@@ -245,6 +272,19 @@ export default function JournalPage() {
         </div>
       </div>
 
+      {/* Birthday banner */}
+      {isBirthday && (
+        <div className={styles.birthdayBanner}>
+          <span className={styles.birthdayConfetti}>🎉🐰🎂🎈🎉</span>
+          <p className={styles.birthdayTitle}>
+            Joyeux anniversaire {profil.nom} !
+          </p>
+          {birthdayAge !== null && (
+            <p className={styles.birthdayAge}>{birthdayAge} an{birthdayAge > 1 ? 's' : ''} aujourd'hui 🥳</p>
+          )}
+        </div>
+      )}
+
       {/* Alerts */}
       {alerts.map((alert, i) => (
         <div key={i} className={styles.alert}>{alert}</div>
@@ -268,6 +308,11 @@ export default function JournalPage() {
                   <span className={styles.entryName}>{veg.nom}</span>
                   <span className={styles.entryQty}>{entry.quantite}</span>
                   {entry.notes && <span className={styles.entryNotes}>{entry.notes}</span>}
+                  {entry.appetit && (
+                    <span className={`${styles.appetitBadge} ${styles[`appetit_${entry.appetit}`]}`}>
+                      {entry.appetit === 'tout' ? '😋 Tout mangé' : entry.appetit === 'moitie' ? '😐 La moitié' : '😒 Refusé'}
+                    </span>
+                  )}
                 </div>
                 <button
                   className={styles.deleteBtn}
@@ -348,6 +393,33 @@ export default function JournalPage() {
           )}
         </div>
       </div>
+
+      {/* Ce jour-là l'an dernier */}
+      {lastYearEntries.length > 0 && (
+        <div className={styles.weekSection}>
+          <div className={styles.lastYearCard}>
+            <span className={styles.lastYearTitle}>🗓️ Ce jour-là l'an dernier</span>
+            <p className={styles.lastYearDate}>{formatDateFr(lastYearDate)}</p>
+            <div className={styles.lastYearList}>
+              {lastYearEntries.map((entry) => {
+                const veg = vegetauxMap.get(entry.vegetalId)
+                if (!veg) return null
+                return (
+                  <div key={entry.id} className={styles.lastYearItem}>
+                    <img src={assetUrl(veg.image)} alt="" className={styles.lastYearImg} />
+                    <span className={styles.lastYearName}>{veg.nom}</span>
+                    {entry.appetit && (
+                      <span className={styles.lastYearAppetit}>
+                        {entry.appetit === 'tout' ? '😋' : entry.appetit === 'moitie' ? '😐' : '😒'}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {showModal && (
         <AddEntryModal

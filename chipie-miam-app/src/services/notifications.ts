@@ -129,9 +129,53 @@ async function checkFeedingReminder(today: string): Promise<void> {
   }
 }
 
+const FASTING_FIRED_KEY = 'chipie_fasting_notif_fired'
+
+// Alert if no journal entry has been recorded in the last 12 hours
+async function checkFastingAlert(): Promise<void> {
+  const firedKey = FASTING_FIRED_KEY
+  const lastFired = localStorage.getItem(firedKey)
+  const now = Date.now()
+
+  // Don't fire more than once every 12 hours
+  if (lastFired && now - Number(lastFired) < 12 * 60 * 60 * 1000) return
+
+  // Find the most recent journal entry across all profiles
+  let latestTimestamp = 0
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (!key?.startsWith('chipie_journal_')) continue
+    try {
+      const entries = JSON.parse(localStorage.getItem(key) ?? '[]') as Array<{ timestamp?: number }>
+      for (const e of entries) {
+        if (e.timestamp && e.timestamp > latestTimestamp) latestTimestamp = e.timestamp
+      }
+    } catch { /* */ }
+  }
+
+  // No entries at all → no alert (new user)
+  if (latestTimestamp === 0) return
+
+  const hoursSince = (now - latestTimestamp) / (1000 * 60 * 60)
+  if (hoursSince < 12) return
+
+  await showNotif('⚠️ Chipie n\'a pas mangé !', {
+    body: `Aucun repas enregistré depuis ${Math.floor(hoursSince)}h. Tout va bien ? 🐰`,
+    icon,
+    badge: icon,
+    tag: 'chipie-fasting',
+    data: { url: '/journal' },
+  })
+  try { localStorage.setItem(firedKey, String(now)) } catch { /* */ }
+}
+
 // Call once on app start — fires any pending notifications
 export async function checkAndFirePending(): Promise<void> {
   if (getPermission() !== 'granted') return
   const today = todayLocal()
-  await Promise.all([checkCarnetReminders(today), checkFeedingReminder(today)])
+  await Promise.all([
+    checkCarnetReminders(today),
+    checkFeedingReminder(today),
+    checkFastingAlert(),
+  ])
 }

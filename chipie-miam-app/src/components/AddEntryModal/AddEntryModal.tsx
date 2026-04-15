@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { VEGETAUX } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
+import type { Appetit } from '../../hooks/useJournal'
 import styles from './AddEntryModal.module.css'
 
 const QUANTITES = [
@@ -12,9 +13,15 @@ const QUANTITES = [
   'Une petite portion',
 ]
 
+const APPETIT_OPTIONS: { value: Appetit; label: string; emoji: string }[] = [
+  { value: 'tout', label: 'Tout mangé', emoji: '😋' },
+  { value: 'moitie', label: 'La moitié', emoji: '😐' },
+  { value: 'refuse', label: 'Refusé', emoji: '😒' },
+]
+
 interface Props {
   date: string
-  onAdd: (vegetalId: string, quantite: string, notes: string) => void
+  onAdd: (vegetalId: string, quantite: string, notes: string, appetit: Appetit) => void
   onClose: () => void
   preSelectedId?: string | null
 }
@@ -24,6 +31,7 @@ export default function AddEntryModal({ date, onAdd, onClose, preSelectedId = nu
   const [selectedId, setSelectedId] = useState<string | null>(preSelectedId)
   const [quantite, setQuantite] = useState(QUANTITES[2])
   const [notes, setNotes] = useState('')
+  const [appetit, setAppetit] = useState<Appetit>('tout')
 
   const filtered = useMemo(() => {
     if (!search.trim()) return VEGETAUX.slice(0, 20)
@@ -38,7 +46,7 @@ export default function AddEntryModal({ date, onAdd, onClose, preSelectedId = nu
 
   const handleSubmit = () => {
     if (!selectedId) return
-    onAdd(selectedId, quantite, notes)
+    onAdd(selectedId, quantite, notes, appetit)
     onClose()
   }
 
@@ -99,6 +107,22 @@ export default function AddEntryModal({ date, onAdd, onClose, preSelectedId = nu
                     onClick={() => setQuantite(q)}
                   >
                     {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>Appétit</label>
+              <div className={styles.appetitRow}>
+                {APPETIT_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    className={`${styles.appetitBtn} ${appetit === opt.value ? styles.appetitBtnActive : ''}`}
+                    onClick={() => setAppetit(opt.value)}
+                  >
+                    <span className={styles.appetitEmoji}>{opt.emoji}</span>
+                    <span>{opt.label}</span>
                   </button>
                 ))}
               </div>

@@ -188,6 +188,39 @@
   color: var(--text-muted);
 }
 
+/* Appetit */
+.appetitRow {
+  display: flex;
+  gap: 6px;
+}
+
+.appetitBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: all 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.appetitBtnActive {
+  background: var(--accent-orange-dim);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+}
+
+.appetitEmoji {
+  font-size: 1.4rem;
+}
+
 /* Submit */
 .submitBtn {
   width: 100%;

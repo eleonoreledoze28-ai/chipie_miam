@@ -38,6 +38,47 @@
   color: var(--text-muted);
 }
 
+/* Races shortcut button */
+.racesBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  background: var(--accent-orange-dim);
+  border: 1.5px solid var(--accent-orange-border, rgba(240, 165, 58, 0.35));
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 150ms ease;
+}
+
+.racesBtn:active { opacity: 0.7; }
+
+.racesBtnEmoji {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.racesBtnText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.racesBtnTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+.racesBtnSub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
 /* Category filters */
 .categories {
   display: flex;

@@ -305,6 +305,41 @@
   margin-top: 2px;
 }
 
+/* === Birthday banner === */
+.birthdayBanner {
+  margin: 8px 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #fff7ed, #fef3c7);
+  border: 2px solid var(--accent-orange);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  animation: birthdayPop 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes birthdayPop {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.birthdayConfetti {
+  font-size: 1.6rem;
+  display: block;
+  margin-bottom: 6px;
+  letter-spacing: 4px;
+}
+
+.birthdayTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--accent-orange);
+}
+
+.birthdayAge {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
 /* === Alerts === */
 .alert {
   margin: 4px 16px;
@@ -380,6 +415,20 @@
   margin-top: 1px;
 }
 
+.appetitBadge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-top: 2px;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+  width: fit-content;
+}
+
+.appetit_tout   { background: #d1fae5; color: #065f46; }
+.appetit_moitie { background: #fef9c3; color: #854d0e; }
+.appetit_refuse { background: #fee2e2; color: #991b1b; }
+
 .deleteBtn {
   color: var(--text-muted);
   padding: 8px;
@@ -388,6 +437,62 @@
 
 .deleteBtn:active {
   color: var(--accent-red);
+}
+
+/* === Last year card === */
+.lastYearCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.lastYearTitle {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent-orange);
+  margin-bottom: 4px;
+}
+
+.lastYearDate {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.lastYearList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lastYearItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lastYearImg {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.lastYearName {
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.lastYearAppetit {
+  font-size: 0.9rem;
 }
 
 /* === Week summary section === */

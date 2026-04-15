@@ -266,6 +266,18 @@ export default function EncyclopediePage() {
         <p className={styles.subtitle}>{ARTICLES.length} articles pour tout savoir</p>
       </div>
 
+      {/* Lexique des races shortcut */}
+      <button className={styles.racesBtn} onClick={() => navigate('/races')}>
+        <span className={styles.racesBtnEmoji}>🐇</span>
+        <div className={styles.racesBtnText}>
+          <span className={styles.racesBtnTitle}>Lexique des races</span>
+          <span className={styles.racesBtnSub}>9 races — caractère, soins, alimentation</span>
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+          <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+
       {/* Category filter */}
       <div className={styles.categories}>
         {CATEGORIES.map(c => (
