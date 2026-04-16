@@ -23,6 +23,7 @@ const ZONES = [
       { id: 'memory',     path: '/jeu/memory',      emoji: '🧠', title: 'Memory',             desc: 'Trouvez les paires image / nom' },
       { id: 'devinette',  path: '/jeu/devinette',   emoji: '📸', title: 'Devinette Photo',    desc: 'Reconnaissez les végétaux' },
       { id: 'colorie',    path: '/jeu/colorie',     emoji: '🎨', title: 'Colorie Chipie',     desc: 'Colorie Chipie comme tu veux !' },
+      { id: 'dessin',     path: '/jeu/dessin',      emoji: '✏️', title: 'Dessin guidé',        desc: 'Apprends à dessiner Chipie étape par étape !' },
     ],
   },
   {
@@ -48,6 +49,7 @@ const ZONES = [
       { id: 'tri-express', path: '/jeu/tri-express', emoji: '🃏', title: 'Tri Express',       desc: 'Bon ou toxique ? Glisse la carte !' },
       { id: 'anagramme',   path: '/jeu/anagramme',   emoji: '🔤', title: 'Mot Mélangé',       desc: 'Remettez les lettres dans le bon ordre' },
       { id: 'soin',        path: '/jeu/soin',        emoji: '🚑', title: "Soin d'urgence",    desc: 'Identifie le toxique et soigne Chipie !' },
+      { id: 'saisons',     path: '/jeu/saisons',     emoji: '🌍', title: 'Chemin des saisons', desc: 'Parcours les 4 saisons avec Chipie !' },
     ],
   },
 ]

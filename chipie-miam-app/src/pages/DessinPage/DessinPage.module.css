@@ -1,0 +1,292 @@
+.page {
+  padding: 10px 16px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.back {
+  align-self: flex-start;
+  color: var(--accent-orange);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* ── Menu ── */
+.menuScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-top: 20px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.menuEmoji { font-size: 3rem; }
+
+.menuTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.menuSubtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.menuSteps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: 100%;
+}
+
+.menuStep {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.playBtn {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  font-size: 1rem;
+  font-weight: 800;
+  margin-top: 4px;
+}
+.playBtn:active { opacity: 0.85; transform: scale(0.97); }
+
+/* ── Top bar ── */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.stepCount {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* ── Progress ── */
+.progressWrap {
+  width: 100%;
+  height: 5px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progressBar {
+  height: 100%;
+  background: var(--accent-orange);
+  border-radius: var(--radius-pill);
+  transition: width 300ms ease;
+}
+
+/* ── Drawing area ── */
+.drawingArea {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-subtle);
+  box-shadow: var(--shadow-elevated);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.guideSvg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+.drawCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+@keyframes guidePulse {
+  0%, 100% { opacity: 0.75; }
+  50%       { opacity: 0.45; }
+}
+
+.guidePulse {
+  animation: guidePulse 1.2s ease-in-out infinite;
+}
+
+/* ── Step info ── */
+.stepInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 10px 14px;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 8px;
+}
+
+.stepEmoji { font-size: 1.5rem; flex-shrink: 0; }
+
+.stepLabel {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.stepDesc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* ── Tools ── */
+.toolRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.toolBtn {
+  padding: 8px 14px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: transform 100ms ease;
+}
+.toolBtn:active { transform: scale(0.9); }
+
+.toolActive {
+  border-color: var(--accent-orange);
+  background: rgba(232, 150, 58, 0.12);
+}
+
+/* ── Palette ── */
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: center;
+  max-width: 300px;
+  margin-bottom: 12px;
+}
+
+.swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  transition: transform 100ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.swatch:active { transform: scale(0.88); }
+
+.swatchActive {
+  border-color: var(--text-primary);
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.3), 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* ── Next button ── */
+.nextBtn {
+  width: 100%;
+  max-width: 300px;
+  padding: 13px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+.nextBtn:active { opacity: 0.85; transform: scale(0.97); }
+
+/* ── End screen ── */
+.endScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: 30px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.endEmoji  { font-size: 3.5rem; }
+
+.endTitle {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: center;
+  margin: 0;
+}
+
+.finalWrap {
+  width: 100%;
+  max-width: 260px;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-subtle);
+  box-shadow: var(--shadow-elevated);
+  overflow: hidden;
+}
+
+.finalImg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.endDesc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.endActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.menuBtn {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.menuBtn:active { background: var(--bg-elevated); }

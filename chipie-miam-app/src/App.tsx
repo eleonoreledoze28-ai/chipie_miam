@@ -31,6 +31,8 @@ import ColoriePage from './pages/ColoriePage/ColoriePage'
 import MarchePage from './pages/MarchePage/MarchePage'
 import SoinPage from './pages/SoinPage/SoinPage'
 import RacesPage from './pages/RacesPage/RacesPage'
+import DessinPage from './pages/DessinPage/DessinPage'
+import CheminSaisonsPage from './pages/CheminSaisonsPage/CheminSaisonsPage'
 
 const TUTORIAL_KEY = 'chipie-tutorial-done'
 
@@ -97,6 +99,8 @@ function App() {
         <Route path="jeu/marche" element={<MarchePage />} />
         <Route path="jeu/soin" element={<SoinPage />} />
         <Route path="races" element={<RacesPage />} />
+        <Route path="jeu/dessin" element={<DessinPage />} />
+        <Route path="jeu/saisons" element={<CheminSaisonsPage />} />
       </Route>
     </Routes>
     </>
