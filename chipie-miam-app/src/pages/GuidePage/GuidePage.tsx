@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SearchBar from '../../components/SearchBar/SearchBar'
 import CategorySection from '../../components/CategorySection/CategorySection'
@@ -62,6 +62,25 @@ const TIPS = [
   '🥗 La roquette et le pissenlit sont parmi les aliments préférés des lapins.',
 ]
 
+// ── Checklist quotidienne ──────────────────────────────────────────────────
+const CHECKLIST_ITEMS = [
+  { id: 'foin',   label: 'Foin renouvelé',   emoji: '🌾' },
+  { id: 'eau',    label: 'Eau fraîche',       emoji: '💧' },
+  { id: 'legumes',label: 'Légumes donnés',    emoji: '🥕' },
+  { id: 'sortie', label: 'Sortie de cage',    emoji: '🐇' },
+]
+
+function loadChecklist(today: string): Set<string> {
+  try {
+    const raw = localStorage.getItem(`chipie-checklist-${today}`)
+    return raw ? new Set(JSON.parse(raw) as string[]) : new Set()
+  } catch { return new Set() }
+}
+
+function saveChecklist(today: string, checked: Set<string>) {
+  localStorage.setItem(`chipie-checklist-${today}`, JSON.stringify([...checked]))
+}
+
 export default function GuidePage() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
@@ -77,6 +96,18 @@ export default function GuidePage() {
 
   const today = todayStr()
   const todayEntries = useMemo(() => getEntriesForDate(today), [entries, today])
+
+  // Checklist state
+  const [checked, setChecked] = useState<Set<string>>(() => loadChecklist(today))
+  useEffect(() => { saveChecklist(today, checked) }, [checked, today])
+  const allDone = checked.size === CHECKLIST_ITEMS.length
+  const toggleCheck = useCallback((id: string) => {
+    setChecked(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }, [])
 
   // Count per vegetal for today
   const todayCounts = useMemo(() => {
@@ -264,6 +295,26 @@ export default function GuidePage() {
               </div>
             </div>
           )}
+        </div>
+
+        <div className={`${styles.checklistCard} ${allDone ? styles.checklistDone : ''}`}>
+          <div className={styles.checklistHeader}>
+            <span className={styles.checklistTitle}>✅ Checklist du jour</span>
+            {allDone && <span className={styles.checklistBadge}>Tout fait ! 🎉</span>}
+          </div>
+          <div className={styles.checklistItems}>
+            {CHECKLIST_ITEMS.map(item => (
+              <button
+                key={item.id}
+                className={`${styles.checkItem} ${checked.has(item.id) ? styles.checkItemDone : ''}`}
+                onClick={() => toggleCheck(item.id)}
+              >
+                <span className={styles.checkItemEmoji}>{item.emoji}</span>
+                <span className={styles.checkItemLabel}>{item.label}</span>
+                <span className={styles.checkItemBox}>{checked.has(item.id) ? '✓' : ''}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className={styles.tipCard}>

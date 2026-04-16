@@ -337,11 +337,70 @@
   opacity: 0.7;
 }
 
-/* ===== Carnet de santé link ===== */
-.carnetLink {
+/* ===== Quick links (carnet santé + dépenses) ===== */
+.quickLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
   max-width: 360px;
   margin-top: 20px;
+}
+
+/* ===== Stickers ===== */
+.stickersSubtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.stickersGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.stickerCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-subtle);
+  position: relative;
+  text-align: center;
+}
+
+.stickerOn {
+  background: var(--bg-card);
+  border-color: var(--accent-orange);
+}
+
+.stickerOff {
+  background: var(--bg-elevated);
+  opacity: 0.5;
+}
+
+.stickerEmoji { font-size: 1.6rem; line-height: 1; }
+
+.stickerLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+.stickerLock {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 0.55rem;
+}
+
+/* ===== Carnet de santé link ===== */
+.carnetLink {
+  width: 100%;
   padding: 14px;
   background: var(--bg-card);
   border: 1px solid var(--accent-orange-border, rgba(240, 165, 58, 0.3));

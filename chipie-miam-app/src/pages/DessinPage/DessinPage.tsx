@@ -155,6 +155,7 @@ export default function DessinPage() {
       setTool('draw')
     } else {
       savedImg.current = canvasRef.current?.toDataURL() ?? null
+      try { localStorage.setItem('chipie-dessin-done', '1') } catch { /* */ }
       setScreen('end')
     }
   }, [step])

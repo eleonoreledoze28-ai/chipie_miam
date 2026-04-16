@@ -162,7 +162,10 @@ export default function CheminSaisonsPage() {
             const pos  = g.position
             const type = SQUARE_TYPE[pos]
             if (!type || type === 'normal') return g
-            if (type === 'end') { setGameScreen('win'); return g }
+            if (type === 'end') {
+              try { localStorage.setItem('chipie-saisons-done', '1') } catch { /* */ }
+              setGameScreen('win'); return g
+            }
 
             if (type === 'question') {
               const { idx, q } = pickQuestion(g.usedQIdx)

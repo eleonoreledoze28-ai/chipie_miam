@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useJournal } from '../../hooks/useJournal'
+import { useProfil } from '../../hooks/useProfil'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import { todayStr, addDays } from '../../utils/dates'
 import { assetUrl } from '../../utils/assetUrl'
@@ -39,6 +40,8 @@ type HistoryView = 'days' | 'weeks'
 
 export default function StatsPage() {
   const { entries, getEntriesForWeek, getUniqueVegetauxCount } = useJournal()
+  const { profil } = useProfil()
+  const rabbitName = profil.nom || 'mon lapin'
   const [historyView, setHistoryView] = useState<HistoryView>('days')
 
   const today = todayStr()
@@ -270,7 +273,7 @@ export default function StatsPage() {
       {/* Top vegetables */}
       {topVegetaux.length > 0 && (
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Les favoris de Chipie</h2>
+          <h2 className={styles.sectionTitle}>Les favoris de {rabbitName}</h2>
           <div className={styles.topList}>
             {topVegetaux.map(({ vegetal, count }, i) => {
               if (!vegetal) return null
@@ -290,7 +293,7 @@ export default function StatsPage() {
       {entries.length === 0 && (
         <div className={styles.empty}>
           <span className={styles.emptyIcon}>📊</span>
-          <p>Commencez a enregistrer les repas de Chipie pour voir les statistiques</p>
+          <p>Commencez à enregistrer les repas de {rabbitName} pour voir les statistiques</p>
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProfil } from '../../hooks/useProfil'
 import { useProfiles } from '../../hooks/useProfiles'
@@ -10,6 +10,78 @@ import styles from './ProfilPage.module.css'
 const DEFAULT_AVATAR = `${import.meta.env.BASE_URL}chipie-avatar.jpeg`
 const vegetauxMap = new Map(VEGETAUX.map(v => [v.id, v]))
 const catMap = new Map(CATEGORIES.map(c => [c.id, c]))
+
+// ── Stickers ──────────────────────────────────────────────────────────────────
+interface Sticker { id: string; emoji: string; label: string; desc: string }
+
+const STICKER_DEFS: Sticker[] = [
+  { id: 'premiers-repas', emoji: '🌱', label: 'Premiers repas',      desc: '1ère entrée dans le journal' },
+  { id: 'cent-repas',     emoji: '🥕', label: '100 repas',           desc: '100 entrées dans le journal' },
+  { id: 'sept-jours',     emoji: '📅', label: '7 jours de suite',    desc: 'Journal rempli 7 jours d\'affilée' },
+  { id: 'trente-jours',   emoji: '🗓️', label: '30 jours de suivi',  desc: 'Journal rempli sur 30 jours' },
+  { id: 'dix-legumes',    emoji: '🌈', label: 'Gourmet',             desc: '10 légumes différents donnés' },
+  { id: 'cinquante-leg',  emoji: '👨‍🍳', label: 'Grand chef',        desc: '50 légumes différents donnés' },
+  { id: 'anniversaire',   emoji: '🎂', label: 'Joyeux anniversaire', desc: 'Visité l\'app le jour de l\'anniversaire' },
+  { id: 'encyclopedie',   emoji: '📖', label: 'Encyclopédiste',      desc: 'Ouvert l\'encyclopédie' },
+  { id: 'artiste',        emoji: '✏️', label: 'Artiste',             desc: 'Terminé le dessin guidé' },
+  { id: 'voyageur',       emoji: '🌍', label: 'Voyageur des saisons', desc: 'Terminé le Chemin des saisons' },
+  { id: 'soignant',       emoji: '🩺', label: 'Soignant',            desc: 'Ajouté un rappel dans le carnet santé' },
+  { id: 'expert-quiz',    emoji: '🏆', label: 'Expert Quiz',         desc: 'Score de 100+ pts au Quiz' },
+]
+
+function computeUnlocked(
+  entries: { vegetalId: string; date: string }[],
+  profil: { dateNaissance?: string }
+): Set<string> {
+  const unlocked = new Set<string>()
+  const totalEntries  = entries.length
+  const uniqueVeg     = new Set(entries.map(e => e.vegetalId)).size
+  const uniqueDays    = new Set(entries.map(e => e.date)).size
+  const sortedDates   = [...new Set(entries.map(e => e.date))].sort()
+
+  if (totalEntries >= 1)  unlocked.add('premiers-repas')
+  if (totalEntries >= 100) unlocked.add('cent-repas')
+  if (uniqueVeg >= 10)    unlocked.add('dix-legumes')
+  if (uniqueVeg >= 50)    unlocked.add('cinquante-leg')
+  if (uniqueDays >= 30)   unlocked.add('trente-jours')
+
+  // Check 7-day streak
+  for (let i = 0; i <= sortedDates.length - 7; i++) {
+    let streak = true
+    for (let j = 1; j < 7; j++) {
+      const prev = new Date(sortedDates[i + j - 1] + 'T00:00:00')
+      const curr = new Date(sortedDates[i + j]     + 'T00:00:00')
+      const diff = (curr.getTime() - prev.getTime()) / 86400000
+      if (diff !== 1) { streak = false; break }
+    }
+    if (streak) { unlocked.add('sept-jours'); break }
+  }
+
+  // Birthday
+  if (profil.dateNaissance) {
+    const today = new Date()
+    const bday  = new Date(profil.dateNaissance + 'T00:00:00')
+    if (bday.getMonth() === today.getMonth() && bday.getDate() === today.getDate()) {
+      unlocked.add('anniversaire')
+    }
+  }
+
+  // localStorage flags
+  try {
+    if (localStorage.getItem('chipie-encyclopedie-visited') === '1') unlocked.add('encyclopedie')
+    if (localStorage.getItem('chipie-dessin-done')          === '1') unlocked.add('artiste')
+    if (localStorage.getItem('chipie-saisons-done')         === '1') unlocked.add('voyageur')
+    const quizBest = parseInt(localStorage.getItem('chipie-quiz-best') || '0', 10)
+    if (quizBest >= 100) unlocked.add('expert-quiz')
+    // Check carnet santé
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i)
+      if (k && k.includes('carnet') && k.includes('reminder')) { unlocked.add('soignant'); break }
+    }
+  } catch { /* */ }
+
+  return unlocked
+}
 
 export default function ProfilPage() {
   const navigate = useNavigate()
@@ -81,6 +153,8 @@ export default function ProfilPage() {
 
   const totalUnique = useMemo(() => new Set(entries.map(e => e.vegetalId)).size, [entries])
   const totalDays = useMemo(() => new Set(entries.map(e => e.date)).size, [entries])
+  const unlockedStickers = useMemo(() => computeUnlocked(entries, profil), [entries, profil])
+  const goToDepenses = useCallback(() => navigate('/depenses'), [navigate])
 
   const avatarSrc = (editing ? draft.avatar : profil.avatar) || DEFAULT_AVATAR
 
@@ -211,11 +285,36 @@ export default function ProfilPage() {
         )}
       </div>
 
-      {/* Carnet de santé link */}
+      {/* Carnet de santé + Dépenses links */}
       {!editing && (
-        <button className={styles.carnetLink} onClick={() => navigate('/carnet-sante')}>
-          🩺 Carnet de santé
-        </button>
+        <div className={styles.quickLinks}>
+          <button className={styles.carnetLink} onClick={() => navigate('/carnet-sante')}>
+            🩺 Carnet de santé
+          </button>
+          <button className={styles.carnetLink} onClick={goToDepenses}>
+            💰 Carnet de dépenses
+          </button>
+        </div>
+      )}
+
+      {/* Stickers */}
+      {!editing && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>🏅 Stickers débloqués</h2>
+          <p className={styles.stickersSubtitle}>{unlockedStickers.size} / {STICKER_DEFS.length} débloqués</p>
+          <div className={styles.stickersGrid}>
+            {STICKER_DEFS.map(s => {
+              const on = unlockedStickers.has(s.id)
+              return (
+                <div key={s.id} className={`${styles.stickerCard} ${on ? styles.stickerOn : styles.stickerOff}`} title={s.desc}>
+                  <span className={styles.stickerEmoji}>{s.emoji}</span>
+                  <span className={styles.stickerLabel}>{s.label}</span>
+                  {!on && <span className={styles.stickerLock}>🔒</span>}
+                </div>
+              )
+            })}
+          </div>
+        </div>
       )}
 
       {/* Actions */}

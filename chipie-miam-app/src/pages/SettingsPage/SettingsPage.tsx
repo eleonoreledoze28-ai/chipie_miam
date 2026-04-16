@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useProfil } from '../../hooks/useProfil'
 import {
   getPermission,
   requestPermission,
@@ -48,6 +49,8 @@ export default function SettingsPage() {
   const navigate = useNavigate()
   const fileRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<{ msg: string; error?: boolean } | null>(null)
+  const { profil } = useProfil()
+  const rabbitName = profil.nom || 'votre lapin'
 
   // Notification state
   const [permission, setPermission] = useState<NotificationPermission>(getPermission)
@@ -134,7 +137,7 @@ export default function SettingsPage() {
         ) : permission === 'default' ? (
           <div className={styles.notifPrompt}>
             <p className={styles.sectionDesc}>
-              Reçois des rappels pour nourrir Chipie et tes rendez-vous vétérinaires.
+              Reçois des rappels pour nourrir {rabbitName} et tes rendez-vous vétérinaires.
             </p>
             <button className={`${styles.btn} ${styles.btnNotif}`} onClick={() => { void handleRequestPermission() }}>
               🔔 Activer les notifications
@@ -152,7 +155,7 @@ export default function SettingsPage() {
             <div className={styles.notifRow}>
               <div className={styles.notifRowInfo}>
                 <span className={styles.notifRowLabel}>🥕 Rappel repas quotidien</span>
-                <span className={styles.notifRowDesc}>Chipie doit manger chaque jour</span>
+                <span className={styles.notifRowDesc}>{rabbitName} doit manger chaque jour</span>
               </div>
               <button
                 className={`${styles.toggle} ${notifSettings.feedingEnabled ? styles.toggleOn : ''}`}

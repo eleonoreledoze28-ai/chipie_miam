@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './EncyclopediePage.module.css'
 
@@ -242,6 +242,11 @@ export default function EncyclopediePage() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [openArticle, setOpenArticle] = useState<string | null>(null)
 
+  // Mark encyclopédie visited (sticker unlock)
+  useEffect(() => {
+    try { localStorage.setItem('chipie-encyclopedie-visited', '1') } catch { /* */ }
+  }, [])
+
   const filtered = activeCategory === 'all'
     ? ARTICLES
     : ARTICLES.filter(a => a.category === activeCategory)
@@ -264,6 +269,15 @@ export default function EncyclopediePage() {
         <span className={styles.headerEmoji}>📖</span>
         <h1 className={styles.title}>Encyclopédie Lapin</h1>
         <p className={styles.subtitle}>{ARTICLES.length} articles pour tout savoir</p>
+      </div>
+
+      {/* Quick shortcuts */}
+      <div className={styles.shortcuts}>
+        <button className={styles.shortcutBtn} onClick={() => navigate('/faq')}>
+          <span>🙋</span>
+          <div><span className={styles.shortcutTitle}>Questions fréquentes</span><span className={styles.shortcutSub}>20 réponses rapides</span></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14"><path d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+        </button>
       </div>
 
       {/* Lexique des races shortcut */}
@@ -292,6 +306,37 @@ export default function EncyclopediePage() {
           </button>
         ))}
       </div>
+
+      {/* Vidéos recommandées */}
+      {(activeCategory === 'all') && (
+        <div className={styles.videosSection}>
+          <h2 className={styles.videosTitle}>🎬 Vidéos recommandées</h2>
+          <p className={styles.videosSub}>Ressources sur YouTube pour approfondir</p>
+          {[
+            { title: 'Alimentation du lapin : les bases',       q: 'alimentation lapin légumes foin',         cat: '🥗 Alimentation' },
+            { title: 'Comprendre le comportement de son lapin', q: 'comportement lapin binky langage',         cat: '🐰 Comportement' },
+            { title: 'Soins et toilettage du lapin',            q: 'soin toilettage lapin brossage ongles',    cat: '✨ Soins' },
+            { title: 'Stase digestive : reconnaître l\'urgence',q: 'stase digestive lapin urgence vétérinaire',cat: '⚠️ Santé' },
+          ].map((v, i) => (
+            <a
+              key={i}
+              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(v.q)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.videoCard}
+            >
+              <div className={styles.videoThumb}>▶</div>
+              <div className={styles.videoInfo}>
+                <span className={styles.videoTitle}>{v.title}</span>
+                <span className={styles.videoCat}>{v.cat}</span>
+              </div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+                <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      )}
 
       {/* Articles */}
       <div className={styles.articles}>
