@@ -57,6 +57,9 @@ import BreakingNewsPage from './pages/BreakingNewsPage/BreakingNewsPage'
 import BulletinPage from './pages/BulletinPage/BulletinPage'
 import ProcesPage from './pages/ProcesPage/ProcesPage'
 import InfluenceusePage from './pages/InfluenceusePage/InfluenceusePage'
+import ContratPage from './pages/ContratPage/ContratPage'
+import GrevePage from './pages/GrevePage/GrevePage'
+import ParlementPage from './pages/ParlementPage/ParlementPage'
 
 const TUTORIAL_KEY = 'chipie-tutorial-done'
 
@@ -149,6 +152,9 @@ function App() {
         <Route path="bulletin" element={<BulletinPage />} />
         <Route path="proces" element={<ProcesPage />} />
         <Route path="influenceuse" element={<InfluenceusePage />} />
+        <Route path="contrat" element={<ContratPage />} />
+        <Route path="greve" element={<GrevePage />} />
+        <Route path="parlement" element={<ParlementPage />} />
       </Route>
     </Routes>
     </>

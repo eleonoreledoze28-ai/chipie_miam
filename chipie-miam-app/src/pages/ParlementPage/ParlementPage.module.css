@@ -1,0 +1,248 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.topBar { width: 100%; }
+.back { display: flex; align-items: center; gap: 4px; color: var(--accent-orange); font-size: 0.85rem; font-weight: 600; }
+
+/* Parliament header */
+.parlHeader {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(135deg, #1a1a3a, #2d2d5a);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.parlLogo { display: flex; align-items: center; gap: 10px; }
+.parlEmoji { font-size: 1.8rem; }
+.parlName { font-size: 0.68rem; font-weight: 800; letter-spacing: 1px; color: #fff; }
+.parlSub { font-size: 0.58rem; color: rgba(255,255,255,0.55); margin-top: 1px; }
+.parlDate { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-align: right; text-transform: capitalize; flex-shrink: 0; max-width: 80px; line-height: 1.4; }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  transition: all 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.tabActive {
+  background: var(--accent-orange);
+  color: #000;
+  border-color: var(--accent-orange);
+}
+
+.badge {
+  background: rgba(0,0,0,0.15);
+  border-radius: 20px;
+  padding: 1px 6px;
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+/* Session */
+.sessionInfo {
+  width: 100%;
+  max-width: 420px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  font-style: italic;
+  text-align: center;
+}
+
+.loisList {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.loiCard {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  border: 1.5px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-card);
+}
+
+.loiVoted {
+  border-color: rgba(240,165,58,0.3);
+}
+
+.loiHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.loiEmoji { font-size: 1.6rem; flex-shrink: 0; }
+.loiNumero { font-size: 0.6rem; font-weight: 700; color: var(--accent-orange); letter-spacing: 0.5px; }
+.loiTitre { font-size: 0.88rem; font-weight: 800; color: var(--text-primary); line-height: 1.3; }
+
+.loiVoteBadge {
+  margin-left: auto;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.badgePour { background: rgba(39,174,96,0.15); color: #27ae60; }
+.badgeContre { background: rgba(231,76,60,0.12); color: #e74c3c; }
+
+.loiTexte {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-style: italic;
+  border-left: 2px solid var(--border-color);
+  padding-left: 10px;
+}
+
+/* Vote actions */
+.voteActions { display: flex; gap: 8px; }
+
+.btnPour {
+  flex: 1;
+  padding: 10px;
+  background: rgba(39,174,96,0.12);
+  border: 1.5px solid rgba(39,174,96,0.3);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #27ae60;
+  text-align: center;
+  transition: all 150ms ease;
+}
+
+.btnContre {
+  flex: 1;
+  padding: 10px;
+  background: rgba(231,76,60,0.08);
+  border: 1.5px solid rgba(231,76,60,0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #e74c3c;
+  text-align: center;
+  transition: all 150ms ease;
+}
+
+.btnPour:active, .btnContre:active { transform: scale(0.96); }
+
+/* Résultat */
+.resultat { display: flex; flex-direction: column; gap: 6px; }
+
+.barTrack {
+  height: 8px;
+  background: rgba(231,76,60,0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barPour {
+  height: 100%;
+  background: #27ae60;
+  border-radius: 4px;
+  transition: width 600ms ease;
+}
+
+.barLabels { display: flex; justify-content: space-between; }
+.labelPour { font-size: 0.62rem; font-weight: 700; color: #27ae60; }
+.labelContre { font-size: 0.62rem; font-weight: 700; color: #e74c3c; }
+
+.resultatVerdict {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 6px 10px;
+  background: var(--bg-elevated, var(--bg-secondary));
+  border-radius: 6px;
+}
+
+/* Journal Officiel */
+.journal {
+  width: 100%;
+  max-width: 420px;
+  background: #fdfdf5;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid #d4c99a;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.journalHeader {
+  background: #1a1a3a;
+  color: #fff;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.journalTitle {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  margin-bottom: 2px;
+}
+
+.journalSub { font-size: 0.6rem; opacity: 0.55; }
+
+.emptyJournal {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.emptyEmoji { font-size: 2.5rem; }
+.emptyText { font-size: 0.85rem; font-weight: 700; color: #555; }
+.emptySub { font-size: 0.7rem; color: #999; line-height: 1.5; }
+
+.loisAdoptees { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+
+.loiAdoptee {
+  padding: 12px;
+  background: rgba(28,28,58,0.04);
+  border-radius: 8px;
+  border-left: 3px solid #1a1a3a;
+}
+
+.loiAdopteeHeader { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.loiAdopteeNum { font-size: 0.6rem; font-weight: 800; color: #1a1a3a; letter-spacing: 0.5px; }
+.loiAdopteeEmoji { font-size: 1rem; }
+.loiAdopteeTitre { font-size: 0.8rem; font-weight: 700; color: #1a1a3a; margin-bottom: 4px; }
+.loiAdopteeTexte { font-size: 0.68rem; color: #555; line-height: 1.5; font-style: italic; }

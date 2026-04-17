@@ -1,0 +1,190 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.topBar { width: 100%; }
+.back { display: flex; align-items: center; gap: 4px; color: var(--accent-orange); font-size: 0.85rem; font-weight: 600; }
+
+.header { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 400px; }
+.headerEmoji { font-size: 2rem; }
+.title { font-size: 1.25rem; font-weight: 800; color: var(--text-primary); }
+.subtitle { font-size: 0.78rem; color: var(--text-muted); }
+
+/* Status banner */
+.statusBanner {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid;
+}
+
+.statusEmoji { font-size: 2rem; flex-shrink: 0; }
+.statusInfo { flex: 1; }
+.statusLevel { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.5px; }
+.statusName { font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
+.statusPct { display: flex; flex-direction: column; align-items: center; }
+.pctNum { font-size: 1.2rem; font-weight: 800; }
+.pctLbl { font-size: 0.55rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+
+/* Happy card */
+.happyCard {
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+
+.happyEmoji { font-size: 3rem; }
+.happyTitle { font-size: 1rem; font-weight: 800; color: var(--text-primary); }
+.happyDesc { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+
+.tipsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.tip {
+  background: rgba(39,174,96,0.08);
+  border: 1px solid rgba(39,174,96,0.2);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #27ae60;
+  text-align: center;
+}
+
+/* Préavis */
+.preavis {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(231,76,60,0.06);
+  border: 1px solid rgba(231,76,60,0.2);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.preavisTitle {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #e74c3c;
+  margin-bottom: 8px;
+}
+
+.preavisText {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Revendications */
+.revendications {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.revenCard {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  border: 1.5px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: opacity 300ms ease;
+  box-shadow: var(--shadow-card);
+}
+
+.revenDone {
+  opacity: 0.5;
+}
+
+.revenTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.revenEmoji { font-size: 1.5rem; flex-shrink: 0; padding-top: 2px; }
+.revenInfo { flex: 1; }
+.revenTitre { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+
+.revenGravite { display: flex; align-items: center; gap: 4px; }
+.graviteDot { width: 6px; height: 6px; border-radius: 50%; }
+.graviteLabel { font-size: 0.6rem; font-weight: 600; color: var(--text-muted); }
+
+.revenDetail { font-size: 0.7rem; color: var(--text-muted); line-height: 1.5; font-style: italic; }
+
+.checkBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: all 150ms ease;
+}
+
+.checkBtnDone {
+  background: #27ae60;
+  border-color: #27ae60;
+  color: #fff;
+}
+
+/* Resolved */
+.resolvedCard {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(39,174,96,0.08);
+  border: 1.5px solid rgba(39,174,96,0.3);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.resolvedEmoji { font-size: 2.5rem; }
+.resolvedTitle { font-size: 1rem; font-weight: 800; color: #27ae60; }
+.resolvedDesc { font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5; }
+
+.resolveBtn {
+  width: 100%;
+  max-width: 400px;
+  padding: 14px;
+  background: var(--accent-orange);
+  color: #000;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  text-align: center;
+}
