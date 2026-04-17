@@ -268,6 +268,12 @@ export default function GuidePage() {
           <button className={styles.encyclopediaLink} onClick={() => navigate('/encyclopedie')}>
             📖 Encyclopédie lapin
           </button>
+          <button className={styles.encyclopediaLink} onClick={() => navigate('/conseils-saison')}>
+            🍃 Conseils de saison
+          </button>
+          <button className={styles.encyclopediaLink} onClick={() => navigate('/foin')}>
+            🌾 Stock de foin
+          </button>
         </div>
 
         <div className={styles.summaryCard}>

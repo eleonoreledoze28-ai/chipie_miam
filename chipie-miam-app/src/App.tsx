@@ -43,6 +43,10 @@ import MaladiesPage from './pages/MaladiesPage/MaladiesPage'
 import EvenementsPage from './pages/EvenementsPage/EvenementsPage'
 import SonsPage from './pages/SonsPage/SonsPage'
 import ComparateurRacesPage from './pages/ComparateurRacesPage/ComparateurRacesPage'
+import FoinPage from './pages/FoinPage/FoinPage'
+import ConseilsSaisonPage from './pages/ConseilsSaisonPage/ConseilsSaisonPage'
+import SurnomPage from './pages/SurnomPage/SurnomPage'
+import AlbumAnniversairePage from './pages/AlbumAnniversairePage/AlbumAnniversairePage'
 
 const TUTORIAL_KEY = 'chipie-tutorial-done'
 
@@ -121,6 +125,10 @@ function App() {
         <Route path="evenements" element={<EvenementsPage />} />
         <Route path="sons" element={<SonsPage />} />
         <Route path="comparateur-races" element={<ComparateurRacesPage />} />
+        <Route path="foin" element={<FoinPage />} />
+        <Route path="conseils-saison" element={<ConseilsSaisonPage />} />
+        <Route path="surnom" element={<SurnomPage />} />
+        <Route path="album-anniversaire" element={<AlbumAnniversairePage />} />
       </Route>
     </Routes>
     </>

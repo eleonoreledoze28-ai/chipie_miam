@@ -234,6 +234,10 @@ export default function AnniversairePage() {
               {profil.nom} a l'équivalent d'un humain de <strong>~{humanAge} ans</strong>.
             </p>
           </div>
+
+          <button className={styles.noDateBtn} onClick={() => navigate('/album-anniversaire')}>
+            🎂 Voir l'album anniversaire
+          </button>
         </>
       )}
     </div>

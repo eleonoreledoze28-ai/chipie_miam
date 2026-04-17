@@ -1,0 +1,263 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-orange);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerEmoji { font-size: 2rem; }
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+/* Status card */
+.statusCard {
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  border: 1.5px solid var(--border-subtle);
+}
+
+.statusEmpty {
+  background: var(--bg-card);
+}
+
+.statusOk {
+  background: color-mix(in srgb, #4caf50 8%, var(--bg-card));
+  border-color: color-mix(in srgb, #4caf50 40%, transparent);
+}
+
+.statusLow {
+  background: color-mix(in srgb, var(--accent-orange) 8%, var(--bg-card));
+  border-color: color-mix(in srgb, var(--accent-orange) 40%, transparent);
+}
+
+.statusIcon { font-size: 2rem; }
+
+.statusTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.statusSub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+}
+
+.statBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.statVal {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.statLbl {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.statDivider {
+  width: 1px;
+  height: 30px;
+  background: var(--border-subtle);
+}
+
+.alertMsg {
+  font-size: 0.78rem;
+  color: var(--accent-orange);
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Info card */
+.infoCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  border: 1px solid var(--border-subtle);
+}
+
+.infoIcon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+.infoText {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Add button */
+.addBtn {
+  padding: 12px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Form */
+.form {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.formInput {
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.saveBtn {
+  padding: 11px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+/* History */
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.historyTitle {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  border: 1px solid var(--border-subtle);
+}
+
+.historyEmoji { font-size: 1.3rem; flex-shrink: 0; }
+
+.historyInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.historyKg {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.historyDate {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.deleteBtn {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 4px 8px;
+}
+
+.deleteBtn:active { color: var(--accent-red, #e74c3c); }

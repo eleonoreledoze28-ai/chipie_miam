@@ -306,6 +306,9 @@ export default function ProfilPage() {
           <button className={styles.carnetLink} onClick={() => navigate('/sons')}>
             🔊 Sons de lapin
           </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/surnom')}>
+            ✨ Générateur de surnom
+          </button>
         </div>
       )}
 
