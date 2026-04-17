@@ -346,14 +346,80 @@
   opacity: 0.7;
 }
 
-/* ===== Quick links (carnet santé + dépenses) ===== */
+/* ===== Quick links ===== */
 .quickLinks {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
   width: 100%;
   max-width: 360px;
   margin-top: 20px;
+}
+
+.qlSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qlTitle {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--ql-color, var(--accent-orange));
+  padding-left: 2px;
+}
+
+.qlGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.qlCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 6px 10px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-subtle);
+  transition: all 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.qlCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--ql-color, var(--accent-orange));
+  opacity: 0.6;
+}
+
+.qlCard:active {
+  background: color-mix(in srgb, var(--ql-color, var(--accent-orange)) 10%, var(--bg-card));
+  border-color: var(--ql-color, var(--accent-orange));
+  transform: scale(0.95);
+}
+
+.qlEmoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.qlLabel {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.2;
 }
 
 /* ===== Stickers ===== */

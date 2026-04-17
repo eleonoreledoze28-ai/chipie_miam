@@ -297,60 +297,122 @@ export default function ProfilPage() {
         )}
       </div>
 
-      {/* Carnet de santé + Dépenses links */}
+      {/* Quick access sections */}
       {!editing && (
         <div className={styles.quickLinks}>
-          <button className={styles.carnetLink} onClick={() => navigate('/carnet-sante')}>
-            🩺 Carnet de santé
-          </button>
-          <button className={styles.carnetLink} onClick={goToDepenses}>
-            💰 Carnet de dépenses
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/anniversaire')}>
-            🎂 Anniversaire
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/carte-identite')}>
-            🪪 Carte d'identité
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/evenements')}>
-            📅 Événements
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/sons')}>
-            🔊 Sons de lapin
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/surnom')}>
-            ✨ Générateur de surnom
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/conte')}>
-            📖 Conte de la semaine
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/facts')}>
-            🔮 Chipie Facts secrets
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/deguisement')}>
-            🎭 Chipie se déguise
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/documentaire')}>
-            🎙️ Mode documentaire
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/lettre')}>
-            💌 Chipie t'écrit
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/tinder-legumes')}>
-            👈👉 Tinder des légumes
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/breaking-news')}>
-            📺 Chipie Breaking News
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/bulletin')}>
-            📋 Bulletin de notes
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/proces')}>
-            ⚖️ Le procès de {profil.nom}
-          </button>
-          <button className={styles.carnetLink} onClick={() => navigate('/influenceuse')}>
-            📸 {profil.nom} influenceuse
-          </button>
+
+          <div className={styles.qlSection}>
+            <p className={styles.qlTitle} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>📋 Quotidien</p>
+            <div className={styles.qlGrid}>
+              <button className={styles.qlCard} onClick={() => navigate('/carnet-sante')} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🩺</span>
+                <span className={styles.qlLabel}>Carnet santé</span>
+              </button>
+              <button className={styles.qlCard} onClick={goToDepenses} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>💰</span>
+                <span className={styles.qlLabel}>Dépenses</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/evenements')} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>📅</span>
+                <span className={styles.qlLabel}>Événements</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/courses')} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🛒</span>
+                <span className={styles.qlLabel}>Courses</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/foin')} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🌾</span>
+                <span className={styles.qlLabel}>Stock foin</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/conseils-saison')} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🌿</span>
+                <span className={styles.qlLabel}>Saison</span>
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.qlSection}>
+            <p className={styles.qlTitle} style={{ '--ql-color': '#a855f7' } as React.CSSProperties}>🐰 {profil.nom}</p>
+            <div className={styles.qlGrid}>
+              <button className={styles.qlCard} onClick={() => navigate('/anniversaire')} style={{ '--ql-color': '#a855f7' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🎂</span>
+                <span className={styles.qlLabel}>Anniversaire</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/carte-identite')} style={{ '--ql-color': '#a855f7' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🪪</span>
+                <span className={styles.qlLabel}>Carte d'identité</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/sons')} style={{ '--ql-color': '#a855f7' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🔊</span>
+                <span className={styles.qlLabel}>Sons</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/surnom')} style={{ '--ql-color': '#a855f7' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>✨</span>
+                <span className={styles.qlLabel}>Surnom</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/deguisement')} style={{ '--ql-color': '#a855f7' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🎭</span>
+                <span className={styles.qlLabel}>Déguisement</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/album-anniversaire')} style={{ '--ql-color': '#a855f7' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>📸</span>
+                <span className={styles.qlLabel}>Album</span>
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.qlSection}>
+            <p className={styles.qlTitle} style={{ '--ql-color': '#22c55e' } as React.CSSProperties}>📚 Contenu</p>
+            <div className={styles.qlGrid}>
+              <button className={styles.qlCard} onClick={() => navigate('/conte')} style={{ '--ql-color': '#22c55e' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>📖</span>
+                <span className={styles.qlLabel}>Conte</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/facts')} style={{ '--ql-color': '#22c55e' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🔮</span>
+                <span className={styles.qlLabel}>Facts secrets</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/lettre')} style={{ '--ql-color': '#22c55e' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>💌</span>
+                <span className={styles.qlLabel}>Lettre</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/documentaire')} style={{ '--ql-color': '#22c55e' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🎙️</span>
+                <span className={styles.qlLabel}>Documentaire</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/tinder-legumes')} style={{ '--ql-color': '#22c55e' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>👈👉</span>
+                <span className={styles.qlLabel}>Tinder légumes</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/races')} style={{ '--ql-color': '#22c55e' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🐇</span>
+                <span className={styles.qlLabel}>Races</span>
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.qlSection}>
+            <p className={styles.qlTitle} style={{ '--ql-color': '#ef4444' } as React.CSSProperties}>🎬 Show</p>
+            <div className={styles.qlGrid}>
+              <button className={styles.qlCard} onClick={() => navigate('/breaking-news')} style={{ '--ql-color': '#ef4444' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>📺</span>
+                <span className={styles.qlLabel}>Breaking News</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/bulletin')} style={{ '--ql-color': '#ef4444' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>📋</span>
+                <span className={styles.qlLabel}>Bulletin</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/proces')} style={{ '--ql-color': '#ef4444' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>⚖️</span>
+                <span className={styles.qlLabel}>Le procès</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/influenceuse')} style={{ '--ql-color': '#ef4444' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🌟</span>
+                <span className={styles.qlLabel}>Influenceuse</span>
+              </button>
+            </div>
+          </div>
+
         </div>
       )}
 
