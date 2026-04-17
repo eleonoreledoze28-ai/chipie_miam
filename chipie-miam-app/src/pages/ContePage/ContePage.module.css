@@ -1,0 +1,101 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topBar { display: flex; align-items: center; }
+
+.back {
+  display: flex; align-items: center; gap: 4px;
+  color: var(--accent-orange); font-size: 0.85rem; font-weight: 600;
+}
+
+.header { display: flex; align-items: center; gap: 12px; }
+.headerEmoji { font-size: 2rem; }
+.title { font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin: 0; }
+.subtitle { font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0; }
+
+/* Story card */
+.storyCard {
+  background: linear-gradient(160deg, #fff9f0 0%, #ffecd2 100%);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  border: 1.5px solid color-mix(in srgb, var(--accent-orange) 30%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 4px 20px rgba(255, 107, 53, 0.08);
+}
+
+.storyTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid var(--accent-orange);
+  flex-shrink: 0;
+}
+
+.storyLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px;
+}
+
+.storyTitle {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #7c2d12;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Decorative divider */
+.storyBody {
+  border-top: 1px dashed color-mix(in srgb, var(--accent-orange) 30%, transparent);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.para {
+  font-size: 0.88rem;
+  color: #3d2a1e;
+  margin: 0;
+  line-height: 1.7;
+  text-indent: 1.2em;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.storyFooter {
+  font-size: 0.68rem;
+  color: var(--accent-orange);
+  font-style: italic;
+  margin: 0;
+  text-align: center;
+  border-top: 1px dashed color-mix(in srgb, var(--accent-orange) 25%, transparent);
+  padding-top: 10px;
+}
+
+/* Download button */
+.downloadBtn {
+  padding: 14px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+}

@@ -309,6 +309,12 @@ export default function ProfilPage() {
           <button className={styles.carnetLink} onClick={() => navigate('/surnom')}>
             ✨ Générateur de surnom
           </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/conte')}>
+            📖 Conte de la semaine
+          </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/facts')}>
+            🔮 Chipie Facts secrets
+          </button>
         </div>
       )}
 

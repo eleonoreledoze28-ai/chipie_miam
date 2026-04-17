@@ -47,6 +47,8 @@ import FoinPage from './pages/FoinPage/FoinPage'
 import ConseilsSaisonPage from './pages/ConseilsSaisonPage/ConseilsSaisonPage'
 import SurnomPage from './pages/SurnomPage/SurnomPage'
 import AlbumAnniversairePage from './pages/AlbumAnniversairePage/AlbumAnniversairePage'
+import FactsPage from './pages/FactsPage/FactsPage'
+import ContePage from './pages/ContePage/ContePage'
 
 const TUTORIAL_KEY = 'chipie-tutorial-done'
 
@@ -129,6 +131,8 @@ function App() {
         <Route path="conseils-saison" element={<ConseilsSaisonPage />} />
         <Route path="surnom" element={<SurnomPage />} />
         <Route path="album-anniversaire" element={<AlbumAnniversairePage />} />
+        <Route path="facts" element={<FactsPage />} />
+        <Route path="conte" element={<ContePage />} />
       </Route>
     </Routes>
     </>
