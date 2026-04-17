@@ -22,7 +22,7 @@
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  padding: 8px 22px;
+  padding: 8px 10px;
   color: var(--text-muted);
   transition: color 200ms ease;
   -webkit-tap-highlight-color: transparent;

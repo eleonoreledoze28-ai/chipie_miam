@@ -1,0 +1,334 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-orange);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.clearBtn {
+  padding: 7px 14px;
+  background: var(--accent-red-dim);
+  color: var(--accent-red);
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid color-mix(in srgb, var(--accent-red) 30%, transparent);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerEmoji { font-size: 2rem; }
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+}
+
+.tabBtn {
+  flex: 1;
+  padding: 9px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.tabActive {
+  background: var(--accent-orange);
+  color: #fff;
+}
+
+.badge {
+  background: rgba(255,255,255,0.25);
+  border-radius: 50px;
+  padding: 1px 7px;
+  font-size: 0.72rem;
+}
+
+/* Shopping list */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.listItemChecked {
+  opacity: 0.55;
+}
+
+.listItemChecked .listItemName {
+  text-decoration: line-through;
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.checkboxDone {
+  background: var(--accent-green);
+  border-color: var(--accent-green);
+}
+
+.listItemInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.listItemName {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.listItemCat {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.restrictionBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: var(--radius-pill);
+  border: 1px solid;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.deleteBtn {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  padding: 4px 6px;
+  flex-shrink: 0;
+}
+.deleteBtn:active { color: var(--accent-red); }
+
+/* Explorer */
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+.searchInput::placeholder { color: var(--text-muted); }
+.searchInput:focus { border-color: var(--accent-orange); outline: none; }
+
+.filters {
+  display: flex;
+  gap: 8px;
+}
+
+.filterBtn {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.filterActive {
+  border-color: var(--accent-orange);
+  background: var(--accent-orange-dim);
+  color: var(--accent-orange);
+}
+
+.catGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.catTitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 2px 2px;
+}
+
+.catCount {
+  background: var(--bg-elevated);
+  border-radius: 50px;
+  padding: 1px 7px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.explorerItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  border: 1px solid var(--border-subtle);
+}
+
+.explorerInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.explorerName {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.explorerMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.seasonBadge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+}
+
+.seasonOk {
+  background: var(--accent-green-dim);
+  color: var(--accent-green);
+}
+
+.seasonOut {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+}
+
+.addBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-orange);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.addBtnDone {
+  background: var(--accent-green);
+  font-size: 0.85rem;
+}
+
+.addBtn:active:not(:disabled) { opacity: 0.8; }
+
+/* Empty */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 50px 20px;
+  color: var(--text-muted);
+}
+
+.emptyIcon { font-size: 2.5rem; opacity: 0.5; }
+.empty p { font-size: 0.88rem; }
+
+.emptyBtn {
+  padding: 10px 22px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
