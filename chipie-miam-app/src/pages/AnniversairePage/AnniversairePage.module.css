@@ -1,0 +1,320 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-orange);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ── Confetti ── */
+.confettiWrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.confetto {
+  position: absolute;
+  top: -20px;
+  border-radius: 3px;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; }
+}
+
+/* ── Hero ── */
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 0 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.avatarWrap {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--border-subtle);
+}
+
+.avatarRing {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--accent-orange);
+  box-shadow: 0 0 0 4px var(--accent-orange-dim), 0 0 20px var(--accent-orange-dim);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px var(--accent-orange-dim), 0 0 20px var(--accent-orange-dim); }
+  50%       { box-shadow: 0 0 0 8px var(--accent-orange-dim), 0 0 40px var(--accent-orange-dim); }
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.birthdayTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.birthdayName {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+.birthdayAge {
+  font-size: 0.88rem;
+  color: var(--accent-orange);
+  font-weight: 700;
+}
+
+.countdownTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.countdownName {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* ── Countdown card ── */
+.countdownCard {
+  background: var(--accent-orange);
+  border-radius: var(--radius-xl);
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.daysNumber {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+}
+
+.daysLabel {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+}
+
+.daysDate {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+}
+
+/* ── Info grid ── */
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.infoCard {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.infoEmoji { font-size: 1.3rem; }
+
+.infoValue {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.infoLabel {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ── Generic cards ── */
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  z-index: 1;
+}
+
+.cardEmoji { font-size: 1.5rem; flex-shrink: 0; }
+
+.cardTitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0 0 4px;
+}
+
+.cardText {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Age explanation ── */
+.ageCard {
+  background: var(--accent-violet-dim);
+  border: 1px solid color-mix(in srgb, var(--accent-violet) 25%, transparent);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.ageCardTitle {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--accent-violet-bright);
+  margin: 0 0 8px;
+}
+
+.ageCardText {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Birthday gift ideas ── */
+.ideesCard {
+  background: var(--accent-green-dim);
+  border: 1px solid color-mix(in srgb, var(--accent-green) 25%, transparent);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.ideesTitle {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--accent-green);
+  margin: 0 0 10px;
+}
+
+.ideesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ideesList li {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  padding-left: 16px;
+  position: relative;
+}
+
+.ideesList li::before {
+  content: '🐾';
+  position: absolute;
+  left: -2px;
+  font-size: 0.7rem;
+  top: 1px;
+}
+
+/* ── No date ── */
+.noDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.noDateEmoji { font-size: 3rem; opacity: 0.5; }
+
+.noDateTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.noDateText {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.noDateBtn {
+  padding: 11px 24px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-top: 4px;
+}

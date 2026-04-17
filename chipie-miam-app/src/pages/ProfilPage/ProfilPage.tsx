@@ -294,6 +294,12 @@ export default function ProfilPage() {
           <button className={styles.carnetLink} onClick={goToDepenses}>
             💰 Carnet de dépenses
           </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/anniversaire')}>
+            🎂 Anniversaire
+          </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/carte-identite')}>
+            🪪 Carte d'identité
+          </button>
         </div>
       )}
 
