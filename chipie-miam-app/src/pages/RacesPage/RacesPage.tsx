@@ -401,6 +401,17 @@ export default function RacesPage() {
           <p className={styles.noResult}>Aucune race trouvée.</p>
         )}
       </div>
+
+      <button className={styles.comparateurLink} onClick={() => navigate('/comparateur-races')}>
+        <span>⚖️</span>
+        <div>
+          <span className={styles.comparateurLinkTitle}>Comparer 2 races</span>
+          <span className={styles.comparateurLinkSub}>Tableau comparatif côte à côte</span>
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+          <path d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
     </div>
   )
 }

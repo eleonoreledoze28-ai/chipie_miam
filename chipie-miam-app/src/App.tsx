@@ -41,6 +41,8 @@ import AnniversairePage from './pages/AnniversairePage/AnniversairePage'
 import CarteIdentitePage from './pages/CarteIdentitePage/CarteIdentitePage'
 import MaladiesPage from './pages/MaladiesPage/MaladiesPage'
 import EvenementsPage from './pages/EvenementsPage/EvenementsPage'
+import SonsPage from './pages/SonsPage/SonsPage'
+import ComparateurRacesPage from './pages/ComparateurRacesPage/ComparateurRacesPage'
 
 const TUTORIAL_KEY = 'chipie-tutorial-done'
 
@@ -117,6 +119,8 @@ function App() {
         <Route path="carte-identite" element={<CarteIdentitePage />} />
         <Route path="maladies" element={<MaladiesPage />} />
         <Route path="evenements" element={<EvenementsPage />} />
+        <Route path="sons" element={<SonsPage />} />
+        <Route path="comparateur-races" element={<ComparateurRacesPage />} />
       </Route>
     </Routes>
     </>

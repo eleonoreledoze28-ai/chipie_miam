@@ -1,0 +1,294 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-orange);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.resetBtn {
+  padding: 7px 14px;
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerEmoji { font-size: 2rem; }
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+/* ── Selection slots ── */
+.slots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slot {
+  flex: 1;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 14px 12px;
+  border: 1.5px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 90px;
+  justify-content: center;
+  position: relative;
+  border-color: color-mix(in srgb, var(--rc, var(--border-color)) 50%, transparent);
+  background: color-mix(in srgb, var(--rc, transparent) 5%, var(--bg-card));
+}
+
+.slotEmpty { cursor: pointer; border-style: dashed; }
+.slotActive { border-color: var(--accent-orange); border-style: solid; }
+
+.slotPlus { font-size: 1.5rem; color: var(--text-muted); font-weight: 300; }
+.slotLabel { font-size: 0.72rem; color: var(--text-muted); font-weight: 700; }
+.slotEmoji { font-size: 1.6rem; }
+.slotName {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.slotClear {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  padding: 2px 5px;
+}
+.slotClear:active { color: var(--accent-red); }
+
+.vs {
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ── Race picker ── */
+.picker {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  border: 1px solid var(--border-subtle);
+}
+
+.pickerLabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+}
+
+.pickerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.pickerItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 6px;
+  background: var(--bg-elevated);
+  border: 1.5px solid color-mix(in srgb, var(--rc, var(--border-subtle)) 30%, transparent);
+  border-radius: var(--radius-md);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pickerItem:active {
+  background: color-mix(in srgb, var(--rc, var(--accent-orange)) 15%, transparent);
+}
+
+.pickerEmoji { font-size: 1.3rem; }
+
+.pickerName {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.pickerPoids {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+/* ── Comparison rows ── */
+.comparison {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rowLabel {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0;
+}
+
+.rowDesc {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin: -4px 0 0;
+  font-style: italic;
+}
+
+.rowValues {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.val {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  padding: 8px 10px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.valWin {
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  font-weight: 800;
+}
+
+.winTag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+/* Score row */
+.scoreCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 8px 10px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-subtle);
+}
+
+.scoreWin {
+  border-color: var(--accent-orange);
+  background: var(--accent-orange-dim);
+}
+
+.starBar {
+  display: flex;
+  gap: 4px;
+}
+
+.starDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+}
+
+.scoreNum {
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* Bool row */
+.boolVal {
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding: 8px 10px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-subtle);
+  text-align: center;
+}
+
+/* List row */
+.listCol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.listCol li {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.4;
+}
+
+.listCol li::before {
+  content: '·';
+  position: absolute;
+  left: 2px;
+  color: var(--rc, var(--accent-orange));
+  font-weight: 900;
+}
