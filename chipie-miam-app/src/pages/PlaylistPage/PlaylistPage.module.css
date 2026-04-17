@@ -1,0 +1,237 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.topBar { width: 100%; }
+.back { display: flex; align-items: center; gap: 4px; color: var(--accent-orange); font-size: 0.85rem; font-weight: 600; }
+
+/* Album header */
+.albumHeader {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+}
+
+.albumArt {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  border: 1.5px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.albumEmoji { font-size: 2.5rem; }
+
+.nowPlayingDot {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+
+.albumInfo { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+
+.albumLabel {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+}
+
+.albumTitle {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.albumArtist {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.genreBadge {
+  align-self: flex-start;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  margin-top: 2px;
+}
+
+/* Mood */
+.moodBanner {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.moodEmoji { font-size: 1.4rem; }
+.moodLabel { font-size: 0.55rem; font-weight: 800; letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase; }
+.moodText { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); margin-top: 1px; }
+
+/* Description */
+.description {
+  width: 100%;
+  max-width: 420px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Track list */
+.trackList {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+.trackRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: background 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.trackRow:last-child { border-bottom: none; }
+.trackRow:active { background: var(--bg-elevated, var(--bg-secondary)); }
+
+.trackActive { background: var(--bg-elevated, var(--bg-secondary)); }
+
+.trackNum {
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.numText { font-size: 0.72rem; color: var(--text-muted); }
+
+/* Animated bars */
+.playingBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.playingBars span {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent-orange);
+  animation: bar 0.8s ease-in-out infinite;
+}
+
+.playingBars span:nth-child(1) { height: 100%; animation-delay: 0s; }
+.playingBars span:nth-child(2) { height: 60%; animation-delay: 0.2s; }
+.playingBars span:nth-child(3) { height: 80%; animation-delay: 0.4s; }
+
+@keyframes bar {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.3); }
+}
+
+.trackInfo { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+
+.trackTitle {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  transition: color 200ms ease;
+}
+
+.trackArtiste { font-size: 0.65rem; color: var(--text-muted); }
+
+.progressBar {
+  height: 2px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 80ms linear;
+}
+
+.trackDuree {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  min-width: 28px;
+  text-align: right;
+}
+
+/* Genre explorer */
+.genres {
+  width: 100%;
+  max-width: 420px;
+}
+
+.genresTitle {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+}
+
+.genresList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.genreTag {
+  padding: 6px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}

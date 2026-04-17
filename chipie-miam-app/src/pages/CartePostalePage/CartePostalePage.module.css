@@ -1,0 +1,246 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.topBar { width: 100%; }
+.back { display: flex; align-items: center; gap: 4px; color: var(--accent-orange); font-size: 0.85rem; font-weight: 600; }
+
+.header { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 400px; }
+.headerEmoji { font-size: 2rem; }
+.title { font-size: 1.2rem; font-weight: 800; color: var(--text-primary); }
+.subtitle { font-size: 0.78rem; color: var(--text-muted); }
+
+/* Flip card */
+.cardScene {
+  width: 100%;
+  max-width: 400px;
+  height: 230px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 14px;
+}
+
+.cardFlipped {
+  transform: rotateY(180deg);
+}
+
+.cardFront,
+.cardBack {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+
+/* Front */
+.cardFront {
+  display: flex;
+  flex-direction: column;
+}
+
+.photo {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.photoEmoji {
+  font-size: 5rem;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+.photoFlag {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 1.8rem;
+}
+
+.photoPays {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  padding: 20px 14px 8px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.frontBottom {
+  background: #fdfdf5;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #e8e0c8;
+}
+
+.tapHint { font-size: 0.6rem; color: #aaa; font-style: italic; }
+.paysLabel { font-size: 0.75rem; font-weight: 700; color: #444; }
+
+/* Back */
+.cardBack {
+  transform: rotateY(180deg);
+  background: #fdfdf5;
+  display: flex;
+  border: 1px solid #d4c99a;
+}
+
+.backLeft {
+  flex: 1;
+  padding: 12px 10px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-right: 1px dashed #ccc;
+}
+
+.backTo { font-size: 0.55rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+.backName { font-size: 0.88rem; font-weight: 800; color: #1a1a2e; }
+.backAddr { font-size: 0.6rem; color: #888; margin-bottom: 2px; }
+
+.divider { height: 1px; background: #ddd; margin: 4px 0; }
+
+.backMessage {
+  font-size: 0.65rem;
+  color: #444;
+  line-height: 1.5;
+  font-style: italic;
+  font-family: Georgia, serif;
+  flex: 1;
+}
+
+.backNote { display: flex; flex-direction: column; gap: 1px; margin-top: 4px; }
+.noteStars { font-size: 0.65rem; color: #f0a53a; letter-spacing: 1px; }
+.noteLabel { font-size: 0.55rem; color: #888; }
+
+.backRight {
+  width: 80px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stamp {
+  width: 56px;
+  height: 56px;
+  border: 2px solid #c00;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px;
+}
+
+.stampEmoji { font-size: 1.4rem; line-height: 1; }
+.stampPays { font-size: 0.38rem; font-weight: 800; color: #c00; letter-spacing: 0.5px; text-align: center; }
+
+.tampon {
+  border: 1.5px solid #1a1a2e;
+  border-radius: 50%;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+}
+
+.tamponLine { font-size: 0.42rem; font-weight: 800; color: #1a1a2e; letter-spacing: 0.5px; }
+.tamponDate { font-size: 0.4rem; color: #1a1a2e; }
+
+.backTap { font-size: 0.5rem; color: #aaa; font-style: italic; margin-top: auto; }
+
+/* Next destination */
+.nextCard {
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+.nextEmoji { font-size: 1.6rem; }
+.nextTitle { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); }
+.nextSub { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+
+/* Stamp collection */
+.collection {
+  width: 100%;
+  max-width: 400px;
+}
+
+.collectionTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+}
+
+.stampsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stampMini {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border: 2px solid transparent;
+}
+
+.stampActive {
+  background: rgba(240,165,58,0.15);
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 8px rgba(240,165,58,0.3);
+}
+
+.stampVisited {
+  background: var(--bg-card);
+  border-color: var(--border-subtle);
+  opacity: 0.7;
+}
+
+.stampLocked {
+  background: var(--bg-secondary);
+  border-color: var(--border-subtle);
+  opacity: 0.25;
+  filter: grayscale(1);
+}
