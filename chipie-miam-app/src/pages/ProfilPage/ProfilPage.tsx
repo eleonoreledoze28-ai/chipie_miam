@@ -1,7 +1,8 @@
-import { useRef, useState, useMemo, useCallback } from 'react'
+import { useRef, useState, useMemo, useCallback, useEffect } from 'react'
+import { COSTUMES } from '../DeguisementPage/DeguisementPage'
 import { useNavigate } from 'react-router-dom'
 import { useProfil } from '../../hooks/useProfil'
-import { useProfiles } from '../../hooks/useProfiles'
+import { useProfiles, getActiveProfileId } from '../../hooks/useProfiles'
 import { useJournal } from '../../hooks/useJournal'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
@@ -157,6 +158,14 @@ export default function ProfilPage() {
   const goToDepenses = useCallback(() => navigate('/depenses'), [navigate])
 
   const avatarSrc = (editing ? draft.avatar : profil.avatar) || DEFAULT_AVATAR
+  const [costumeEmoji, setCostumeEmoji] = useState<string>(() => {
+    const id = localStorage.getItem(`chipie-costume-${getActiveProfileId()}`) ?? 'none'
+    return COSTUMES.find(c => c.id === id)?.emoji ?? ''
+  })
+  useEffect(() => {
+    const id = localStorage.getItem(`chipie-costume-${getActiveProfileId()}`) ?? 'none'
+    setCostumeEmoji(COSTUMES.find(c => c.id === id)?.emoji ?? '')
+  }, [])
 
   return (
     <div className={styles.page}>
@@ -195,6 +204,9 @@ export default function ProfilPage() {
       {/* Avatar */}
       <div className={`${styles.avatar} ${editing ? styles.avatarEditing : ''}`} onClick={editing ? () => fileRef.current?.click() : undefined}>
         <img src={avatarSrc} alt={profil.nom} className={styles.avatarImg} />
+        {costumeEmoji && !editing && (
+          <span className={styles.costumePin}>{costumeEmoji}</span>
+        )}
         {editing && (
           <div className={styles.avatarOverlay}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
@@ -314,6 +326,18 @@ export default function ProfilPage() {
           </button>
           <button className={styles.carnetLink} onClick={() => navigate('/facts')}>
             🔮 Chipie Facts secrets
+          </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/deguisement')}>
+            🎭 Chipie se déguise
+          </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/documentaire')}>
+            🎙️ Mode documentaire
+          </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/lettre')}>
+            💌 Chipie t'écrit
+          </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/tinder-legumes')}>
+            👈👉 Tinder des légumes
           </button>
         </div>
       )}

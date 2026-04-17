@@ -1,0 +1,94 @@
+.page { padding: 10px 16px 90px; display: flex; flex-direction: column; gap: 14px; }
+.topBar { display: flex; align-items: center; }
+.back { display: flex; align-items: center; gap: 4px; color: var(--accent-orange); font-size: 0.85rem; font-weight: 600; }
+.header { display: flex; align-items: center; gap: 12px; }
+.headerEmoji { font-size: 2rem; }
+.title { font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin: 0; }
+.subtitle { font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0; }
+
+/* Letter */
+.letter {
+  background: linear-gradient(160deg, #fdf6e3 0%, #faf0d0 100%);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  border: 1.5px solid #d4a855;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(212, 168, 85, 0.15);
+  position: relative;
+}
+
+.letter::before {
+  content: '💌';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.6rem;
+  background: #fdf6e3;
+  padding: 0 6px;
+  border-radius: 50%;
+}
+
+.letterTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #d4a855;
+}
+
+.avatar {
+  width: 46px; height: 46px; border-radius: 50%; object-fit: cover;
+  border: 2px solid #d4a855; flex-shrink: 0;
+}
+
+.from { font-size: 0.8rem; font-weight: 800; color: #7c5c2e; margin: 0; }
+.date { font-size: 0.68rem; color: #9a7a4e; margin: 2px 0 0; font-style: italic; }
+
+.salutation {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #3d2a1e;
+  margin: 0;
+  font-family: Georgia, serif;
+}
+
+.para {
+  font-size: 0.85rem;
+  color: #3d2a1e;
+  margin: 0;
+  line-height: 1.7;
+  font-family: Georgia, serif;
+  text-indent: 1.2em;
+}
+
+.signature {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #7c5c2e;
+  margin: 0;
+  font-family: Georgia, serif;
+  padding-top: 8px;
+  border-top: 1px dashed #d4a855;
+  line-height: 1.6;
+}
+
+.ps {
+  font-size: 0.75rem;
+  color: #9a7a4e;
+  margin: 0;
+  font-style: italic;
+  font-family: Georgia, serif;
+}
+
+.downloadBtn {
+  padding: 14px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+}

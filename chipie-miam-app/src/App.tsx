@@ -49,6 +49,10 @@ import SurnomPage from './pages/SurnomPage/SurnomPage'
 import AlbumAnniversairePage from './pages/AlbumAnniversairePage/AlbumAnniversairePage'
 import FactsPage from './pages/FactsPage/FactsPage'
 import ContePage from './pages/ContePage/ContePage'
+import DeguisementPage from './pages/DeguisementPage/DeguisementPage'
+import DocumentairePage from './pages/DocumentairePage/DocumentairePage'
+import LettreChipiePage from './pages/LettreChipiePage/LettreChipiePage'
+import TinderLegumesPage from './pages/TinderLegumesPage/TinderLegumesPage'
 
 const TUTORIAL_KEY = 'chipie-tutorial-done'
 
@@ -133,6 +137,10 @@ function App() {
         <Route path="album-anniversaire" element={<AlbumAnniversairePage />} />
         <Route path="facts" element={<FactsPage />} />
         <Route path="conte" element={<ContePage />} />
+        <Route path="deguisement" element={<DeguisementPage />} />
+        <Route path="documentaire" element={<DocumentairePage />} />
+        <Route path="lettre" element={<LettreChipiePage />} />
+        <Route path="tinder-legumes" element={<TinderLegumesPage />} />
       </Route>
     </Routes>
     </>

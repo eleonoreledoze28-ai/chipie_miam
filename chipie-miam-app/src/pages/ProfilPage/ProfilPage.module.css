@@ -163,6 +163,15 @@
   object-fit: cover;
 }
 
+.costumePin {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 1.6rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+  pointer-events: none;
+}
+
 .avatarOverlay {
   position: absolute;
   inset: 0;
