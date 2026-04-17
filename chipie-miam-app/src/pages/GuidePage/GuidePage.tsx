@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SearchBar from '../../components/SearchBar/SearchBar'
+import BonjourChipie from '../../components/BonjourChipie/BonjourChipie'
 import CategorySection from '../../components/CategorySection/CategorySection'
 import VegetalCard from '../../components/VegetalCard/VegetalCard'
 import AddEntryModal from '../../components/AddEntryModal/AddEntryModal'
@@ -246,6 +247,11 @@ export default function GuidePage() {
 
       {/* Essentials + Today summary */}
       <div className={styles.summarySection}>
+        <BonjourChipie
+          todayTotal={todayTotal}
+          checkedCount={checked.size}
+          checklistTotal={CHECKLIST_ITEMS.length}
+        />
         <div className={styles.essentialsCard}>
           <span className={styles.essentialsTitle}>🐰 Les essentiels au quotidien</span>
           <div className={styles.essentialsList}>
