@@ -1,0 +1,228 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back {
+  display: flex; align-items: center; gap: 4px;
+  color: var(--accent-orange); font-size: 0.85rem; font-weight: 600;
+}
+
+.badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  background: color-mix(in srgb, var(--accent-orange) 15%, transparent);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: monospace;
+}
+
+.header { display: flex; align-items: center; gap: 12px; }
+.headerEmoji { font-size: 2rem; }
+.title { font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin: 0; }
+.subtitle { font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0; }
+
+.caseCard {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-top: 3px solid var(--accent-orange);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.caseTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.caseEmoji { font-size: 2.2rem; }
+
+.caseLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px;
+  font-family: monospace;
+}
+
+.caseTitre {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.caseDivider {
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.caseField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fieldText {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.startBtn {
+  padding: 16px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(240, 165, 58, 0.35);
+}
+
+.questionCard {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24px 16px;
+  text-align: center;
+  border: 1.5px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.questionEmoji { font-size: 2.2rem; margin: 0; }
+
+.questionText {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.choiceList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choiceBtn {
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.choiceBtn:active {
+  background: color-mix(in srgb, var(--accent-orange) 10%, var(--bg-card));
+  border-color: var(--accent-orange);
+  transform: scale(0.97);
+}
+
+.reactionCard {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1.5px solid var(--border-subtle);
+  border-left: 4px solid var(--accent-violet);
+}
+
+.reactionLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent-violet);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.reactionText {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.resolutionCard {
+  background: linear-gradient(135deg, #1a120a 0%, #2d1a06 100%);
+  border-radius: var(--radius-lg);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1.5px solid color-mix(in srgb, var(--accent-orange) 35%, transparent);
+}
+
+.resolutionLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.resolutionText {
+  font-size: 0.9rem;
+  color: #f5ddb8;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.verdictBadge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--accent-orange);
+  background: color-mix(in srgb, var(--accent-orange) 15%, transparent);
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+  font-family: monospace;
+}
+
+.nextCase {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+  font-style: italic;
+}

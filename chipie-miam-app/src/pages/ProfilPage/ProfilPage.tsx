@@ -430,6 +430,14 @@ export default function ProfilPage() {
                 <span className={styles.qlEmoji}>🎵</span>
                 <span className={styles.qlLabel}>Playlist du jour</span>
               </button>
+              <button className={styles.qlCard} onClick={() => navigate('/secret')} style={{ '--ql-color': '#b07cff' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🤫</span>
+                <span className={styles.qlLabel}>Secret du jour</span>
+              </button>
+              <button className={styles.qlCard} onClick={() => navigate('/detective')} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>🕵️</span>
+                <span className={styles.qlLabel}>Détective</span>
+              </button>
             </div>
           </div>
 
