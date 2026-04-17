@@ -136,6 +136,18 @@ export default function DangerPage() {
           En cas de doute sur un aliment, <strong>ne le donnez pas</strong>. Consultez toujours votre veterinaire avant d'introduire un nouvel aliment dans l'alimentation de votre lapin.
         </p>
       </div>
+
+      {/* Link to maladies */}
+      <button className={styles.maladiesLink} onClick={() => navigate('/maladies')}>
+        <span>🏥</span>
+        <div>
+          <span className={styles.maladiesLinkTitle}>Lexique des maladies</span>
+          <span className={styles.maladiesLinkSub}>Symptômes, urgences &amp; prévention</span>
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="16" height="16">
+          <path d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
     </div>
   )
 }

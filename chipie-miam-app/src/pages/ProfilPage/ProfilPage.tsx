@@ -300,6 +300,9 @@ export default function ProfilPage() {
           <button className={styles.carnetLink} onClick={() => navigate('/carte-identite')}>
             🪪 Carte d'identité
           </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/evenements')}>
+            📅 Événements
+          </button>
         </div>
       )}
 
