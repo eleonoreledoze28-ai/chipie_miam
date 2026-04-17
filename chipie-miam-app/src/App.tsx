@@ -53,6 +53,10 @@ import DeguisementPage from './pages/DeguisementPage/DeguisementPage'
 import DocumentairePage from './pages/DocumentairePage/DocumentairePage'
 import LettreChipiePage from './pages/LettreChipiePage/LettreChipiePage'
 import TinderLegumesPage from './pages/TinderLegumesPage/TinderLegumesPage'
+import BreakingNewsPage from './pages/BreakingNewsPage/BreakingNewsPage'
+import BulletinPage from './pages/BulletinPage/BulletinPage'
+import ProcesPage from './pages/ProcesPage/ProcesPage'
+import InfluenceusePage from './pages/InfluenceusePage/InfluenceusePage'
 
 const TUTORIAL_KEY = 'chipie-tutorial-done'
 
@@ -141,6 +145,10 @@ function App() {
         <Route path="documentaire" element={<DocumentairePage />} />
         <Route path="lettre" element={<LettreChipiePage />} />
         <Route path="tinder-legumes" element={<TinderLegumesPage />} />
+        <Route path="breaking-news" element={<BreakingNewsPage />} />
+        <Route path="bulletin" element={<BulletinPage />} />
+        <Route path="proces" element={<ProcesPage />} />
+        <Route path="influenceuse" element={<InfluenceusePage />} />
       </Route>
     </Routes>
     </>

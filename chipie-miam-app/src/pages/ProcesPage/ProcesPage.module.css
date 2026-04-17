@@ -1,0 +1,266 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.topBar { width: 100%; margin-bottom: 4px; }
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-orange);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.headerEmoji { font-size: 2rem; }
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+/* Court intro */
+.courtHeader {
+  background: #1a1a2e;
+  color: #fff;
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.courtTitle {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.courtSub {
+  font-size: 0.62rem;
+  opacity: 0.6;
+}
+
+.parties {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 0;
+}
+
+.partie { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.partieEmoji { font-size: 2rem; }
+.partieName { font-size: 0.78rem; font-weight: 700; color: var(--text-primary); text-align: center; }
+.partieRole { font-size: 0.62rem; color: var(--text-muted); }
+
+.vs {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+}
+
+.introText {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Charges */
+.phaseTitle {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--accent-orange);
+  text-transform: uppercase;
+}
+
+.chefsList { display: flex; flex-direction: column; gap: 12px; }
+
+.chefItem {
+  padding: 12px;
+  background: var(--bg-elevated, var(--bg-secondary));
+  border-radius: 8px;
+  border-left: 3px solid var(--accent-orange);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chefHeader { display: flex; align-items: center; justify-content: space-between; }
+.chefNum { font-size: 0.6rem; font-weight: 700; color: var(--accent-orange); text-transform: uppercase; }
+.chefEmoji { font-size: 1.2rem; }
+.chefDesc { font-size: 0.78rem; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
+
+.preuves { display: flex; flex-direction: column; gap: 3px; }
+.preuve { font-size: 0.68rem; color: var(--text-secondary); line-height: 1.4; font-style: italic; }
+
+/* Débats */
+.discours {
+  padding: 12px;
+  background: var(--bg-elevated, var(--bg-secondary));
+  border-radius: 8px;
+}
+
+.discoursRole {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+  margin-bottom: 6px;
+}
+
+.discoursText {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.defense {
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+}
+
+.defenseLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.defenseText {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Verdict */
+.verdictBox {
+  border: 2px solid;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.verdictEmoji { font-size: 2.5rem; }
+
+.verdictLabel {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.peine {
+  padding: 12px;
+  background: var(--bg-elevated, var(--bg-secondary));
+  border-radius: 8px;
+}
+
+.peineLabel {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.peineText {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.footer {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-align: center;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Next button */
+.nextBtn {
+  padding: 12px 20px;
+  background: var(--accent-orange);
+  color: #000;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  align-self: center;
+  min-width: 180px;
+  text-align: center;
+}
+
+/* Steps */
+.steps {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.step {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.stepActive {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+  color: #000;
+}
+
+.stepDone {
+  background: var(--bg-secondary);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+}

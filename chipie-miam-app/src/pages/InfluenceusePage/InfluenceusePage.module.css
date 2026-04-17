@@ -1,0 +1,243 @@
+.page {
+  padding: 10px 16px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.topBar { width: 100%; margin-bottom: 4px; }
+
+.back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-orange);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.headerEmoji { font-size: 2rem; }
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* Instagram post */
+.insta {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-subtle);
+  margin-bottom: 16px;
+}
+
+.postHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+}
+
+.storyRing {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  padding: 2px;
+  flex-shrink: 0;
+}
+
+.postAvatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--bg-card);
+}
+
+.postMeta { flex: 1; }
+
+.postUsername {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.postLocation {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+.postMore {
+  font-size: 1rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* Image */
+.imageArea {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, #f5e6d3, #e8d5c4);
+  overflow: hidden;
+}
+
+.postImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.filterLabel {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.moodLabel {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 4px;
+}
+
+.leftActions { display: flex; gap: 12px; }
+
+.actionBtn {
+  font-size: 1.4rem;
+  line-height: 1;
+  transition: transform 150ms ease;
+}
+
+.actionBtn:active { transform: scale(0.85); }
+
+.liked { animation: heartPop 200ms ease; }
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* Likes */
+.likes {
+  padding: 2px 14px 6px;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+}
+
+/* Caption */
+.caption {
+  padding: 0 14px 4px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.captionUser {
+  font-weight: 700;
+}
+
+.hashtags {
+  padding: 0 14px 6px;
+  font-size: 0.7rem;
+  color: #3b82f6;
+  line-height: 1.6;
+}
+
+/* Comments */
+.comments {
+  padding: 0 14px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.comment {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.commentUser { font-weight: 700; color: var(--text-primary); }
+
+.postTime {
+  padding: 4px 14px 12px;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* Stats */
+.stats {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: var(--shadow-card);
+}
+
+.stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+.statNum {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--accent-orange);
+}
+
+.statLabel {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statDivider {
+  width: 1px;
+  height: 28px;
+  background: var(--border-subtle);
+}

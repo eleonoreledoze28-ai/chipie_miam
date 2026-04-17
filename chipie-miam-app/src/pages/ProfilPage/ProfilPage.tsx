@@ -339,6 +339,18 @@ export default function ProfilPage() {
           <button className={styles.carnetLink} onClick={() => navigate('/tinder-legumes')}>
             👈👉 Tinder des légumes
           </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/breaking-news')}>
+            📺 Chipie Breaking News
+          </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/bulletin')}>
+            📋 Bulletin de notes
+          </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/proces')}>
+            ⚖️ Le procès de {profil.nom}
+          </button>
+          <button className={styles.carnetLink} onClick={() => navigate('/influenceuse')}>
+            📸 {profil.nom} influenceuse
+          </button>
         </div>
       )}
 
