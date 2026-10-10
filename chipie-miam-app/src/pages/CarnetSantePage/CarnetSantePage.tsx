@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProfil } from '../../hooks/useProfil'
 import { getActiveProfileId } from '../../hooks/useProfiles'
+import WeightChart from '../../components/WeightChart/WeightChart'
 import styles from './CarnetSantePage.module.css'
 
 // ===== Data types =====
@@ -130,16 +131,6 @@ export default function CarnetSantePage() {
     saveReminders(updated)
   }, [reminders])
 
-  // ===== Weight chart data =====
-  const chartData = useMemo(() => {
-    const last = weights.slice(-10)
-    if (last.length === 0) return null
-    const minW = Math.min(...last.map(w => w.weight))
-    const maxW = Math.max(...last.map(w => w.weight))
-    const range = maxW - minW || 1
-    return { entries: last, minW, maxW, range }
-  }, [weights])
-
   const latestWeight = weights.length > 0 ? weights[weights.length - 1] : null
   const weightTrend = weights.length >= 2
     ? weights[weights.length - 1].weight - weights[weights.length - 2].weight
@@ -199,25 +190,7 @@ export default function CarnetSantePage() {
           </div>
 
           {/* Weight chart */}
-          {chartData && (
-            <div className={styles.chartCard}>
-              <h3 className={styles.chartTitle}>Évolution du poids</h3>
-              <div className={styles.chart}>
-                {chartData.entries.map((w, i) => {
-                  const height = ((w.weight - chartData.minW) / chartData.range) * 80 + 20
-                  const isLast = i === chartData.entries.length - 1
-                  return (
-                    <div key={w.id} className={styles.chartCol}>
-                      <span className={styles.chartValue}>{w.weight}g</span>
-                      <div className={`${styles.chartBar} ${isLast ? styles.chartBarCurrent : ''}`}
-                        style={{ height: `${height}%` }} />
-                      <span className={styles.chartDate}>{new Date(w.date + 'T00:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+          {weights.length > 0 && <WeightChart weights={weights} />}
 
           {/* Weight history */}
           <div className={styles.historyHeader}>
