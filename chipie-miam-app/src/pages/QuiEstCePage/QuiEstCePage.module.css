@@ -1,0 +1,87 @@
+.help {
+  margin: 0;
+  max-width: 340px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.clues {
+  width: 100%;
+  max-width: 360px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.clue {
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  animation: appear 250ms ease-out;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.clueBtn {
+  padding: 8px 16px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+.clueBtn:disabled { opacity: 0.4; }
+
+.options {
+  width: 100%;
+  max-width: 360px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.option {
+  padding: 14px 8px;
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.option:active:not(:disabled) { transform: scale(0.97); }
+
+.optionRight { border-color: var(--accent-green); background: var(--accent-green-dim); }
+.optionWrong { border-color: var(--accent-red); background: var(--accent-red-dim); }
+.optionDim { opacity: 0.45; }
+
+.feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.feedback p { margin: 0; font-size: 0.9rem; font-weight: 700; }
+.good { color: var(--accent-green); }
+.bad { color: var(--accent-red); }
+
+.nextBtn {
+  padding: 11px 28px;
+  background: var(--accent-orange);
+  color: #000;
+  border-radius: var(--radius-pill);
+  font-size: 0.92rem;
+  font-weight: 800;
+}

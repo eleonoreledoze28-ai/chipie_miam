@@ -1,0 +1,102 @@
+.help {
+  margin: 0;
+  max-width: 320px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.zone {
+  position: relative;
+  width: min(100%, 320px);
+  aspect-ratio: 1;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  touch-action: none; /* le glissement ne doit pas faire défiler la page */
+  cursor: none;
+}
+
+.rabbit {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  transition: transform 300ms;
+}
+
+.happy { transform: scale(1.04); }
+
+.tuft {
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(var(--rot));
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #ffffff, #e8e2d8 70%, rgba(232, 226, 216, 0.4));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+.gone {
+  animation: fly 600ms ease-out forwards;
+}
+
+@keyframes fly {
+  to {
+    transform: translate(calc(-50% + var(--fly)), -140%) rotate(calc(var(--rot) + 200deg));
+    opacity: 0;
+  }
+}
+
+.brush {
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  font-size: 2.2rem;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5));
+}
+
+.hearts {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  pointer-events: none;
+  animation: heartsUp 1.4s ease-out forwards;
+}
+
+@keyframes heartsUp {
+  from { opacity: 1; transform: translateY(20px) scale(0.8); }
+  to   { opacity: 0; transform: translateY(-60px) scale(1.4); }
+}
+
+.bar {
+  width: min(100%, 320px);
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-elevated);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--accent-orange);
+  transition: width 200ms ease;
+}
+
+.message {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.best {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}

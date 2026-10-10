@@ -11,6 +11,8 @@ const ZONES = [
       { id: 'snake',      path: '/jeu/snake',      emoji: '🐍', title: 'Snake Chipie',       desc: 'Mange les bons, évite les toxiques !' },
       { id: 'labyrinthe', path: '/jeu/labyrinthe',  emoji: '🌀', title: 'Labyrinthe',         desc: 'Guidez Chipie vers son repas' },
       { id: 'course',     path: '/jeu/course',      emoji: '🏃', title: "Course d'obstacles", desc: 'Saute, collecte, esquive !' },
+      { id: 'saute-carotte', path: '/jeu/saute-carotte', emoji: '🥕', title: 'Saute-carotte', desc: 'Saute les cailloux, croque les carottes !' },
+      { id: 'cache-cache', path: '/jeu/cache-cache', emoji: '🌿', title: 'Cache-cache', desc: 'Retrouve Chipie sous le bon buisson' },
     ],
   },
   {
@@ -24,6 +26,8 @@ const ZONES = [
       { id: 'devinette',  path: '/jeu/devinette',   emoji: '📸', title: 'Devinette Photo',    desc: 'Reconnaissez les végétaux' },
       { id: 'colorie',    path: '/jeu/colorie',     emoji: '🎨', title: 'Colorie Chipie',     desc: 'Colorie Chipie comme tu veux !' },
       { id: 'dessin',     path: '/jeu/dessin',      emoji: '✏️', title: 'Dessin guidé',        desc: 'Apprends à dessiner Chipie étape par étape !' },
+      { id: 'taupiniere', path: '/jeu/taupiniere', emoji: '🕳️', title: 'Taupinière', desc: 'Caresse Chipie, mais ne la réveille pas !' },
+      { id: 'brosse-moi', path: '/jeu/brosse-moi', emoji: '🪮', title: 'Brosse-moi', desc: 'Brosse Chipie, un moment de douceur' },
     ],
   },
   {
@@ -50,6 +54,7 @@ const ZONES = [
       { id: 'anagramme',   path: '/jeu/anagramme',   emoji: '🔤', title: 'Mot Mélangé',       desc: 'Remettez les lettres dans le bon ordre' },
       { id: 'soin',        path: '/jeu/soin',        emoji: '🚑', title: "Soin d'urgence",    desc: 'Identifie le toxique et soigne Chipie !' },
       { id: 'saisons',     path: '/jeu/saisons',     emoji: '🌍', title: 'Chemin des saisons', desc: 'Parcours les 4 saisons avec Chipie !' },
+      { id: 'qui-est-ce', path: '/jeu/qui-est-ce', emoji: '🕵️', title: 'Qui est-ce ?', desc: 'Devine la race de lapin grâce aux indices' },
     ],
   },
 ]

@@ -65,6 +65,11 @@ import PlaylistPage from './pages/PlaylistPage/PlaylistPage'
 import SecretPage from './pages/SecretPage/SecretPage'
 import DetectivePage from './pages/DetectivePage/DetectivePage'
 import PharmaciePage from './pages/PharmaciePage/PharmaciePage'
+import TaupinierePage from './pages/TaupinierePage/TaupinierePage'
+import SauteCarottePage from './pages/SauteCarottePage/SauteCarottePage'
+import QuiEstCePage from './pages/QuiEstCePage/QuiEstCePage'
+import BrosseMoiPage from './pages/BrosseMoiPage/BrosseMoiPage'
+import CacheCachePage from './pages/CacheCachePage/CacheCachePage'
 
 const TUTORIAL_KEY = 'chipie-tutorial-done'
 
@@ -165,6 +170,11 @@ function App() {
         <Route path="secret" element={<SecretPage />} />
         <Route path="detective" element={<DetectivePage />} />
         <Route path="pharmacie" element={<PharmaciePage />} />
+        <Route path="jeu/taupiniere" element={<TaupinierePage />} />
+        <Route path="jeu/saute-carotte" element={<SauteCarottePage />} />
+        <Route path="jeu/qui-est-ce" element={<QuiEstCePage />} />
+        <Route path="jeu/brosse-moi" element={<BrosseMoiPage />} />
+        <Route path="jeu/cache-cache" element={<CacheCachePage />} />
       </Route>
     </Routes>
     </>
