@@ -2,7 +2,8 @@
   position: fixed;
   left: 12px;
   right: 12px;
-  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  /* au-dessus de la mascotte, qui occupe le coin bas-droit */
+  bottom: calc(var(--nav-height, 60px) + var(--safe-bottom, 0px) + 84px);
   z-index: 400;
   display: flex;
   align-items: center;
