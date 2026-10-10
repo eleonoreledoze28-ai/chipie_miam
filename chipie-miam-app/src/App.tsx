@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom'
 import Layout from './components/Layout/Layout'
 import SplashScreen from './components/SplashScreen/SplashScreen'
 import Tutorial from './components/Tutorial/Tutorial'
+import UpdatePrompt from './components/UpdatePrompt/UpdatePrompt'
 import GuidePage from './pages/GuidePage/GuidePage'
 import DetailPage from './pages/DetailPage/DetailPage'
 import JournalPage from './pages/JournalPage/JournalPage'
@@ -105,6 +106,7 @@ function App() {
 
   return (
     <>
+      <UpdatePrompt />
       {showSplash   && <SplashScreen onDone={handleSplashDone} />}
       {showTutorial && <Tutorial onDone={handleTutorialDone} />}
     <Routes>

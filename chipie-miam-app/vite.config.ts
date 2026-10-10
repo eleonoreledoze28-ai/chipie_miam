@@ -10,7 +10,7 @@ export default defineConfig(({ command }) => ({
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'sw.ts',
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.svg', 'chipie-avatar.jpeg', 'images/**/*'],
       manifest: {
         name: 'Chipie Miam',

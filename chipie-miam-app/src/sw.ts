@@ -9,6 +9,13 @@ clientsClaim()
 cleanupOutdatedCaches()
 precacheAndRoute(self.__WB_MANIFEST)
 
+// La nouvelle version attend que l'utilisateur accepte la mise à jour (voir UpdatePrompt)
+self.addEventListener('message', (event) => {
+  if ((event.data as { type?: string } | null)?.type === 'SKIP_WAITING') {
+    void self.skipWaiting()
+  }
+})
+
 // When user taps a notification: focus/open the app and navigate to the right page
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()

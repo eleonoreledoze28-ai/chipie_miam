@@ -1,0 +1,45 @@
+.banner {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--accent-orange);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  animation: slideIn 250ms ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.text {
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.update {
+  padding: 7px 14px;
+  background: var(--accent-orange);
+  color: #000;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.later {
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
