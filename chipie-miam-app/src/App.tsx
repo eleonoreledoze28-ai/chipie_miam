@@ -64,6 +64,7 @@ import CartePostalePage from './pages/CartePostalePage/CartePostalePage'
 import PlaylistPage from './pages/PlaylistPage/PlaylistPage'
 import SecretPage from './pages/SecretPage/SecretPage'
 import DetectivePage from './pages/DetectivePage/DetectivePage'
+import PharmaciePage from './pages/PharmaciePage/PharmaciePage'
 
 const TUTORIAL_KEY = 'chipie-tutorial-done'
 
@@ -163,6 +164,7 @@ function App() {
         <Route path="playlist" element={<PlaylistPage />} />
         <Route path="secret" element={<SecretPage />} />
         <Route path="detective" element={<DetectivePage />} />
+        <Route path="pharmacie" element={<PharmaciePage />} />
       </Route>
     </Routes>
     </>

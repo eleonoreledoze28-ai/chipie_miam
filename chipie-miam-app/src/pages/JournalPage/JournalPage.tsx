@@ -5,6 +5,7 @@ import { useProfil } from '../../hooks/useProfil'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
 import AddEntryModal from '../../components/AddEntryModal/AddEntryModal'
+import BilanSemaine from '../../components/BilanSemaine/BilanSemaine'
 import {
   todayStr, addDays, addMonths,
   formatDateFr, formatMonthFr,
@@ -30,6 +31,7 @@ export default function JournalPage() {
   const monthDays = useMemo(() => getMonthDays(selectedDate), [selectedDate])
   const dayEntries = useMemo(() => getEntriesForDate(selectedDate), [selectedDate, entries])
   const weekEntries = useMemo(() => getEntriesForWeek(selectedDate), [selectedDate, entries])
+  const prevWeekEntries = getEntriesForWeek(addDays(selectedDate, -7))
   const uniqueCount = getUniqueVegetauxCount(weekEntries)
 
   // Current month for month view
@@ -346,6 +348,8 @@ export default function JournalPage() {
               : `Encore ${varietyGoal - uniqueCount} végéta${varietyGoal - uniqueCount > 1 ? 'ux' : 'l'} différent${varietyGoal - uniqueCount > 1 ? 's' : ''} pour atteindre l'objectif.`}
           </p>
         </div>
+
+        <BilanSemaine weekEntries={weekEntries} prevWeekEntries={prevWeekEntries} />
 
         {/* Category breakdown */}
         {weekBreakdown.length > 0 && (

@@ -320,6 +320,10 @@ export default function ProfilPage() {
                 <span className={styles.qlEmoji}>🛒</span>
                 <span className={styles.qlLabel}>Courses</span>
               </button>
+              <button className={styles.qlCard} onClick={() => navigate('/pharmacie')} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>
+                <span className={styles.qlEmoji}>💊</span>
+                <span className={styles.qlLabel}>Pharmacie</span>
+              </button>
               <button className={styles.qlCard} onClick={() => navigate('/foin')} style={{ '--ql-color': '#f0a53a' } as React.CSSProperties}>
                 <span className={styles.qlEmoji}>🌾</span>
                 <span className={styles.qlLabel}>Stock foin</span>
