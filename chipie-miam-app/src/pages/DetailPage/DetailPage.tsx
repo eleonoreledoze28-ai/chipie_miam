@@ -15,6 +15,17 @@ export default function DetailPage() {
   const { entries } = useJournal()
 
   const vegetal = VEGETAUX.find((v) => v.id === id)
+
+  // Les hooks restent avant le retour anticipé : leur nombre ne doit pas changer d'un rendu à l'autre
+  const imageUrl = vegetal ? getImage(vegetal.id, vegetal.image) : ''
+  const [editUrl, setEditUrl] = useState(imageUrl)
+
+  // Count how many times this vegetal was logged
+  const logCount = useMemo(
+    () => (vegetal ? entries.filter(e => e.vegetalId === vegetal.id).length : 0),
+    [entries, vegetal],
+  )
+
   if (!vegetal) {
     return (
       <div className={styles.notFound}>
@@ -25,13 +36,8 @@ export default function DetailPage() {
   }
 
   const categorie = CATEGORIES.find((c) => c.id === vegetal.categorie)
-  const imageUrl = getImage(vegetal.id, vegetal.image)
-  const [editUrl, setEditUrl] = useState(imageUrl)
 
   const googleImagesUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(vegetal.nom + ' plante lapin')}`
-
-  // Count how many times this vegetal was logged
-  const logCount = useMemo(() => entries.filter(e => e.vegetalId === vegetal.id).length, [entries, vegetal.id])
 
   const handleImageSave = () => {
     setImage(vegetal.id, editUrl)

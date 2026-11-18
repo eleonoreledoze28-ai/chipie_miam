@@ -177,6 +177,32 @@ export default function TamagotchiPage() {
   const [particles, setParticles] = useState<{ id: number; emoji: string; x: number }[]>([])
   const [newAchievement, setNewAchievement] = useState<string | null>(null)
 
+  // Positions de la pluie, de la neige et des étoiles : tirées une seule fois,
+  // sinon elles changeraient de place à chaque rafraîchissement de l'écran
+  const [sky] = useState(() => {
+    const rand = (min: number, span: number) => min + Math.random() * span
+    return {
+      rain: Array.from({ length: 25 }, () => ({
+        left: `${rand(0, 100)}%`,
+        animationDelay: `${rand(0, 1)}s`,
+        animationDuration: `${rand(0.4, 0.3)}s`,
+      })),
+      snow: Array.from({ length: 20 }, () => ({
+        left: `${rand(0, 100)}%`,
+        animationDelay: `${rand(0, 3)}s`,
+        animationDuration: `${rand(2, 2)}s`,
+        fontSize: `${rand(6, 8)}px`,
+      })),
+      stars: Array.from({ length: 18 }, () => ({
+        left: `${rand(3, 94)}%`,
+        top: `${rand(3, 45)}%`,
+        animationDelay: `${rand(0, 3)}s`,
+        width: `${rand(1.5, 2.5)}px`,
+        height: `${rand(1.5, 2.5)}px`,
+      })),
+    }
+  })
+
   // Derived
   const daysAlive = Math.floor((Date.now() - new Date(state.startDate + 'T00:00:00').getTime()) / 86400000)
   const season = getSeason(daysAlive)
@@ -472,24 +498,15 @@ export default function TamagotchiPage() {
         {/* Rain / Snow */}
         {(weather === 'pluie' || weather === 'orage') && (
           <div className={styles.rainContainer}>
-            {Array.from({ length: 25 }).map((_, i) => (
-              <div key={i} className={styles.raindrop} style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 1}s`,
-                animationDuration: `${0.4 + Math.random() * 0.3}s`,
-              }} />
+            {sky.rain.map((d, i) => (
+              <div key={i} className={styles.raindrop} style={d} />
             ))}
           </div>
         )}
         {weather === 'neige' && (
           <div className={styles.snowContainer}>
-            {Array.from({ length: 20 }).map((_, i) => (
-              <div key={i} className={styles.snowflake} style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 2}s`,
-                fontSize: `${6 + Math.random() * 8}px`,
-              }}>*</div>
+            {sky.snow.map((d, i) => (
+              <div key={i} className={styles.snowflake} style={d}>*</div>
             ))}
           </div>
         )}
@@ -497,14 +514,8 @@ export default function TamagotchiPage() {
         {/* Stars at night */}
         {timeOfDay === 'nuit' && (
           <div className={styles.starsContainer}>
-            {Array.from({ length: 18 }).map((_, i) => (
-              <div key={i} className={styles.star} style={{
-                left: `${3 + Math.random() * 94}%`,
-                top: `${3 + Math.random() * 45}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                width: `${1.5 + Math.random() * 2.5}px`,
-                height: `${1.5 + Math.random() * 2.5}px`,
-              }} />
+            {sky.stars.map((d, i) => (
+              <div key={i} className={styles.star} style={d} />
             ))}
           </div>
         )}

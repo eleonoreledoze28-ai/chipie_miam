@@ -16,18 +16,20 @@ export default defineConfig(({ command }) => ({
         name: 'Chipie Miam',
         short_name: 'Chipie Miam',
         description: 'Guide alimentaire pour lapin domestique',
+        lang: 'fr',
         theme_color: '#1a1a1a',
         background_color: '#0d0d0d',
         display: 'standalone',
         orientation: 'portrait',
         icons: [
+          // chemins relatifs : l'app est servie depuis /chipie_miam/, pas depuis la racine du site
           {
-            src: '/icon-192.png',
+            src: 'icon-192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/icon-512.png',
+            src: 'icon-512.png',
             sizes: '512x512',
             type: 'image/png',
           },
