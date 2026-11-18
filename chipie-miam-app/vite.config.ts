@@ -17,7 +17,9 @@ export default defineConfig(({ command }) => ({
         short_name: 'Chipie Miam',
         description: 'Guide alimentaire pour lapin domestique',
         lang: 'fr',
-        theme_color: '#1a1a1a',
+        // identifiant stable de l'app, indépendant de l'adresse de départ
+        id: '/chipie_miam/',
+        theme_color: '#0d0d0d', // identique à la balise <meta name="theme-color"> d'index.html
         background_color: '#0d0d0d',
         display: 'standalone',
         orientation: 'portrait',
@@ -27,11 +29,20 @@ export default defineConfig(({ command }) => ({
             src: 'icon-192.png',
             sizes: '192x192',
             type: 'image/png',
+            purpose: 'any',
           },
           {
             src: 'icon-512.png',
             sizes: '512x512',
             type: 'image/png',
+            purpose: 'any',
+          },
+          // Android rogne cette version en cercle ou en carré arrondi : le visage reste au centre
+          {
+            src: 'icon-maskable-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
       },
