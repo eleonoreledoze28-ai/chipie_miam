@@ -2,6 +2,7 @@ import { VEGETAUX } from '../data/vegetaux'
 import type { Vegetal } from '../data/vegetaux'
 import { getStatut, loadStock } from '../utils/stock'
 import type { Appetit } from '../hooks/useJournal'
+import { editDistance, normalizeText, stemWord, tokenize } from '../utils/textSearch'
 
 /**
  * Cerveau de « Dis Chipie ! » : comprend une phrase (dictée ou tapée) et répond avec les données
@@ -31,42 +32,11 @@ export interface AssistantContext {
   recentVegetalIds: Set<string> // aliments donnés ces derniers jours (pour varier les idées de repas)
 }
 
-// ── Texte ────────────────────────────────────────────────────────────────────
-export function normalize(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[’'`´-]/g, ' ')
-    .replace(/[^a-z0-9 ]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
-// Singulier approximatif : « carottes » → « carotte », « choux » → « chou »
-function stem(token: string): string {
-  return token.length > 3 && /[sx]$/.test(token) ? token.slice(0, -1) : token
-}
-
-function tokens(text: string): string[] {
-  const n = normalize(text)
-  return n ? n.split(' ').map(stem) : []
-}
-
-function distance(a: string, b: string): number {
-  if (a === b) return 0
-  const prev = Array.from({ length: b.length + 1 }, (_, i) => i)
-  for (let i = 1; i <= a.length; i++) {
-    let diag = prev[0]
-    prev[0] = i
-    for (let j = 1; j <= b.length; j++) {
-      const tmp = prev[j]
-      prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1))
-      diag = tmp
-    }
-  }
-  return prev[b.length]
-}
+// ── Texte (fonctions partagées avec la recherche de l'app) ───────────────────
+const normalize = normalizeText
+const stem = stemWord
+const tokens = tokenize
+const distance = editDistance
 
 // Mots qui ne sont jamais des aliments (et ne doivent pas être pris pour des fautes de frappe)
 const STOP = new Set([

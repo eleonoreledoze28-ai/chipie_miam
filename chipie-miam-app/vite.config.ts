@@ -47,7 +47,8 @@ export default defineConfig(({ command }) => ({
         ],
       },
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg,json}'],
+        // Polices : seulement le latin (français), pas le cyrillique ni le vietnamien, pour rester léger hors-ligne
+        globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg,json}', '**/*-latin-*.woff2'],
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
       },
     }),

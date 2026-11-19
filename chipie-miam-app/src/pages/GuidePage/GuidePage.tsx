@@ -5,7 +5,8 @@ import BonjourChipie from '../../components/BonjourChipie/BonjourChipie'
 import CategorySection from '../../components/CategorySection/CategorySection'
 import VegetalCard from '../../components/VegetalCard/VegetalCard'
 import AddEntryModal from '../../components/AddEntryModal/AddEntryModal'
-import { VEGETAUX, CATEGORIES, type CategorieId } from '../../data/vegetaux'
+import { VEGETAUX, CATEGORIES, type CategorieId, type Vegetal } from '../../data/vegetaux'
+import { searchVegetaux } from '../../utils/textSearch'
 import { useCustomImages } from '../../hooks/useCustomImages'
 import { useCollapseState } from '../../hooks/useCollapseState'
 import { useJournal } from '../../hooks/useJournal'
@@ -152,17 +153,14 @@ export default function GuidePage() {
     addEntry({ vegetalId, date: today, quantite, notes })
   }, [addEntry, today])
 
-  const filtered = useMemo(() => {
-    let result = VEGETAUX
+  // Recherche tol\u00e9rante : accents, pluriels, fautes de frappe, synonymes (\u00ab doucette \u00bb \u2192 m\u00e2che)
+  const searchResult = useMemo(
+    () => (search.trim() ? searchVegetaux(search, VEGETAUX) : null),
+    [search],
+  )
 
-    if (search.trim()) {
-      const q = search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      result = result.filter((v) => {
-        const nom = v.nom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        const latin = v.nomLatin.toLowerCase()
-        return nom.includes(q) || latin.includes(q)
-      })
-    }
+  const filtered = useMemo(() => {
+    let result: readonly Vegetal[] = searchResult ? searchResult.results.map(r => r.vegetal) : VEGETAUX
 
     if (filter !== 'tous') {
       result = result.filter((v) => v.categorie === filter)
@@ -180,9 +178,10 @@ export default function GuidePage() {
     }
 
     return result
-  }, [search, filter, sort, seasonFilter, currentSeason])
+  }, [searchResult, filter, sort, seasonFilter, currentSeason])
 
-  const showByCategory = sort === 'categorie'
+  // Pendant une recherche, les résultats restent classés par pertinence (pas regroupés par catégorie)
+  const showByCategory = sort === 'categorie' && !searchResult
 
   const renderCard = (v: typeof VEGETAUX[number]) => (
     <VegetalCard
@@ -217,6 +216,12 @@ export default function GuidePage() {
           <span>🌿 Aliments de saison : <strong>{SEASON_LABELS[currentSeason]}</strong></span>
           <span className={styles.seasonCount}>{filtered.length} aliments</span>
         </div>
+      )}
+
+      {searchResult && filtered.length > 0 && !searchResult.exact && (
+        <p className={styles.searchHint}>
+          Pas de correspondance exacte pour « {search} » : voici les résultats les plus proches.
+        </p>
       )}
 
       {filtered.length === 0 ? (

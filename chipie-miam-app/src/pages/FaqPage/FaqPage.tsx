@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { fuzzyIncludes } from '../../utils/textSearch'
 import styles from './FaqPage.module.css'
 
 interface FaqItem { q: string; a: string; emoji: string }
@@ -113,10 +114,7 @@ export default function FaqPage() {
   const [search, setSearch] = useState('')
 
   const filtered = search.trim()
-    ? FAQ.filter(f =>
-        f.q.toLowerCase().includes(search.toLowerCase()) ||
-        f.a.toLowerCase().includes(search.toLowerCase())
-      )
+    ? FAQ.filter(f => fuzzyIncludes(search, f.q, f.a))
     : FAQ
 
   return (

@@ -366,7 +366,7 @@ export default function AssiettePage() {
         <div className={styles.levelScreen}>
           <span className={styles.levelEmoji}>🍽️</span>
           <h1 className={styles.levelTitle}>Assiette de Chipie</h1>
-          <p className={styles.levelSubtitle}>Composez le repas ideal pour Chipie !</p>
+          <p className={styles.levelSubtitle}>Composez le repas idéal pour Chipie !</p>
 
           <div className={styles.levelCards}>
             {LEVELS.map(lvl => {
@@ -449,10 +449,10 @@ export default function AssiettePage() {
           )}
 
           <p className={styles.endMsg}>
-            {stars >= 3 ? 'Chipie est ravie ! Un repas parfaitement equilibre !' :
-             stars >= 2 ? 'Bien joue ! Chipie a bien mange !' :
-             finalScore > 0 ? 'Pas mal, mais Chipie merite mieux !' :
-             'Chipie a mal au ventre... Attention aux aliments toxiques !'}
+            {stars >= 3 ? 'Chipie est ravie ! Un repas parfaitement équilibré !' :
+             stars >= 2 ? 'Bien joué ! Chipie a bien mangé !' :
+             finalScore > 0 ? 'Pas mal, mais Chipie mérite mieux !' :
+             'Chipie a mal au ventre… Attention aux aliments toxiques !'}
           </p>
 
           <div className={styles.endActions}>
@@ -495,7 +495,7 @@ export default function AssiettePage() {
       {/* Round score toast */}
       {roundScoreToast && (
         <div className={`${styles.roundToast} ${roundScoreToast.perfect ? styles.roundToastPerfect : ''}`}>
-          {roundScoreToast.perfect ? '💎 Round parfait ! +20 bonus' : `Round termine : +${roundScoreToast.score} pts`}
+          {roundScoreToast.perfect ? '💎 Round parfait ! +20 bonus' : `Round terminé : +${roundScoreToast.score} pts`}
         </div>
       )}
 
@@ -629,7 +629,7 @@ export default function AssiettePage() {
 
       {/* Next round button */}
       <button className={styles.skipBtn} onClick={nextRound}>
-        {round >= level.rounds ? 'Voir le resultat' : `Round suivant`}
+        {round >= level.rounds ? 'Voir le résultat' : `Round suivant`}
       </button>
     </div>
   )

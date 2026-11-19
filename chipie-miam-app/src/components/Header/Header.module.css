@@ -36,7 +36,7 @@
 }
 
 .profileName {
-  font-size: 0.82rem;
+  font-size: min(0.82rem, 3.6vw);
   font-weight: 600;
   color: var(--accent-orange);
 }
@@ -58,7 +58,7 @@
 }
 
 .title {
-  font-size: 1.2rem;
+  font-size: min(1.2rem, 5.4vw); /* plafonné : reste sur une ligne même avec un texte très grand */
   font-weight: 800;
   letter-spacing: 2px;
   white-space: nowrap;

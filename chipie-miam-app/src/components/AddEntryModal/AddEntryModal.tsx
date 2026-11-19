@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { VEGETAUX } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
+import { searchVegetaux } from '../../utils/textSearch'
 import type { Appetit } from '../../hooks/useJournal'
 import styles from './AddEntryModal.module.css'
 
@@ -35,11 +36,7 @@ export default function AddEntryModal({ date, onAdd, onClose, preSelectedId = nu
 
   const filtered = useMemo(() => {
     if (!search.trim()) return VEGETAUX.slice(0, 20)
-    const q = search.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    return VEGETAUX.filter((v) => {
-      const nom = v.nom.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      return nom.includes(q)
-    })
+    return searchVegetaux(search, VEGETAUX).results.map(r => r.vegetal)
   }, [search])
 
   const selected = selectedId ? VEGETAUX.find((v) => v.id === selectedId) : null

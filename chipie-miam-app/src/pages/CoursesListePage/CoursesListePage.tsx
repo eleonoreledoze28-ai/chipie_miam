@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getActiveProfileId } from '../../hooks/useProfiles'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import type { Vegetal } from '../../data/vegetaux'
+import { searchVegetaux } from '../../utils/textSearch'
 import styles from './CoursesListePage.module.css'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -79,8 +80,7 @@ export default function CoursesListePage() {
     if (filterSeason) list = list.filter(v => isInSeason(v, season))
     if (filterSafe) list = list.filter(v => v.restriction === 'aucune')
     if (search.trim()) {
-      const q = search.toLowerCase().trim()
-      list = list.filter(v => v.nom.toLowerCase().includes(q))
+      list = searchVegetaux(search, list).results.map(r => r.vegetal)
     }
     return list
   }, [search, filterSeason, filterSafe, season])

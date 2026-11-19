@@ -11,7 +11,7 @@ import {
   WEIGH_EVERY_DAYS,
   type NotifSettings,
 } from '../../services/notifications'
-import { setFx, useFx } from '../../services/fxSettings'
+import { TEXT_SIZES, setFx, useFx } from '../../services/fxSettings'
 import { disableWeather, enableWeather, KIND_LABEL, useWeather } from '../../services/weather'
 import type { EnableResult } from '../../services/weather'
 import { haptic } from '../../services/haptics'
@@ -164,6 +164,32 @@ export default function SettingsPage() {
       <p className={styles.subtitle}>
         Ambiance, notifications, sauvegarde et restauration des données.
       </p>
+
+      {/* ===== Texte ===== */}
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Texte</div>
+        <div className={styles.sizeRow} role="group" aria-label="Taille du texte">
+          {TEXT_SIZES.map(size => (
+            <button
+              key={size.id}
+              className={`${styles.sizeBtn} ${fx.textSize === size.id ? styles.sizeBtnActive : ''}`}
+              onClick={() => setFx({ textSize: size.id })}
+              aria-pressed={fx.textSize === size.id}
+            >
+              {size.label}
+            </button>
+          ))}
+        </div>
+        <p className={styles.preview}>
+          {rabbitName} adore le persil frais. Voici l'aspect du texte dans toute l'app.
+        </p>
+        <ToggleRow
+          label="👓 Mode lisibilité"
+          desc="Police très lisible, plus d'espace entre les lettres et entre les lignes"
+          on={fx.readable}
+          onChange={on => setFx({ readable: on })}
+        />
+      </div>
 
       {/* ===== Ambiance & effets ===== */}
       <div className={styles.section}>

@@ -431,3 +431,12 @@
   color: var(--text-muted);
   flex-shrink: 0;
 }
+
+.searchHint {
+  margin: 0 16px 8px;
+  padding: 8px 12px;
+  background: var(--accent-orange-dim);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}

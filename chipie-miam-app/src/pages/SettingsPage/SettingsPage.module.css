@@ -234,3 +234,37 @@
   color: var(--text-secondary);
   line-height: 1.4;
 }
+
+/* Taille du texte */
+.sizeRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.sizeBtn {
+  padding: 9px 4px;
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.sizeBtnActive {
+  background: var(--accent-orange-dim);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+}
+
+.preview {
+  margin: 0 0 6px;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--text-primary);
+}

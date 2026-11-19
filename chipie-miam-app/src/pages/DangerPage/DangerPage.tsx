@@ -9,23 +9,23 @@ const catMap = new Map(CATEGORIES.map(c => [c.id, c]))
 // Common toxic foods for rabbits (not in database)
 const TOXIC_FOODS = [
   { nom: 'Pomme de terre', emoji: '🥔', raison: 'Contient de la solanine, toxique pour les lapins. Crue ou cuite, elle est dangereuse.' },
-  { nom: 'Oignon / Ail', emoji: '🧅', raison: 'Detruisent les globules rouges et provoquent une anemie grave.' },
+  { nom: 'Oignon / Ail', emoji: '🧅', raison: 'Détruisent les globules rouges et provoquent une anémie grave.' },
   { nom: 'Avocat', emoji: '🥑', raison: 'La persine contenue dans la chair et le noyau est mortelle pour les lapins.' },
-  { nom: 'Chocolat', emoji: '🍫', raison: 'La theobromine est extremement toxique, meme en petite quantite.' },
+  { nom: 'Chocolat', emoji: '🍫', raison: 'La théobromine est extrêmement toxique, même en petite quantité.' },
   { nom: 'Rhubarbe', emoji: '🌿', raison: 'Contient de l\'acide oxalique en grande quantite, toxique pour les reins.' },
-  { nom: 'Laitue iceberg', emoji: '🥬', raison: 'Contient du lactucarium, un sedatif dangereux. Preferer les laitues feuilles.' },
-  { nom: 'Haricots / Pois crus', emoji: '🫘', raison: 'Les legumineuses crues causent des ballonnements graves et potentiellement mortels.' },
-  { nom: 'Pain / Cereales', emoji: '🍞', raison: 'Les glucides complexes fermentent dans l\'intestin et causent des blocages digestifs.' },
-  { nom: 'Noyaux / Pepins', emoji: '🍒', raison: 'Contiennent du cyanure. Les fruits sont OK sans noyaux ni pepins.' },
-  { nom: 'Muguet', emoji: '🌷', raison: 'Plante extremement toxique meme en petite quantite. Provoque arret cardiaque.' },
+  { nom: 'Laitue iceberg', emoji: '🥬', raison: 'Contient du lactucarium, un sédatif dangereux. Préférer les laitues feuilles.' },
+  { nom: 'Haricots / Pois crus', emoji: '🫘', raison: 'Les légumineuses crues causent des ballonnements graves et potentiellement mortels.' },
+  { nom: 'Pain / Céréales', emoji: '🍞', raison: 'Les glucides complexes fermentent dans l\'intestin et causent des blocages digestifs.' },
+  { nom: 'Noyaux / Pépins', emoji: '🍒', raison: 'Contiennent du cyanure. Les fruits sont OK sans noyaux ni pépins.' },
+  { nom: 'Muguet', emoji: '🌷', raison: 'Plante extrêmement toxique même en petite quantité. Provoque un arrêt cardiaque.' },
   { nom: 'Laurier', emoji: '🌿', raison: 'Toutes les parties sont toxiques et provoquent des troubles digestifs graves.' },
-  { nom: 'If', emoji: '🌲', raison: 'Mortel meme en tres petite quantite. Toutes les parties sont toxiques.' },
+  { nom: 'If', emoji: '🌲', raison: 'Mortel même en très petite quantité. Toutes les parties sont toxiques.' },
 ]
 
 const EMERGENCY_TIPS = [
-  { emoji: '🚨', title: 'Symptomes d\'intoxication', text: 'Diarrhee, lethargie, refus de manger, tremblements, salivation excessive, gonflements abdominaux.' },
-  { emoji: '⏰', title: 'Agir vite', text: 'Si vous suspectez une intoxication, consultez un veterinaire en urgence dans l\'heure.' },
-  { emoji: '📞', title: 'Urgence veterinaire', text: 'Gardez toujours le numero de votre veterinaire et des urgences veterinaires a portee.' },
+  { emoji: '🚨', title: 'Symptômes d\'intoxication', text: 'Diarrhée, léthargie, refus de manger, tremblements, salivation excessive, gonflements abdominaux.' },
+  { emoji: '⏰', title: 'Agir vite', text: 'Si vous suspectez une intoxication, consultez un vétérinaire en urgence dans l\'heure.' },
+  { emoji: '📞', title: 'Urgence vétérinaire', text: 'Gardez toujours le numéro de votre vétérinaire et des urgences vétérinaires à portée de main.' },
   { emoji: '🚫', title: 'Ne pas faire vomir', text: 'Contrairement aux chiens, ne jamais faire vomir un lapin. Cela peut aggraver la situation.' },
 ]
 
@@ -78,7 +78,7 @@ export default function DangerPage() {
       {/* Aliments a eviter from database */}
       {dangerFoods.length > 0 && (
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>❌ Aliments a eviter (dans le guide)</h2>
+          <h2 className={styles.sectionTitle}>❌ Aliments à éviter (dans le guide)</h2>
           <div className={styles.foodList}>
             {dangerFoods.map(v => (
               <div key={v.id} className={styles.dangerCard}>
@@ -98,7 +98,7 @@ export default function DangerPage() {
       {/* Toxic foods not in database */}
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>☠️ Aliments et plantes toxiques</h2>
-        <p className={styles.sectionDesc}>Ces aliments courants ne figurent pas dans le guide car ils ne doivent JAMAIS etre donnes a un lapin.</p>
+        <p className={styles.sectionDesc}>Ces aliments courants ne figurent pas dans le guide car ils ne doivent JAMAIS être donnés à un lapin.</p>
         <div className={styles.toxicList}>
           {TOXIC_FOODS.map((item, i) => (
             <div key={i} className={styles.toxicCard}>
@@ -115,8 +115,8 @@ export default function DangerPage() {
       {/* Caution foods */}
       {cautionFoods.length > 0 && (
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>⚠️ A donner avec moderation</h2>
-          <p className={styles.sectionDesc}>Ces aliments sont acceptables en petite quantite mais peuvent causer des problemes en exces.</p>
+          <h2 className={styles.sectionTitle}>⚠️ À donner avec modération</h2>
+          <p className={styles.sectionDesc}>Ces aliments sont acceptables en petite quantité mais peuvent causer des problèmes en excès.</p>
           <div className={styles.cautionGrid}>
             {cautionFoods.slice(0, 12).map(v => (
               <div key={v.id} className={styles.cautionCard}>
@@ -133,7 +133,7 @@ export default function DangerPage() {
       <div className={styles.safetyCard}>
         <span className={styles.safetyEmoji}>🐰</span>
         <p className={styles.safetyText}>
-          En cas de doute sur un aliment, <strong>ne le donnez pas</strong>. Consultez toujours votre veterinaire avant d'introduire un nouvel aliment dans l'alimentation de votre lapin.
+          En cas de doute sur un aliment, <strong>ne le donnez pas</strong>. Consultez toujours votre vétérinaire avant d'introduire un nouvel aliment dans l'alimentation de votre lapin.
         </p>
       </div>
 

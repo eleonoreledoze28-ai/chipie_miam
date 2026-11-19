@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MALADIES, URGENCE_INFO } from '../../data/maladies'
 import type { Urgence } from '../../data/maladies'
+import { fuzzyIncludes } from '../../utils/textSearch'
 import styles from './MaladiesPage.module.css'
 
 const URGENCE_ORDER: Urgence[] = ['urgence', 'important', 'surveillance']
@@ -18,11 +19,7 @@ export default function MaladiesPage() {
     )
     if (filterUrgence !== 'all') list = list.filter(m => m.urgence === filterUrgence)
     if (search.trim()) {
-      const q = search.toLowerCase()
-      list = list.filter(m =>
-        m.nom.toLowerCase().includes(q) ||
-        m.symptomes.some(s => s.toLowerCase().includes(q))
-      )
+      list = list.filter(m => fuzzyIncludes(search, m.nom, ...m.symptomes))
     }
     return list
   }, [search, filterUrgence])
