@@ -1,0 +1,9 @@
+/* Au-dessus du contenu, sous l'en-tête fixe, la barre de navigation et la mascotte ; ne bloque jamais les touches */
+.canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 120;
+  pointer-events: none;
+}

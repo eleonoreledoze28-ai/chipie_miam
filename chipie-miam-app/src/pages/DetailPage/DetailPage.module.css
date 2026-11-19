@@ -16,7 +16,9 @@
 
 .notFound button {
   padding: 8px 20px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-sm);
   color: var(--accent-orange);
   font-weight: 600;
@@ -45,7 +47,9 @@
   align-items: center;
   justify-content: center;
   font-size: 4rem;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .heroOverlay {
@@ -168,7 +172,9 @@
   justify-content: space-between;
   margin: -24px 16px 0;
   padding: 14px 18px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
@@ -265,7 +271,9 @@
 .section {
   display: flex;
   gap: 0;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-card);
@@ -386,7 +394,9 @@
 }
 
 .googleBtn:active {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   color: var(--accent-orange);
   border-color: var(--accent-orange-border);
 }

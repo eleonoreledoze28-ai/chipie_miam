@@ -56,7 +56,9 @@
 .tabs {
   display: flex;
   gap: 8px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 4px;
 }
@@ -97,7 +99,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   padding: 12px 14px;
   border: 1px solid var(--border-subtle);
@@ -184,7 +188,9 @@
 .searchInput {
   width: 100%;
   padding: 10px 12px 10px 36px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   font-size: 0.9rem;
@@ -202,7 +208,9 @@
 .filterBtn {
   flex: 1;
   padding: 8px 12px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-pill);
   font-size: 0.78rem;
@@ -246,7 +254,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   padding: 10px 14px;
   border: 1px solid var(--border-subtle);

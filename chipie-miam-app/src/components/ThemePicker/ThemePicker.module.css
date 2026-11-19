@@ -51,7 +51,9 @@
 }
 
 .optionActive {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   outline: 2px solid var(--accent-orange);
   outline-offset: -2px;
 }

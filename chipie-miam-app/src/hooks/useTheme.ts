@@ -4,6 +4,13 @@ export type ThemeId = 'dark' | 'lavender' | 'aqua' | 'aqua-dark' | 'autumn' | 'a
 
 const STORAGE_KEY = 'chipie_theme'
 
+// Thèmes à fond clair : le ciel et les étincelles s'y adaptent pour rester lisibles
+const LIGHT_THEMES: ReadonlySet<ThemeId> = new Set<ThemeId>(['lavender', 'aqua', 'autumn', 'amalfi'])
+
+export function isLightTheme(id: ThemeId): boolean {
+  return LIGHT_THEMES.has(id)
+}
+
 function getSnapshot(): ThemeId {
   return (localStorage.getItem(STORAGE_KEY) as ThemeId) || 'dark'
 }

@@ -42,7 +42,9 @@
 .card {
   width: 100%;
   max-width: 380px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 16px;
   box-shadow: var(--shadow-card);
@@ -243,7 +245,9 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 2px solid var(--border-color);
   display: flex;
   align-items: center;

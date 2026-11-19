@@ -53,7 +53,9 @@
 }
 
 .statusEmpty {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .statusOk {
@@ -126,7 +128,9 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   padding: 12px 14px;
   border: 1px solid var(--border-subtle);
@@ -154,7 +158,9 @@
 
 /* Form */
 .form {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 16px;
   border: 1px solid var(--border-subtle);
@@ -228,7 +234,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   padding: 12px 14px;
   border: 1px solid var(--border-subtle);

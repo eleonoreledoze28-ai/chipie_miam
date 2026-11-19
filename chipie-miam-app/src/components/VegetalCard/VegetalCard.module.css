@@ -122,7 +122,9 @@
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 /* Label area */

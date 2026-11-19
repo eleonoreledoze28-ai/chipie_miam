@@ -1,0 +1,135 @@
+/* Derrière tout le contenu (z-index négatif), sans jamais bloquer les touches.
+   --px / --py (de -1 à 1) viennent du doigt ou de l'inclinaison : chaque calque bouge d'une quantité différente. */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  contain: layout paint;
+}
+
+.gradient {
+  position: absolute;
+  inset: -4%;
+  background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+  opacity: var(--sky-alpha, 0.9);
+  transition: opacity 1s ease;
+}
+
+/* ── Étoiles ────────────────────────────────────────────────────── */
+.stars {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--px, 0) * -5px), calc(var(--py, 0) * -4px), 0);
+  transition: opacity 2s ease;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.7);
+  animation: twinkle ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50%      { opacity: 0.95; transform: scale(1.15); }
+}
+
+/* Étoile filante : rare et discrète */
+.shooting {
+  position: absolute;
+  top: 12%;
+  left: 62%;
+  width: 90px;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff);
+  opacity: 0;
+  transform: rotate(-28deg);
+  animation: shoot 38s linear infinite;
+}
+
+@keyframes shoot {
+  0%, 94%  { opacity: 0; transform: translate(0, 0) rotate(-28deg); }
+  95%      { opacity: 1; }
+  100%     { opacity: 0; transform: translate(-190px, 105px) rotate(-28deg); }
+}
+
+/* ── Soleil et lune ─────────────────────────────────────────────── */
+.sunLayer,
+.moonLayer {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--px, 0) * -11px), calc(var(--py, 0) * -8px), 0);
+  transition: opacity 2s ease;
+}
+
+.sun {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(2px);
+}
+
+.moon {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 10px rgba(220, 230, 255, 0.35));
+}
+
+/* ── Nuages ─────────────────────────────────────────────────────── */
+.clouds {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--px, 0) * -16px), calc(var(--py, 0) * -6px), 0);
+  transition: opacity 3s ease;
+}
+
+.cloud {
+  position: absolute;
+  left: -40%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(205, 215, 235, 0.55), rgba(205, 215, 235, 0) 70%);
+  filter: blur(14px);
+  animation: drift linear infinite;
+}
+
+@keyframes drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(190vw); }
+}
+
+/* ── Lucioles ───────────────────────────────────────────────────── */
+.fireflies {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--px, 0) * -22px), calc(var(--py, 0) * -14px), 0);
+  transition: opacity 2s ease;
+}
+
+.firefly {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #f6f08a;
+  box-shadow: 0 0 10px 3px rgba(246, 240, 138, 0.65);
+  opacity: 0;
+  animation: wander ease-in-out infinite;
+}
+
+@keyframes wander {
+  0%   { opacity: 0;   transform: translate(0, 0); }
+  15%  { opacity: 0.9; }
+  45%  { opacity: 0.2; transform: translate(calc(var(--dx) * 0.5), calc(var(--dy) * 0.5)); }
+  70%  { opacity: 0.95; }
+  100% { opacity: 0;   transform: translate(var(--dx), var(--dy)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star, .shooting, .cloud, .firefly { animation: none; }
+  .shooting { display: none; }
+  .firefly { opacity: 0.6; }
+}

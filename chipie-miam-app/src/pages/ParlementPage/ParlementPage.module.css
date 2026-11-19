@@ -43,7 +43,9 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-muted);
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   transition: all 150ms ease;
   display: flex;
@@ -86,7 +88,9 @@
 }
 
 .loiCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 14px;
   border: 1.5px solid var(--border-subtle);

@@ -19,7 +19,9 @@
 
 /* Progress */
 .progressCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 14px 16px;
   border: 1px solid var(--border-subtle);
@@ -138,7 +140,9 @@
 .filter {
   flex-shrink: 0;
   padding: 6px 12px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-pill);
   font-size: 0.72rem;
@@ -170,7 +174,9 @@
 }
 
 .factRevealed {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .factLocked {

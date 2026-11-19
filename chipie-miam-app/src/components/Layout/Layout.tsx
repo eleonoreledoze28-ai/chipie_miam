@@ -4,17 +4,21 @@ import NavBar from '../NavBar/NavBar'
 import ChipieParle from '../ChipieParle/ChipieParle'
 import AmbientLayer from '../AmbientLayer/AmbientLayer'
 import VoiceFab from '../VoiceFab/VoiceFab'
+import SkyBackground from '../SkyBackground/SkyBackground'
+import Sparkles from '../Sparkles/Sparkles'
 import styles from './Layout.module.css'
 
 export default function Layout() {
   return (
     <div className={styles.layout}>
+      <SkyBackground />
       <Header />
       <main className={styles.main}>
         <Outlet />
       </main>
       <NavBar />
       <AmbientLayer />
+      <Sparkles />
       <VoiceFab />
       <ChipieParle />
     </div>

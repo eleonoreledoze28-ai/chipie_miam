@@ -182,8 +182,26 @@ export default function SettingsPage() {
           onChange={on => { setFx({ haptics: on }); if (on) haptic('success') }}
         />
         <ToggleRow
-          label="🌙 Ambiance visuelle"
-          desc="L'écran change avec l'heure de la journée (nuit étoilée, soleil couchant…)"
+          label="🌌 Ciel réaliste"
+          desc="Le fond suit le vrai soleil, la vraie lune (phase exacte), les étoiles et les lucioles"
+          on={fx.sky}
+          onChange={on => setFx({ sky: on })}
+        />
+        <ToggleRow
+          label="🪟 Effet verre"
+          desc="Les cartes deviennent translucides et laissent voir le ciel derrière"
+          on={fx.glass}
+          onChange={on => setFx({ glass: on })}
+        />
+        <ToggleRow
+          label="✨ Étincelles au toucher"
+          desc="De petites étincelles suivent ton doigt et jaillissent quand tu touches l'écran"
+          on={fx.sparkles}
+          onChange={on => setFx({ sparkles: on })}
+        />
+        <ToggleRow
+          label="🍂 Météo et saisons à l'écran"
+          desc="Pluie, neige, brouillard, pétales au printemps et feuilles à l'automne"
           on={fx.ambient}
           onChange={on => setFx({ ambient: on })}
         />

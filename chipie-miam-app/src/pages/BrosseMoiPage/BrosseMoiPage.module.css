@@ -12,7 +12,9 @@
   aspect-ratio: 1;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 2px solid var(--border-subtle);
   touch-action: none; /* le glissement ne doit pas faire défiler la page */
   cursor: none;

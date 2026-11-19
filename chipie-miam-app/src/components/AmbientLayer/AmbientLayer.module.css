@@ -7,59 +7,15 @@
   overflow: hidden;
 }
 
-/* ── Moment de la journée ───────────────────────────────────────── */
-.tint {
-  position: absolute;
-  inset: 0;
-  transition: background 2s ease;
-}
-
-.night { background: linear-gradient(180deg, rgba(40, 50, 130, 0.16), rgba(20, 20, 60, 0.07) 55%, transparent); }
-.dawn  { background: linear-gradient(180deg, rgba(255, 170, 120, 0.10), transparent 45%); }
-.dusk  { background: linear-gradient(180deg, rgba(255, 130, 70, 0.10), rgba(120, 60, 160, 0.06) 60%, transparent); }
-.day   { background: transparent; }
-
-.star {
-  position: absolute;
-  border-radius: 50%;
-  background: #fff;
-  opacity: 0.7;
-  animation: twinkle 3.5s ease-in-out infinite;
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: 0.15; }
-  50%      { opacity: 0.85; }
-}
-
 /* ── Météo ──────────────────────────────────────────────────────── */
-.sun {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 100% 0%, rgba(255, 200, 80, 0.20), transparent 55%);
-  animation: glow 6s ease-in-out infinite;
-}
-
-@keyframes glow {
-  0%, 100% { opacity: 0.75; }
-  50%      { opacity: 1; }
-}
-
-.clouds {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 40%;
-  background: linear-gradient(180deg, rgba(160, 170, 190, 0.10), transparent);
-}
-
 .fog {
   position: absolute;
   inset: 0;
   background: linear-gradient(0deg, rgba(220, 225, 235, 0.14), rgba(220, 225, 235, 0.04) 60%, transparent);
-  animation: drift 14s ease-in-out infinite alternate;
+  animation: drift-fog 14s ease-in-out infinite alternate;
 }
 
-@keyframes drift {
+@keyframes drift-fog {
   from { transform: translateX(-3%); }
   to   { transform: translateX(3%); }
 }
@@ -128,6 +84,6 @@
 
 /* Pas d'animation pour les personnes qui les ont désactivées dans leur système */
 @media (prefers-reduced-motion: reduce) {
-  .star, .sun, .fog, .drop, .flash, .flake, .drift { animation: none; }
+  .fog, .drop, .flash, .flake, .drift { animation: none; }
   .drop, .flake, .flash, .drift { display: none; }
 }

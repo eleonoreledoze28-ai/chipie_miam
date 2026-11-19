@@ -70,7 +70,9 @@
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   font-size: 0.75rem;
@@ -124,7 +126,9 @@
 .listCard {
   width: 100%;
   max-width: 380px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 10px 14px;
@@ -200,7 +204,9 @@
   align-items: center;
   gap: 3px;
   padding: 10px 6px 8px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-md);
   -webkit-tap-highlight-color: transparent;
@@ -218,7 +224,9 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid rgba(76,217,100,0.4);
   border-radius: 8px;
   padding: 2px 6px;
@@ -254,7 +262,9 @@
 
 .validateBtn:active  { transform: scale(0.97); }
 .validateBtn:disabled {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   color: var(--text-muted);
   box-shadow: none;
 }
@@ -284,7 +294,9 @@
 }
 
 .endStats {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 18px 48px;
@@ -318,7 +330,9 @@
 .menuBtn {
   width: 100%;
   padding: 12px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   font-size: 0.8rem;

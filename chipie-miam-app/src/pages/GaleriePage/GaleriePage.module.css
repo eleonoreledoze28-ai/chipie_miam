@@ -67,7 +67,9 @@
   position: relative;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   cursor: pointer;
   aspect-ratio: 1;
   border: 1px solid var(--border-subtle);
@@ -304,7 +306,9 @@
 
 .viewToggle {
   display: flex;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-pill);
   padding: 3px;
@@ -327,7 +331,9 @@
   flex: 1;
   min-width: 0;
   padding: 8px 10px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-pill);
   font-size: 0.8rem;

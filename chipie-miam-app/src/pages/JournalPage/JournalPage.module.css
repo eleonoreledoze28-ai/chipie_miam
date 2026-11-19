@@ -17,7 +17,9 @@
   text-transform: uppercase;
   letter-spacing: 0.4px;
   color: var(--text-muted);
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   transition: all 150ms ease;
   -webkit-tap-highlight-color: transparent;
@@ -74,7 +76,9 @@
   gap: 12px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   text-align: left;
   transition: all 150ms ease;
@@ -441,7 +445,9 @@
 
 /* === Last year card === */
 .lastYearCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -505,7 +511,9 @@
 
 /* Variety card */
 .varietyCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -556,7 +564,9 @@
 
 /* Breakdown card */
 .breakdownCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -619,7 +629,9 @@
 
 /* === Favorites card === */
 .favCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 16px;

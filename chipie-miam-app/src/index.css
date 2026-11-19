@@ -62,6 +62,24 @@
 
   /* Typo */
   --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Effet verre : par défaut, cartes pleines (comme avant). L'attribut data-glass de <html>
+     (réglé dans Paramètres) les rend translucides pour laisser voir le ciel derrière. */
+  --glass-bg: var(--bg-card);
+  --glass-blur: none;
+}
+
+/* « on » : translucide + flou ; « lite » : translucide sans flou (téléphones peu puissants).
+   Sans color-mix (très vieux navigateurs), les cartes restent pleines. */
+@supports (background: color-mix(in srgb, red 50%, transparent)) {
+  :root[data-glass="on"] {
+    --glass-bg: color-mix(in srgb, var(--bg-card) 72%, transparent);
+    --glass-blur: blur(10px) saturate(1.15);
+  }
+  :root[data-glass="lite"] {
+    --glass-bg: color-mix(in srgb, var(--bg-card) 84%, transparent);
+    --glass-blur: none;
+  }
 }
 
 /* ============================================================================

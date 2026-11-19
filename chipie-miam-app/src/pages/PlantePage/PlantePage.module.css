@@ -51,7 +51,9 @@
   align-items: center;
   gap: 6px;
   padding: 5px 14px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-pill);
   margin-bottom: 14px;
@@ -75,7 +77,9 @@
 }
 
 .plot {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 2px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 16px 12px;
@@ -254,7 +258,9 @@
 .upgrades {
   width: 100%;
   max-width: 360px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -350,7 +356,9 @@
 }
 
 .modal {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   border-top: 1px solid var(--border-subtle);
   padding: 20px 16px 32px;
@@ -423,7 +431,9 @@
   bottom: 90px;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-pill);
   padding: 8px 20px;

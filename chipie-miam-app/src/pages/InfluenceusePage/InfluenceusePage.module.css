@@ -42,7 +42,9 @@
 .insta {
   width: 100%;
   max-width: 380px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: var(--shadow-card);
@@ -211,7 +213,9 @@
 .stats {
   width: 100%;
   max-width: 380px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   padding: 14px;
   display: flex;

@@ -60,7 +60,9 @@
 
 .slot {
   flex: 1;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 14px 12px;
   border: 1.5px solid var(--border-subtle);
@@ -108,7 +110,9 @@
 
 /* ── Race picker ── */
 .picker {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 14px;
   border: 1px solid var(--border-subtle);
@@ -165,7 +169,9 @@
 }
 
 .row {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   padding: 12px 14px;
   border: 1px solid var(--border-subtle);
@@ -247,7 +253,9 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-color);
 }
 

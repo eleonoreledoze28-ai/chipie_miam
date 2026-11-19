@@ -22,7 +22,9 @@
 }
 
 .profileBtn:active {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
 .avatar {
@@ -91,6 +93,8 @@
 }
 
 .iconBtn:active {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   color: var(--accent-orange);
 }

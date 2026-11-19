@@ -21,7 +21,9 @@
 
 /* Speech bubble */
 .bubble {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   border-radius: 16px 16px 4px 16px;
   padding: 10px 32px 10px 14px;

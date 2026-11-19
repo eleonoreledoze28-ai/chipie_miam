@@ -63,7 +63,9 @@
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   font-size: 0.75rem;
@@ -251,7 +253,9 @@
 .medalBronze { color: #cd8050; background: rgba(205,128,80,0.12); border-color: rgba(205,128,80,0.4); }
 
 .endStats {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 18px 32px;
@@ -297,7 +301,9 @@
 .menuBtn {
   width: 100%;
   padding: 12px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   font-size: 0.8rem;

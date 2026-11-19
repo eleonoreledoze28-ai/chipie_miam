@@ -54,7 +54,9 @@
   width: 100%;
   max-width: 360px;
   padding: 22px 18px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
   display: flex;

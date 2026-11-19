@@ -34,7 +34,9 @@
 .subtitle { font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 0; }
 
 .caseCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   border-top: 3px solid var(--accent-orange);
   border-radius: var(--radius-lg);
@@ -108,7 +110,9 @@
 }
 
 .questionCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 24px 16px;
   text-align: center;
@@ -137,7 +141,9 @@
 
 .choiceBtn {
   padding: 16px 20px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   font-size: 0.95rem;
@@ -153,7 +159,9 @@
 }
 
 .reactionCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 18px 16px;
   display: flex;

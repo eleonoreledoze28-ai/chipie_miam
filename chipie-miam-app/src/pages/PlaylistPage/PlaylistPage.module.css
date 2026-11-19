@@ -85,7 +85,9 @@
 .moodBanner {
   width: 100%;
   max-width: 420px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   padding: 12px 14px;
   display: flex;
@@ -113,7 +115,9 @@
 .trackList {
   width: 100%;
   max-width: 420px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border-subtle);
@@ -228,7 +232,9 @@
 
 .genreTag {
   padding: 6px 12px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
   border-radius: 20px;
   font-size: 0.68rem;

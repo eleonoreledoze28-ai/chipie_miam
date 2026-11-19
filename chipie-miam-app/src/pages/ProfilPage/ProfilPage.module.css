@@ -36,7 +36,9 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px 6px 6px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-pill);
   flex-shrink: 0;
@@ -105,7 +107,9 @@
   flex: 1;
   font-size: 0.85rem;
   padding: 8px 12px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
@@ -205,7 +209,9 @@
   font-weight: 800;
   color: var(--text-primary);
   text-align: center;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 6px 12px;
@@ -218,7 +224,9 @@
   font-size: 0.85rem;
   color: var(--text-secondary);
   text-align: center;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 6px 12px;
@@ -236,7 +244,9 @@
 }
 
 .infoCard {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   padding: 14px;
   display: flex;
@@ -383,7 +393,9 @@
   align-items: center;
   gap: 6px;
   padding: 12px 6px 10px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   border: 1.5px solid var(--border-subtle);
   transition: all 150ms ease;
@@ -448,7 +460,9 @@
 }
 
 .stickerOn {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-color: var(--accent-orange);
 }
 
@@ -477,7 +491,9 @@
 .carnetLink {
   width: 100%;
   padding: 14px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--accent-orange-border, rgba(240, 165, 58, 0.3));
   border-radius: var(--radius-lg);
   font-size: 0.88rem;
@@ -525,7 +541,9 @@
 
 .vetInput {
   padding: 10px 14px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-size: 0.82rem;
@@ -539,7 +557,9 @@
   flex-direction: column;
   gap: 4px;
   padding: 12px 16px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
 }
 
@@ -560,7 +580,9 @@
   font-size: 0.78rem;
   color: var(--text-muted);
   padding: 12px 16px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
 }
 
@@ -568,7 +590,9 @@
 .notesArea {
   width: 100%;
   padding: 10px 14px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-size: 0.82rem;
@@ -584,7 +608,9 @@
   font-size: 0.82rem;
   color: var(--text-secondary);
   padding: 12px 16px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   line-height: 1.5;
   white-space: pre-wrap;
@@ -594,7 +620,9 @@
 .miniStats {
   display: flex;
   align-items: center;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-md);
   padding: 14px 12px;
 }
@@ -640,7 +668,9 @@
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-sm);
 }
 

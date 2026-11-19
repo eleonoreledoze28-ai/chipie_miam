@@ -20,7 +20,9 @@
 
 /* Swipe card */
 .card {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 30px 20px;
   border: 1.5px solid var(--border-subtle);
@@ -82,7 +84,9 @@
 
 /* Summary */
 .summary {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   padding: 24px 18px;
   border: 1.5px solid var(--border-subtle);
