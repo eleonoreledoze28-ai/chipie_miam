@@ -440,3 +440,58 @@
   font-size: 0.78rem;
   color: var(--text-secondary);
 }
+
+/* Pastilles de filtre */
+.chips {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-gradient) 100%);
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.chipOn {
+  color: var(--text-primary);
+  border-color: var(--accent-orange);
+  background: var(--accent-orange-dim);
+}
+.chipDot { width: 9px; height: 9px; border-radius: 50%; }
+.chipReset {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-decoration: underline;
+}
+
+/* Bilan « goûtés » */
+.tastedCard {
+  margin: 4px 10px 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+.tastedText { display: block; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 6px; }
+.tastedText strong { color: var(--accent-orange); }
+.tastedTrack { display: block; height: 6px; border-radius: 999px; background: var(--border-subtle); overflow: hidden; }
+.tastedFill { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent-green), var(--accent-orange)); transition: width 600ms ease; }

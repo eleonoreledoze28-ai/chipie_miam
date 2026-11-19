@@ -86,3 +86,20 @@
 .list {
   padding: 4px 4px 8px;
 }
+
+/* Progression « goûtés » */
+.header { position: relative; }
+.tasted {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.bar {
+  position: absolute;
+  left: 0; bottom: 0;
+  height: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent-green);
+  transition: width 500ms ease;
+}

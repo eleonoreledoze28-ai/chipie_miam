@@ -8,6 +8,8 @@ interface Props {
   vegetal: Vegetal
   imageUrl: string
   todayCount: number
+  /** Jamais donné à Chipie (d'après le journal) */
+  isNew?: boolean
   onAddToJournal: (vegetalId: string) => void
   onRemoveFromJournal: (vegetalId: string) => void
   onChangeImage: (vegetalId: string, url: string) => void
@@ -19,7 +21,7 @@ function shortNote(v: Vegetal): string {
   return ''
 }
 
-export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJournal, onRemoveFromJournal, onChangeImage }: Props) {
+export default function VegetalCard({ vegetal, imageUrl, todayCount, isNew, onAddToJournal, onRemoveFromJournal, onChangeImage }: Props) {
   const navigate = useNavigate()
   const [showImageEdit, setShowImageEdit] = useState(false)
   const [editUrl, setEditUrl] = useState('')
@@ -61,7 +63,7 @@ export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJour
 
   return (
     <div className={styles.cardWrap}>
-      <div className={`${styles.card} ${hasCount ? styles.cardGiven : ''}`}>
+      <div className={`${styles.card} ${styles[`stripe_${vegetal.restriction}`]} ${hasCount ? styles.cardGiven : ''}`}>
         {/* Add / Remove / Count */}
         {hasCount ? (
           <div className={styles.counterGroup}>
@@ -100,6 +102,7 @@ export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJour
           <span className={styles.label}>
             {vegetal.nom}
             {note && <span className={styles.note}> {note}</span>}
+            {isNew && <span className={styles.newBadge}>Nouveau</span>}
           </span>
         </div>
 

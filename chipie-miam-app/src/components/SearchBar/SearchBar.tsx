@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import type { ReactNode } from 'react'
 import type { CategorieId } from '../../data/vegetaux'
 import styles from './SearchBar.module.css'
 
@@ -34,11 +35,13 @@ interface SearchBarProps {
   seasonFilter?: boolean
   onSeasonFilterChange?: (on: boolean) => void
   currentSeason?: string
+  /** Rangée sous la recherche (filtres en pastilles) */
+  children?: ReactNode
 }
 
 export default function SearchBar({
   value, onChange, sort, onSortChange, filter, onFilterChange,
-  allCollapsed, onToggleCollapseAll, seasonFilter, onSeasonFilterChange, currentSeason,
+  allCollapsed, onToggleCollapseAll, seasonFilter, onSeasonFilterChange, currentSeason, children,
 }: SearchBarProps) {
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -136,6 +139,7 @@ export default function SearchBar({
           )}
         </div>
       </div>
+      {children}
     </div>
   )
 }

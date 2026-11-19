@@ -13,6 +13,14 @@ import { useJournal } from '../../hooks/useJournal'
 import { todayStr, formatDateFr } from '../../utils/dates'
 import styles from './GuidePage.module.css'
 
+type ChipId = 'aucune' | 'petite_quantite' | 'a_eviter' | 'nouveau'
+const CHIPS: ReadonlyArray<{ id: ChipId; label: string; dot: string }> = [
+  { id: 'aucune', label: 'À volonté', dot: '#4cd964' },
+  { id: 'petite_quantite', label: 'Avec modération', dot: '#f5a623' },
+  { id: 'a_eviter', label: 'À éviter', dot: '#ff5a5f' },
+  { id: 'nouveau', label: 'Pas encore mangé', dot: '#af8cff' },
+]
+
 type SortOption = 'categorie' | 'alpha' | 'restriction'
 type FilterOption = 'tous' | CategorieId
 
@@ -89,6 +97,7 @@ export default function GuidePage() {
   const [sort, setSort] = useState<SortOption>('categorie')
   const [filter, setFilter] = useState<FilterOption>('tous')
   const [seasonFilter, setSeasonFilter] = useState(false)
+  const [chips, setChips] = useState<Set<ChipId>>(new Set())
   const [modalVegetalId, setModalVegetalId] = useState<string | null>(null)
   const currentSeason = getCurrentSeason()
 
@@ -107,6 +116,28 @@ export default function GuidePage() {
     setChecked(prev => {
       const next = new Set(prev)
       next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }, [])
+
+  // Aliments déjà donnés à Chipie (tout le journal) — les aliments « à éviter » ne comptent jamais comme à goûter
+  const tastedIds = useMemo(() => new Set(entries.map(e => e.vegetalId)), [entries])
+  const tastable = useMemo(() => VEGETAUX.filter(v => v.restriction !== 'a_eviter'), [])
+  const tastedCount = useMemo(() => tastable.filter(v => tastedIds.has(v.id)).length, [tastable, tastedIds])
+  const progressByCat = useMemo(() => {
+    const out: Record<string, { done: number; total: number }> = {}
+    for (const v of tastable) {
+      const p = out[v.categorie] ?? (out[v.categorie] = { done: 0, total: 0 })
+      p.total++
+      if (tastedIds.has(v.id)) p.done++
+    }
+    return out
+  }, [tastable, tastedIds])
+
+  const toggleChip = useCallback((id: ChipId) => {
+    setChips(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id); else next.add(id)
       return next
     })
   }, [])
@@ -170,6 +201,12 @@ export default function GuidePage() {
       result = result.filter((v) => isInSeason(v.saisonnalite, currentSeason))
     }
 
+    // Pastilles : les niveaux de restriction s'additionnent (« à volonté » OU « modération »),
+    // « pas encore mangé » restreint ensuite la liste
+    const levels = (['aucune', 'petite_quantite', 'a_eviter'] as const).filter(l => chips.has(l))
+    if (levels.length > 0) result = result.filter(v => levels.includes(v.restriction))
+    if (chips.has('nouveau')) result = result.filter(v => !tastedIds.has(v.id) && v.restriction !== 'a_eviter')
+
     if (sort === 'alpha') {
       result = [...result].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
     } else if (sort === 'restriction') {
@@ -178,7 +215,7 @@ export default function GuidePage() {
     }
 
     return result
-  }, [searchResult, filter, sort, seasonFilter, currentSeason])
+  }, [searchResult, filter, sort, seasonFilter, currentSeason, chips, tastedIds])
 
   // Pendant une recherche, les résultats restent classés par pertinence (pas regroupés par catégorie)
   const showByCategory = sort === 'categorie' && !searchResult
@@ -189,6 +226,7 @@ export default function GuidePage() {
       vegetal={v}
       imageUrl={getImage(v.id, v.image)}
       todayCount={todayCounts[v.id] || 0}
+      isNew={!tastedIds.has(v.id) && v.restriction !== 'a_eviter'}
       onAddToJournal={handleAddClick}
       onRemoveFromJournal={handleRemoveClick}
       onChangeImage={setImage}
@@ -209,7 +247,39 @@ export default function GuidePage() {
         seasonFilter={seasonFilter}
         onSeasonFilterChange={setSeasonFilter}
         currentSeason={SEASON_LABELS[currentSeason]}
-      />
+      >
+        <div className={styles.chips} role="group" aria-label="Filtres">
+          <button
+            className={`${styles.chip} ${seasonFilter ? styles.chipOn : ''}`}
+            aria-pressed={seasonFilter}
+            onClick={() => setSeasonFilter(s => !s)}
+          >
+            <span className={styles.chipDot} style={{ background: '#5ac8fa' }} />De saison
+          </button>
+          {CHIPS.map(c => (
+            <button
+              key={c.id}
+              className={`${styles.chip} ${chips.has(c.id) ? styles.chipOn : ''}`}
+              aria-pressed={chips.has(c.id)}
+              onClick={() => toggleChip(c.id)}
+            >
+              <span className={styles.chipDot} style={{ background: c.dot }} />{c.label}
+            </button>
+          ))}
+          {(chips.size > 0 || seasonFilter) && (
+            <button className={styles.chipReset} onClick={() => { setChips(new Set()); setSeasonFilter(false) }}>Effacer</button>
+          )}
+        </div>
+      </SearchBar>
+
+      <div className={styles.tastedCard}>
+        <span className={styles.tastedText}>
+          🐰 Chipie a goûté <strong>{tastedCount}</strong> aliment{tastedCount > 1 ? 's' : ''} sur {tastable.length}
+        </span>
+        <span className={styles.tastedTrack}>
+          <span className={styles.tastedFill} style={{ width: `${Math.round((tastedCount / tastable.length) * 100)}%` }} />
+        </span>
+      </div>
 
       {seasonFilter && (
         <div className={styles.seasonBanner}>
@@ -238,6 +308,7 @@ export default function GuidePage() {
               categorie={cat}
               vegetaux={items}
               open={openCategories.has(cat.id)}
+              progress={progressByCat[cat.id]}
               onToggle={() => toggleCategory(cat.id)}
             >
               {items.map(renderCard)}

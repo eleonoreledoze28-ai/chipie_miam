@@ -218,3 +218,30 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
 }
+
+/* Feu tricolore : bande de couleur à gauche selon la fréquence conseillée */
+.card { position: relative; }
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 7px; bottom: 7px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--accent-green);
+}
+.stripe_petite_quantite::before { background: #f5a623; }
+.stripe_a_eviter::before { background: #ff5a5f; }
+
+.newBadge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  vertical-align: middle;
+  color: var(--accent-orange);
+  background: var(--accent-orange-dim);
+  border: 1px solid var(--accent-orange);
+}
