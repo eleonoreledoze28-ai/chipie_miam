@@ -432,3 +432,8 @@ input, textarea, select { font: inherit; color: inherit; background: none; borde
 @supports (padding: env(safe-area-inset-top)) {
   body { padding-top: env(safe-area-inset-top); }
 }
+
+/* Effet de pression sur les boutons */
+button:not(:disabled), [role='button'] { transition: transform 120ms ease; }
+button:not(:disabled):active, [role='button']:active { transform: scale(0.96); }
+@media (prefers-reduced-motion: reduce) { button:not(:disabled):active, [role='button']:active { transform: none; } }

@@ -1,0 +1,96 @@
+.chipie {
+  display: block;
+  overflow: visible;
+}
+
+/* Toutes les parties qui bougent pivotent autour de leur propre centre */
+.chipie g,
+.chipie text {
+  transform-box: fill-box;
+}
+
+.animated .body {
+  transform-origin: 50% 100%;
+  animation: breathe 4.2s ease-in-out infinite;
+}
+
+.animated .earLeft {
+  transform-origin: 70% 12%;
+  animation: earLeft 6s ease-in-out infinite;
+}
+
+.animated .earRight {
+  transform-origin: 30% 12%;
+  animation: earRight 6s ease-in-out infinite 1.4s;
+}
+
+.animated .eyes {
+  transform-origin: 50% 50%;
+  animation: blink 5.2s infinite;
+}
+
+.animated .chew {
+  transform-origin: 50% 30%;
+  animation: chew 0.55s ease-in-out infinite;
+}
+
+.animated .carrot {
+  transform-origin: 0% 50%;
+  animation: nibble 0.55s ease-in-out infinite;
+}
+
+.animated .zzz text { animation: zFloat 3s ease-in-out infinite; }
+.animated .z2 { animation-delay: 0.5s; }
+.animated .z3 { animation-delay: 1s; }
+
+.animated .hearts path { animation: heartFloat 2.4s ease-in-out infinite; }
+.animated .h2 { animation-delay: 0.9s; }
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50%      { transform: scale(1.012, 1.02); }
+}
+
+@keyframes earLeft {
+  0%, 84%, 100% { transform: rotate(0deg); }
+  88%           { transform: rotate(-5deg); }
+  92%           { transform: rotate(3deg); }
+}
+
+@keyframes earRight {
+  0%, 84%, 100% { transform: rotate(0deg); }
+  88%           { transform: rotate(5deg); }
+  92%           { transform: rotate(-3deg); }
+}
+
+@keyframes blink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  96%           { transform: scaleY(0.08); }
+}
+
+@keyframes chew {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(0.55); }
+}
+
+@keyframes nibble {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(-3deg); }
+}
+
+@keyframes zFloat {
+  0%, 100% { opacity: 0.35; transform: translateY(2px); }
+  50%      { opacity: 1;    transform: translateY(-5px); }
+}
+
+@keyframes heartFloat {
+  0%, 100% { opacity: 0.4; transform: translateY(2px) scale(0.9); }
+  50%      { opacity: 1;   transform: translateY(-6px) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated .body, .animated .earLeft, .animated .earRight, .animated .eyes,
+  .animated .chew, .animated .carrot, .animated .zzz text, .animated .hearts path {
+    animation: none;
+  }
+}

@@ -8,8 +8,8 @@ import { useTilt } from '../../hooks/useTilt'
 import { haptic } from '../../services/haptics'
 import { startPurr } from '../../services/sfx'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import styles from './ProfilPage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 const DEFAULT_AVATAR = `${import.meta.env.BASE_URL}chipie-avatar.jpeg`
 const vegetauxMap = new Map(VEGETAUX.map(v => [v.id, v]))
@@ -534,7 +534,7 @@ export default function ProfilPage() {
                 return (
                   <div key={vegetal.id} className={styles.topItem}>
                     <span className={styles.topRank}>#{i + 1}</span>
-                    <img src={assetUrl(vegetal.image)} alt="" className={styles.topImg} />
+                    <VegetalImage vegetal={vegetal} className={styles.topImg} />
                     <div className={styles.topInfo}>
                       <span className={styles.topName}>{vegetal.nom}</span>
                       <span className={styles.topCat}>{catMap.get(vegetal.categorie as never)?.emoji} {catMap.get(vegetal.categorie as never)?.nom}</span>

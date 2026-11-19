@@ -220,6 +220,12 @@ export default function SettingsPage() {
           onChange={on => setFx({ glass: on })}
         />
         <ToggleRow
+          label="🎨 Dessins à la place des photos"
+          desc="Les aliments sont dessinés (pratique si les photos ne s'affichent pas ou hors connexion)"
+          on={fx.illustrations}
+          onChange={on => setFx({ illustrations: on })}
+        />
+        <ToggleRow
           label="✨ Étincelles au toucher"
           desc="De petites étincelles suivent ton doigt et jaillissent quand tu touches l'écran"
           on={fx.sparkles}

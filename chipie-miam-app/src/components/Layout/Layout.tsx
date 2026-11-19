@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import Header from '../Header/Header'
 import NavBar from '../NavBar/NavBar'
 import ChipieParle from '../ChipieParle/ChipieParle'
@@ -9,12 +9,15 @@ import Sparkles from '../Sparkles/Sparkles'
 import styles from './Layout.module.css'
 
 export default function Layout() {
+  const { pathname } = useLocation()
   return (
     <div className={styles.layout}>
       <SkyBackground />
       <Header />
       <main className={styles.main}>
-        <Outlet />
+        <div key={pathname} className={styles.page}>
+          <Outlet />
+        </div>
       </main>
       <NavBar />
       <AmbientLayer />

@@ -12,3 +12,10 @@
   padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 8px);
   overflow-y: auto;
 }
+
+/* Transition entre les pages (le transform disparaît à la fin : pas d'effet sur les éléments fixes) */
+.page { animation: pageIn 260ms ease-out backwards; }
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(10px); }
+}
+@media (prefers-reduced-motion: reduce) { .page { animation: none; } }

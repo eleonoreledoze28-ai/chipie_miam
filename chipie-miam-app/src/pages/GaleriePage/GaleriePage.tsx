@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getActiveProfileId } from '../../hooks/useProfiles'
 import { useProfil } from '../../hooks/useProfil'
 import styles from './GaleriePage.module.css'
+import ChipieCharacter from '../../components/ChipieCharacter/ChipieCharacter'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 interface Photo {
@@ -234,7 +235,7 @@ export default function GaleriePage() {
 
       {photos.length === 0 ? (
         <div className={styles.empty}>
-          <span className={styles.emptyIcon}>🐰</span>
+          <ChipieCharacter mood="happy" size={110} />
           <p>Aucune photo pour l'instant</p>
           <button className={styles.emptyBtn} onClick={openFilePicker}>
             Ajouter une photo

@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import styles from './DangerPage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 const catMap = new Map(CATEGORIES.map(c => [c.id, c]))
 
@@ -82,7 +82,7 @@ export default function DangerPage() {
           <div className={styles.foodList}>
             {dangerFoods.map(v => (
               <div key={v.id} className={styles.dangerCard}>
-                <img src={assetUrl(v.image)} alt="" className={styles.foodImg} />
+                <VegetalImage vegetal={v} className={styles.foodImg} />
                 <div className={styles.foodInfo}>
                   <span className={styles.foodName}>{v.nom}</span>
                   <span className={styles.foodCat}>{v.cat?.emoji} {v.cat?.nom}</span>
@@ -120,7 +120,7 @@ export default function DangerPage() {
           <div className={styles.cautionGrid}>
             {cautionFoods.slice(0, 12).map(v => (
               <div key={v.id} className={styles.cautionCard}>
-                <img src={assetUrl(v.image)} alt="" className={styles.cautionImg} />
+                <VegetalImage vegetal={v} className={styles.cautionImg} />
                 <span className={styles.cautionName}>{v.nom}</span>
                 <span className={styles.cautionBadge}>⚠️</span>
               </div>

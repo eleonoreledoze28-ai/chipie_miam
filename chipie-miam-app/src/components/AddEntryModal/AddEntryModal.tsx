@@ -4,6 +4,7 @@ import { assetUrl } from '../../utils/assetUrl'
 import { searchVegetaux } from '../../utils/textSearch'
 import type { Appetit } from '../../hooks/useJournal'
 import styles from './AddEntryModal.module.css'
+import VegetalImage from '../VegetalImage/VegetalImage'
 
 const QUANTITES = [
   'Une feuille',
@@ -85,7 +86,7 @@ export default function AddEntryModal({ date, onAdd, onClose, preSelectedId = nu
         ) : (
           <>
             <div className={styles.selectedVeg}>
-              <img src={assetUrl(selected.image)} alt="" className={styles.selectedImg} />
+              <VegetalImage vegetal={selected} className={styles.selectedImg} />
               <div>
                 <p className={styles.selectedName}>{selected.nom}</p>
                 <button className={styles.changeBtn} onClick={() => setSelectedId(null)}>

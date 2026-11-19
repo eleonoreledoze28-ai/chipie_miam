@@ -3,7 +3,6 @@ import { useJournal } from '../../hooks/useJournal'
 import type { Appetit } from '../../hooks/useJournal'
 import { useProfil } from '../../hooks/useProfil'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import AddEntryModal from '../../components/AddEntryModal/AddEntryModal'
 import BilanSemaine from '../../components/BilanSemaine/BilanSemaine'
 import {
@@ -12,6 +11,8 @@ import {
   getWeekDays, getMonthDays, formatDateShort,
 } from '../../utils/dates'
 import styles from './JournalPage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
+import ChipieCharacter from '../../components/ChipieCharacter/ChipieCharacter'
 
 type ViewMode = 'day' | 'week' | 'month'
 
@@ -296,7 +297,7 @@ export default function JournalPage() {
       <div className={styles.entries}>
         {dayEntries.length === 0 ? (
           <div className={styles.empty}>
-            <span className={styles.emptyIcon}>📝</span>
+            <ChipieCharacter mood="eat" size={110} />
             <p>Aucun aliment enregistré ce jour</p>
           </div>
         ) : (
@@ -305,7 +306,7 @@ export default function JournalPage() {
             if (!veg) return null
             return (
               <div key={entry.id} className={styles.entry}>
-                <img src={assetUrl(veg.image)} alt="" className={styles.entryImg} />
+                <VegetalImage vegetal={veg} className={styles.entryImg} />
                 <div className={styles.entryInfo}>
                   <span className={styles.entryName}>{veg.nom}</span>
                   <span className={styles.entryQty}>{entry.quantite}</span>
@@ -388,7 +389,7 @@ export default function JournalPage() {
             <div className={styles.favGrid}>
               {topFrequent.map(({ veg, count }) => (
                 <button key={veg.id} className={styles.favItem} onClick={() => handleQuickAdd(veg.id)}>
-                  <img src={assetUrl(veg.image)} alt="" className={styles.favImg} />
+                  <VegetalImage vegetal={veg} className={styles.favImg} />
                   <span className={styles.favName}>{veg.nom}</span>
                   <span className={styles.favCount}>{count}×</span>
                 </button>
@@ -410,7 +411,7 @@ export default function JournalPage() {
                 if (!veg) return null
                 return (
                   <div key={entry.id} className={styles.lastYearItem}>
-                    <img src={assetUrl(veg.image)} alt="" className={styles.lastYearImg} />
+                    <VegetalImage vegetal={veg} className={styles.lastYearImg} />
                     <span className={styles.lastYearName}>{veg.nom}</span>
                     {entry.appetit && (
                       <span className={styles.lastYearAppetit}>

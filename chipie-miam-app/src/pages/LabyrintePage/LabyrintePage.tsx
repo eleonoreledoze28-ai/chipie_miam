@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import { useMazeAudio } from './useMazeAudio'
 import styles from './LabyrintePage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 // ===== Types =====
 interface Cell {
@@ -588,7 +588,7 @@ export default function LabyrintePage() {
 
           {won && (
             <div className={styles.endFood}>
-              <img src={assetUrl(food.image)} alt="" className={styles.endFoodImg} />
+              <VegetalImage vegetal={food} className={styles.endFoodImg} />
               <span>Chipie a trouv\u00e9 : <strong>{food.nom}</strong> {cat?.emoji}</span>
             </div>
           )}
@@ -716,7 +716,7 @@ export default function LabyrintePage() {
                     <span className={`${styles.player} ${moveAnim ? styles.playerMove : ''} ${frozen ? styles.playerFrozen : ''} ${teleportAnim ? styles.playerTeleport : ''}`}>🐰</span>
                   )}
                   {isGoal && !isPlayer && (
-                    <img src={assetUrl(food.image)} alt="" className={styles.goalImg} />
+                    <VegetalImage vegetal={food} className={styles.goalImg} />
                   )}
                   {isCarrot && !isPlayer && (
                     <span className={`${styles.carrot} ${carrotAnim === key ? styles.carrotCollect : ''}`}>🥕</span>

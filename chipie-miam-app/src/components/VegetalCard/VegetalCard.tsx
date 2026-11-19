@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import type { Vegetal } from '../../data/vegetaux'
 import styles from './VegetalCard.module.css'
+import VegetalImage from '../VegetalImage/VegetalImage'
 
 interface Props {
   vegetal: Vegetal
@@ -20,7 +21,6 @@ function shortNote(v: Vegetal): string {
 
 export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJournal, onRemoveFromJournal, onChangeImage }: Props) {
   const navigate = useNavigate()
-  const [imgError, setImgError] = useState(false)
   const [showImageEdit, setShowImageEdit] = useState(false)
   const [editUrl, setEditUrl] = useState('')
   const note = shortNote(vegetal)
@@ -50,7 +50,6 @@ export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJour
     e.stopPropagation()
     onChangeImage(vegetal.id, editUrl)
     setShowImageEdit(false)
-    setImgError(false)
   }
 
   const handleImageCancel = (e: React.MouseEvent) => {
@@ -92,17 +91,7 @@ export default function VegetalCard({ vegetal, imageUrl, todayCount, onAddToJour
 
         {/* Thumbnail (click to edit URL) */}
         <button className={styles.thumbWrap} onClick={handleImageClick} title="Changer l'image">
-          {!imgError ? (
-            <img
-              src={imageUrl}
-              alt={vegetal.nom}
-              className={styles.thumb}
-              loading="lazy"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <div className={styles.thumbPlaceholder}>🌿</div>
-          )}
+          <VegetalImage vegetal={vegetal} src={imageUrl} alt={vegetal.nom} className={styles.thumb} loading="lazy" />
           <div className={styles.editOverlay}>✎</div>
         </button>
 

@@ -11,6 +11,7 @@ export interface FxSettings {
   glass: boolean      // cartes translucides (effet verre)
   textSize: TextSize  // taille du texte dans toute l'app
   readable: boolean   // mode lisibilité : police très lisible, texte plus aéré
+  illustrations: boolean // dessins à la place des photos d'aliments
 }
 
 export type TextSize = 'small' | 'normal' | 'large' | 'xlarge'
@@ -25,7 +26,7 @@ export const TEXT_SIZES: ReadonlyArray<{ id: TextSize; label: string }> = [
 const KEY = 'chipie_fx_settings'
 const DEFAULTS: FxSettings = {
   sounds: true, haptics: true, ambient: true, weather: false, sky: true, sparkles: true, glass: true,
-  textSize: 'normal', readable: false,
+  textSize: 'normal', readable: false, illustrations: false,
 }
 
 function load(): FxSettings {

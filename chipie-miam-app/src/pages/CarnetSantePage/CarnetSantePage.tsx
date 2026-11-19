@@ -4,6 +4,7 @@ import { useProfil } from '../../hooks/useProfil'
 import { getActiveProfileId } from '../../hooks/useProfiles'
 import WeightChart from '../../components/WeightChart/WeightChart'
 import styles from './CarnetSantePage.module.css'
+import ChipieCharacter from '../../components/ChipieCharacter/ChipieCharacter'
 
 // ===== Data types =====
 interface WeightEntry {
@@ -214,7 +215,7 @@ export default function CarnetSantePage() {
 
           {weights.length === 0 && !showWeightForm && (
             <div className={styles.empty}>
-              <span>⚖️</span>
+              <ChipieCharacter mood="love" size={110} />
               <p>Aucune pesée enregistrée. Pesez {profil.nom} régulièrement pour suivre sa santé !</p>
             </div>
           )}

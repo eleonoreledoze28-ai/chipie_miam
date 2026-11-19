@@ -3,8 +3,8 @@ import { useJournal } from '../../hooks/useJournal'
 import { useProfil } from '../../hooks/useProfil'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import { todayStr, addDays } from '../../utils/dates'
-import { assetUrl } from '../../utils/assetUrl'
 import styles from './StatsPage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 const vegetauxMap = new Map(VEGETAUX.map((v) => [v.id, v]))
 const catMap = new Map(CATEGORIES.map((c) => [c.id, c]))
@@ -280,7 +280,7 @@ export default function StatsPage() {
               return (
                 <div key={vegetal.id} className={styles.topItem}>
                   <span className={styles.topRank}>#{i + 1}</span>
-                  <img src={assetUrl(vegetal.image)} alt="" className={styles.topImg} />
+                  <VegetalImage vegetal={vegetal} className={styles.topImg} />
                   <span className={styles.topName}>{vegetal.nom}</span>
                   <span className={styles.topCount}>{count}x</span>
                 </div>

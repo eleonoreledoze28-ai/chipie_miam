@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VEGETAUX, CATEGORIES, type Vegetal } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import styles from './AssiettePage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 // ===== Audio hook (lightweight, inline) =====
 function useAssetteAudio() {
@@ -566,7 +566,7 @@ export default function AssiettePage() {
           <div className={styles.plateRim}>
             <div className={styles.plateInner}>
               {plate.slice(-12).map((p, i) => (
-                <img key={`${p.id}-${i}`} src={assetUrl(p.image)} alt="" className={styles.plateItem}
+                <VegetalImage key={`${p.id}-${i}`} vegetal={p} className={styles.plateItem}
                   style={{ animationDelay: `${i * 0.04}s` }} />
               ))}
               {plate.length === 0 && (
@@ -615,7 +615,7 @@ export default function AssiettePage() {
               disabled={isSelected}
             >
               <div className={styles.foodImgWrap}>
-                <img src={assetUrl(item.image)} alt="" className={styles.foodImg} />
+                <VegetalImage vegetal={item} className={styles.foodImg} />
                 {!isSelected && <span className={styles.foodCatBadge}>{itemCat?.emoji}</span>}
               </div>
               <span className={styles.foodName}>{item.nom}</span>

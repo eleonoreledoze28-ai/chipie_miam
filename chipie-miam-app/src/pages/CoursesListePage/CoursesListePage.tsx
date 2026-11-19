@@ -5,6 +5,7 @@ import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import type { Vegetal } from '../../data/vegetaux'
 import { searchVegetaux } from '../../utils/textSearch'
 import styles from './CoursesListePage.module.css'
+import ChipieCharacter from '../../components/ChipieCharacter/ChipieCharacter'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 interface CourseItem {
@@ -179,7 +180,7 @@ export default function CoursesListePage() {
         <>
           {items.length === 0 ? (
             <div className={styles.empty}>
-              <span className={styles.emptyIcon}>🥬</span>
+              <ChipieCharacter mood="eat" size={110} />
               <p>Ta liste est vide</p>
               <button className={styles.emptyBtn} onClick={() => setTab('explorer')}>
                 Explorer les aliments

@@ -5,11 +5,11 @@ import { useCustomImages } from '../../hooks/useCustomImages'
 import { useJournal } from '../../hooks/useJournal'
 import RestrictionBadge from '../../components/RestrictionBadge/RestrictionBadge'
 import styles from './DetailPage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 export default function DetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [imgError, setImgError] = useState(false)
   const [showImageEdit, setShowImageEdit] = useState(false)
   const { getImage, setImage } = useCustomImages()
   const { entries } = useJournal()
@@ -42,7 +42,6 @@ export default function DetailPage() {
   const handleImageSave = () => {
     setImage(vegetal.id, editUrl)
     setShowImageEdit(false)
-    setImgError(false)
   }
 
   const sugarLabel = vegetal.niveauSucre === 'eleve' ? 'Élevé' : vegetal.niveauSucre === 'moyen' ? 'Moyen' : 'Faible'
@@ -69,11 +68,7 @@ export default function DetailPage() {
           </svg>
         </button>
 
-        {!imgError ? (
-          <img src={imageUrl} alt={vegetal.nom} className={styles.hero} onError={() => setImgError(true)} />
-        ) : (
-          <div className={styles.heroPlaceholder}>🌿</div>
-        )}
+        <VegetalImage vegetal={vegetal} src={imageUrl} alt={vegetal.nom} className={styles.hero} />
         <div className={styles.heroOverlay} />
 
         {/* Name on hero */}

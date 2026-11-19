@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VEGETAUX, type Vegetal } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import styles from './TriExpressPage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 const DURATION = 30
 const BEST_KEY = 'chipie-tri-best'
@@ -332,7 +332,7 @@ export default function TriExpressPage() {
               {badgeDir === 'good' ? '✓ BON' : '✗ TOXIQUE'}
             </div>
           )}
-          <img src={assetUrl(currentCard.image)} alt={currentCard.nom} className={styles.cardImg} draggable={false} />
+          <VegetalImage vegetal={currentCard} alt={currentCard.nom} className={styles.cardImg} draggable={false} />
           <p className={styles.cardName}>{currentCard.nom}</p>
           <p className={styles.cardLatin}>{currentCard.nomLatin}</p>
         </div>

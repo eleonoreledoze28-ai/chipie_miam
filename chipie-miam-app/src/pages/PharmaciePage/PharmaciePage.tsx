@@ -9,6 +9,7 @@ import { playSfx } from '../../services/sfx'
 import { lookupProduct, rememberProduct } from '../../services/barcode'
 import BarcodeScanner from '../../components/BarcodeScanner/BarcodeScanner'
 import styles from './PharmaciePage.module.css'
+import ChipieCharacter from '../../components/ChipieCharacter/ChipieCharacter'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 const TYPE_INFO: Record<TypeStock, { label: string; emoji: string; unite: string }> = {
@@ -306,7 +307,7 @@ export default function PharmaciePage() {
       {/* List */}
       {items.length === 0 ? (
         <div className={styles.empty}>
-          <span className={styles.emptyIcon}>🧴</span>
+          <ChipieCharacter mood="sleep" size={110} />
           <p>Aucun article pour l'instant</p>
           <button className={styles.emptyBtn} onClick={openAdd}>Ajouter un article</button>
         </div>

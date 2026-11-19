@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VEGETAUX, type Vegetal } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import styles from './SnakePage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 // ===== Audio =====
 function useSnakeAudio() {
@@ -503,7 +503,7 @@ export default function SnakePage() {
                 )}
                 {isHead && <span className={`${styles.head} ${styles[`head_${direction}`]}`}>🐰</span>}
                 {isFood && food && (
-                  <img src={assetUrl(food.vegetal.image)} alt=""
+                  <VegetalImage vegetal={food.vegetal}
                     className={`${styles.foodImg} ${styles[`food_${food.kind}`]}`} />
                 )}
               </div>

@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VEGETAUX } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import styles from './AnagrammePage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 const MAX_QUESTIONS = 10
 
@@ -250,7 +250,7 @@ export default function AnagrammePage() {
       {/* Image hint (only if not hard mode) */}
       {difficulty !== 'hard' && (
         <div className={styles.imageArea}>
-          <img src={assetUrl(vegetal.image)} alt="" className={`${styles.hintImage} ${hint ? '' : styles.hintHidden}`} />
+          <VegetalImage vegetal={vegetal} className={`${styles.hintImage} ${hint ? '' : styles.hintHidden}`} />
           {!hint && !showResult && (
             <button className={styles.hintBtn} onClick={() => setHint(true)}>
               👁️ Voir l'indice

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VEGETAUX, CATEGORIES, type Vegetal } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import styles from './QuizPage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 // ===== Audio =====
 function useQuizAudio() {
@@ -401,7 +401,7 @@ export default function QuizPage() {
       {/* Question card */}
       <div className={`${styles.cardArea} ${swipeDir === 'left' ? styles.cardSwipeLeft : ''} ${swipeDir === 'right' ? styles.cardSwipeRight : ''}`}>
         <div className={`${styles.questionCard} ${feedback === 'correct' ? styles.cardCorrect : ''} ${feedback === 'wrong' ? styles.cardWrong : ''}`}>
-          <img src={assetUrl(question.vegetal.image)} alt="" className={styles.questionImg} />
+          <VegetalImage vegetal={question.vegetal} className={styles.questionImg} />
           <h2 className={styles.questionName}>{question.vegetal.nom}</h2>
           <span className={styles.questionCat}>{cat?.emoji} {cat?.nom}</span>
           <p className={styles.questionPrompt}>Bon pour Chipie ?</p>

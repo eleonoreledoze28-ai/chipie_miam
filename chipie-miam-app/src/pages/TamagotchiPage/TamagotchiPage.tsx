@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
-import { assetUrl } from '../../utils/assetUrl'
 import ChipieSvg, { type ChipieMood } from './ChipieSvg'
 import {
   SEASONS, WEATHER_INFO, ACHIEVEMENTS, SHOP_ITEMS, RANDOM_EVENTS,
@@ -9,6 +8,7 @@ import {
   type AchievementCheckState,
 } from './tamagotchiData'
 import styles from './TamagotchiPage.module.css'
+import VegetalImage from '../../components/VegetalImage/VegetalImage'
 
 // ===== Utils =====
 function shuffle<T>(arr: T[]): T[] {
@@ -725,7 +725,7 @@ export default function TamagotchiPage() {
                     const cat = CATEGORIES.find(c => c.id === v.categorie)
                     return (
                       <button key={v.id} className={styles.foodItem} onClick={() => feed(v)}>
-                        <img src={assetUrl(v.image)} alt="" className={styles.foodImg} />
+                        <VegetalImage vegetal={v} className={styles.foodImg} />
                         <div className={styles.foodInfo}>
                           <span className={styles.foodName}>{v.nom}</span>
                           <span className={styles.foodCat}>{cat?.emoji} {cat?.nom}</span>

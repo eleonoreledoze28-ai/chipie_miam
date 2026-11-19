@@ -1,5 +1,8 @@
+import { useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import ChipieCharacter from '../ChipieCharacter/ChipieCharacter'
+import { confetti } from '../../services/confetti'
 import styles from './GameShell.module.css'
 
 interface Props {
@@ -40,8 +43,10 @@ interface ResultProps {
 
 /** Écran de fin commun. */
 export function GameResult({ title, lines, isRecord, onReplay }: ResultProps) {
+  useEffect(() => { if (isRecord) confetti() }, [isRecord])
   return (
     <div className={styles.result}>
+      <ChipieCharacter mood={isRecord ? 'love' : 'happy'} size={120} />
       <h2 className={styles.resultTitle}>{title}</h2>
       {isRecord && <p className={styles.record}>🏆 Nouveau record !</p>}
       {lines.map(line => <p key={line} className={styles.resultLine}>{line}</p>)}

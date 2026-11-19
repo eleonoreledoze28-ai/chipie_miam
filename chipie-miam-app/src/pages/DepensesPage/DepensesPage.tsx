@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getActiveProfileId } from '../../hooks/useProfiles'
 import styles from './DepensesPage.module.css'
+import ChipieCharacter from '../../components/ChipieCharacter/ChipieCharacter'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 type Categorie = 'vet' | 'alimentation' | 'accessoires' | 'jouets' | 'autre'
@@ -169,7 +170,7 @@ export default function DepensesPage() {
       {/* Expense list */}
       {filtered.length === 0 ? (
         <div className={styles.empty}>
-          <span className={styles.emptyIcon}>💸</span>
+          <ChipieCharacter mood="surprised" size={110} />
           <p>Aucune dépense ce mois-ci</p>
           <button className={styles.emptyAddBtn} onClick={() => setShowForm(true)}>Ajouter une dépense</button>
         </div>
