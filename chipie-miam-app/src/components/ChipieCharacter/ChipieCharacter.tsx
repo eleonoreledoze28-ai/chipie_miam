@@ -9,6 +9,8 @@ interface Props {
   size?: number
   /** Clignement, oreilles, respiration… (désactivé si l'écran demande de réduire les animations) */
   animated?: boolean
+  /** Seulement la tête (cadrage serré, sans corps ni ombre) : pour les jeux */
+  head?: boolean
   className?: string
 }
 
@@ -30,7 +32,7 @@ const EAR_INNER = '#6b4d3a'
 const CREAM = '#e3d3b4'
 
 /** Chipie dessinée : lapin bélier noir au museau fauve, avec plusieurs expressions. */
-export default function ChipieCharacter({ mood = 'happy', size = 160, animated = true, className = '' }: Props) {
+export default function ChipieCharacter({ mood = 'happy', size = 160, animated = true, head = false, className = '' }: Props) {
   const uid = useId().replace(/:/g, '')
   const gBody = `body-${uid}`
   const gHead = `head-${uid}`
@@ -40,9 +42,9 @@ export default function ChipieCharacter({ mood = 'happy', size = 160, animated =
 
   return (
     <svg
-      viewBox="0 0 200 200"
+      viewBox={head ? '28 24 144 128' : '0 0 200 200'}
       width={size}
-      height={size}
+      height={head ? size * (128 / 144) : size}
       className={`${styles.chipie} ${animated ? styles.animated : ''} ${className}`}
       role="img"
       aria-label={LABELS[mood]}
@@ -64,9 +66,9 @@ export default function ChipieCharacter({ mood = 'happy', size = 160, animated =
       </defs>
 
       {/* ombre au sol */}
-      <ellipse cx="100" cy="188" rx="54" ry="7" fill="rgba(0,0,0,0.28)" />
+      {!head && <ellipse cx="100" cy="188" rx="54" ry="7" fill="rgba(0,0,0,0.28)" />}
 
-      <g className={styles.body}>
+      {!head && <g className={styles.body}>
         {/* pattes arrière */}
         <ellipse cx="62" cy="176" rx="22" ry="11" fill={FUR} />
         <ellipse cx="138" cy="176" rx="22" ry="11" fill={FUR} />
@@ -82,7 +84,7 @@ export default function ChipieCharacter({ mood = 'happy', size = 160, animated =
         <ellipse cx="118" cy="172" rx="10" ry="15" fill={FUR} />
         <ellipse cx="82" cy="182" rx="8" ry="4.5" fill={CREAM} />
         <ellipse cx="118" cy="182" rx="8" ry="4.5" fill={CREAM} />
-      </g>
+      </g>}
 
       {/* oreilles tombantes (derrière la tête) */}
       <g className={styles.earLeft}>
