@@ -66,6 +66,7 @@ import PlaylistPage from './pages/PlaylistPage/PlaylistPage'
 import SecretPage from './pages/SecretPage/SecretPage'
 import DetectivePage from './pages/DetectivePage/DetectivePage'
 import PharmaciePage from './pages/PharmaciePage/PharmaciePage'
+import DisChipiePage from './pages/DisChipiePage/DisChipiePage'
 import TaupinierePage from './pages/TaupinierePage/TaupinierePage'
 import SauteCarottePage from './pages/SauteCarottePage/SauteCarottePage'
 import QuiEstCePage from './pages/QuiEstCePage/QuiEstCePage'
@@ -186,6 +187,7 @@ function App() {
         <Route path="secret" element={<SecretPage />} />
         <Route path="detective" element={<DetectivePage />} />
         <Route path="pharmacie" element={<PharmaciePage />} />
+        <Route path="dis-chipie" element={<DisChipiePage />} />
         <Route path="jeu/taupiniere" element={<TaupinierePage />} />
         <Route path="jeu/saute-carotte" element={<SauteCarottePage />} />
         <Route path="jeu/qui-est-ce" element={<QuiEstCePage />} />
