@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useJournal } from '../../hooks/useJournal'
 import { useProfil } from '../../hooks/useProfil'
 import { getActiveProfileId } from '../../hooks/useProfiles'
@@ -80,6 +80,17 @@ export default function DisChipiePage() {
   }, [addEntry, recentIds, rabbitName, voiceOn])
 
   const { listening, interim, error, start, stop } = useSpeechRecognition(ask)
+
+  // Arrivée par le bouton micro flottant (?micro=1) : on écoute tout de suite, puis on retire le paramètre
+  const [searchParams, setSearchParams] = useSearchParams()
+  const autoStarted = useRef(false)
+  const wantsMic = searchParams.get('micro') === '1'
+  useEffect(() => {
+    if (!wantsMic || autoStarted.current) return
+    autoStarted.current = true
+    if (recognitionOk) start()
+    setSearchParams({}, { replace: true })
+  }, [wantsMic, recognitionOk, start, setSearchParams])
 
   const undo = useCallback((exchange: Exchange) => {
     exchange.loggedIds.forEach(id => removeEntry(id))

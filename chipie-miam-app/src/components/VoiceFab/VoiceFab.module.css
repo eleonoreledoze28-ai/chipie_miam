@@ -1,0 +1,21 @@
+/* En bas à gauche, dans la colonne de l'app (500 px max), au-dessus de la barre de navigation.
+   z-index 90 : sous les fenêtres (formulaires, scanner) et l'en-tête, qui passent par-dessus. */
+.fab {
+  position: fixed;
+  left: max(14px, calc(50% - 250px + 14px));
+  bottom: calc(var(--nav-height, 62px) + var(--safe-bottom, 0px) + 16px);
+  z-index: 90;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent-orange);
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  transition: transform 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fab:active { transform: scale(0.92); }
