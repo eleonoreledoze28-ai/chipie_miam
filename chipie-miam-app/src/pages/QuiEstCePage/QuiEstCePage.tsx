@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import GameShell, { GameResult } from '../../components/GameShell/GameShell'
 import { useBestScore } from '../../hooks/useBestScore'
+import { haptic } from '../../services/haptics'
+import { playSfx } from '../../services/sfx'
 import { RACES_COMPAREES } from '../../data/races'
 import type { RaceComparee } from '../../data/races'
 import styles from './QuiEstCePage.module.css'
@@ -76,6 +78,8 @@ export default function QuiEstCePage() {
   const pick = (id: string) => {
     if (answered) return
     const points = id === round.answer.id ? MAX_CLUES + 1 - revealed : 0
+    playSfx(points > 0 ? 'chime' : 'error')
+    haptic(points > 0 ? 'success' : 'error')
     setPicked(id)
     setGained(points)
     setScore(s => s + points)

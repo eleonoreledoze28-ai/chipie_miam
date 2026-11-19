@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import GameShell, { GameResult } from '../../components/GameShell/GameShell'
 import { useBestScore } from '../../hooks/useBestScore'
 import { useProfil } from '../../hooks/useProfil'
+import { haptic } from '../../services/haptics'
+import { playSfx } from '../../services/sfx'
 import styles from './CacheCachePage.module.css'
 
 type Phase = 'ready' | 'run' | 'guess' | 'result' | 'over'
@@ -73,6 +75,7 @@ export default function CacheCachePage() {
         const next = [...slotsRef.current]
         ;[next[a], next[b]] = [next[b], next[a]]
         writeSlots(next)
+        playSfx('swap')
         await sleep(duration + 60)
       }
       if (!cancelled) setPhase('guess')
@@ -89,12 +92,19 @@ export default function CacheCachePage() {
 
     if (cup === target) {
       setRound(r => r + 1)
+      playSfx('chime')
+      haptic('success')
     } else if (lives <= 1) {
       setLives(0)
-      setIsRecord(submit(roundRef.current))
+      const record = submit(roundRef.current)
+      setIsRecord(record)
       setPhase('over')
+      playSfx('error')
+      haptic(record ? 'win' : 'error')
     } else {
       setLives(l => l - 1)
+      playSfx('error')
+      haptic('error')
     }
   }
 

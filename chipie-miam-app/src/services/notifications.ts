@@ -1,16 +1,36 @@
+import { getStatut } from '../utils/stock'
+import type { StockItem } from '../utils/stock'
+import { getFx } from './fxSettings'
+import { refreshWeather } from './weather'
+
 const SETTINGS_KEY = 'chipie_notif_settings'
 
 export interface NotifSettings {
   feedingEnabled: boolean
   feedingTime: string      // "HH:MM"
   feedingFiredDate: string // "YYYY-MM-DD" — last day feeding notif was shown
+  weighEnabled: boolean         // rappel de pesée mensuelle
+  pharmacieEnabled: boolean     // pharmacie : péremption, stock bas
+  weatherAlertEnabled: boolean  // chaleur / gel (nécessite la météo réelle)
+  weatherFiredDate: string      // "YYYY-MM-DD" — dernier jour où l'alerte météo a été montrée
 }
 
 const DEFAULTS: NotifSettings = {
   feedingEnabled: true,
   feedingTime: '08:00',
   feedingFiredDate: '',
+  weighEnabled: true,
+  pharmacieEnabled: true,
+  weatherAlertEnabled: true,
+  weatherFiredDate: '',
 }
+
+// Seuils des rappels intelligents
+export const WEIGH_EVERY_DAYS = 30        // pesée recommandée au moins une fois par mois
+const WEIGH_REPEAT_DAYS = 7               // ne pas rappeler plus d'une fois par semaine
+const PHARMACIE_WARNING_DAYS = 7          // péremption proche : prévenir 7 jours avant
+export const HEAT_ALERT_C = 28            // un lapin supporte mal plus de ~25 °C
+export const FROST_ALERT_C = 0
 
 export function getSettings(): NotifSettings {
   try {
@@ -95,6 +115,8 @@ async function checkCarnetReminders(today: string): Promise<void> {
   }
 }
 
+let feedingTimer: number | null = null
+
 // Schedule or fire the daily feeding reminder
 async function checkFeedingReminder(today: string): Promise<void> {
   const settings = getSettings()
@@ -117,10 +139,13 @@ async function checkFeedingReminder(today: string): Promise<void> {
     saveSettings({ ...getSettings(), feedingFiredDate: todayLocal() })
   }
 
+  if (feedingTimer !== null) { window.clearTimeout(feedingTimer); feedingTimer = null }
+
   if (msUntil <= 0) {
     await doFire()
   } else {
-    setTimeout(() => {
+    feedingTimer = window.setTimeout(() => {
+      feedingTimer = null
       const fresh = getSettings()
       if (fresh.feedingEnabled && fresh.feedingFiredDate !== todayLocal()) {
         void doFire()
@@ -169,7 +194,114 @@ async function checkFastingAlert(): Promise<void> {
   try { localStorage.setItem(firedKey, String(now)) } catch { /* */ }
 }
 
-// Call once on app start — fires any pending notifications
+// Prénom du lapin d'un profil (pour personnaliser les messages)
+function rabbitName(profileId: string): string {
+  try {
+    const raw = localStorage.getItem(`chipie_profil_${profileId}`)
+    const nom = raw ? (JSON.parse(raw) as { nom?: string }).nom : ''
+    return nom || 'Chipie'
+  } catch {
+    return 'Chipie'
+  }
+}
+
+function daysBetween(from: string, to: string): number {
+  return Math.round((new Date(to + 'T00:00:00').getTime() - new Date(from + 'T00:00:00').getTime()) / 86_400_000)
+}
+
+// Pesée : prévient si la dernière pesée date de plus de 30 jours (au plus une fois par semaine)
+async function checkWeighReminder(today: string): Promise<void> {
+  if (!getSettings().weighEnabled) return
+  const PREFIX = 'chipie_weights_'
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (!key?.startsWith(PREFIX)) continue
+    const profileId = key.slice(PREFIX.length)
+    try {
+      const weights = JSON.parse(localStorage.getItem(key) ?? '[]') as Array<{ date?: string }>
+      const last = weights.reduce((max, w) => (w.date && w.date > max ? w.date : max), '')
+      if (!last) continue // aucune pesée enregistrée : rien à rappeler
+
+      const since = daysBetween(last, today)
+      if (since < WEIGH_EVERY_DAYS) continue
+
+      const firedKey = `chipie_notif_weigh_${profileId}`
+      const lastFired = localStorage.getItem(firedKey)
+      if (lastFired && daysBetween(lastFired, today) < WEIGH_REPEAT_DAYS) continue
+
+      const nom = rabbitName(profileId)
+      await showNotif(`⚖️ Pesée du mois pour ${nom}`, {
+        body: `La dernière pesée date de ${since} jours. Un poids régulier est le meilleur signe de bonne santé.`,
+        icon,
+        badge: icon,
+        tag: `chipie-weigh-${profileId}`,
+        data: { url: '/carnet-sante' },
+      })
+      try { localStorage.setItem(firedKey, today) } catch { /* */ }
+    } catch { /* */ }
+  }
+}
+
+// Pharmacie : articles périmés, bientôt périmés, épuisés ou en stock bas (une fois par jour et par profil)
+async function checkPharmacie(today: string): Promise<void> {
+  if (!getSettings().pharmacieEnabled) return
+  const PREFIX = 'chipie-pharmacie-'
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (!key?.startsWith(PREFIX)) continue
+    const profileId = key.slice(PREFIX.length)
+    try {
+      const firedKey = `chipie_notif_pharma_${profileId}`
+      if (localStorage.getItem(firedKey) === today) continue
+
+      const items = JSON.parse(localStorage.getItem(key) ?? '[]') as StockItem[]
+      const issues = items
+        .map(item => ({ item, statut: getStatut(item, today, PHARMACIE_WARNING_DAYS) }))
+        .filter(x => x.statut !== 'ok')
+      if (issues.length === 0) continue
+
+      const LABELS = { perime: 'périmé', rupture: 'épuisé', bientot: 'bientôt périmé', bas: 'stock bas', ok: '' }
+      const shown = issues.slice(0, 3).map(x => `${x.item.nom} (${LABELS[x.statut]})`)
+      const more = issues.length > 3 ? ` et ${issues.length - 3} autre${issues.length - 3 > 1 ? 's' : ''}` : ''
+
+      await showNotif('💊 Pharmacie à vérifier', {
+        body: `${shown.join(', ')}${more}`,
+        icon,
+        badge: icon,
+        tag: `chipie-pharmacie-${profileId}`,
+        data: { url: '/pharmacie' },
+      })
+      try { localStorage.setItem(firedKey, today) } catch { /* */ }
+    } catch { /* */ }
+  }
+}
+
+// Météo : forte chaleur ou gel (une fois par jour, seulement si la météo réelle est activée)
+async function checkWeatherAlert(today: string): Promise<void> {
+  const settings = getSettings()
+  if (!settings.weatherAlertEnabled || !getFx().weather) return
+  if (settings.weatherFiredDate === today) return
+
+  const weather = await refreshWeather()
+  if (!weather) return
+
+  let title = ''
+  let body = ''
+  if (weather.maxC >= HEAT_ALERT_C) {
+    title = '🌡️ Forte chaleur prévue'
+    body = `${Math.round(weather.maxC)} °C aujourd'hui : eau fraîche, pièce à l'ombre, bouteille d'eau congelée à côté de la cage. Un lapin supporte mal plus de 25 °C.`
+  } else if (weather.minC <= FROST_ALERT_C) {
+    title = '🥶 Gel prévu'
+    body = `${Math.round(weather.minC)} °C cette nuit : abri bien sec et à l'abri du vent, litière épaisse, eau qui ne gèle pas.`
+  } else {
+    return
+  }
+
+  await showNotif(title, { body, icon, badge: icon, tag: 'chipie-weather', data: { url: '/conseils-saison' } })
+  saveSettings({ ...getSettings(), weatherFiredDate: today })
+}
+
+// Call once on app start (and when the app comes back to the foreground) — fires any pending notifications
 export async function checkAndFirePending(): Promise<void> {
   if (getPermission() !== 'granted') return
   const today = todayLocal()
@@ -177,5 +309,8 @@ export async function checkAndFirePending(): Promise<void> {
     checkCarnetReminders(today),
     checkFeedingReminder(today),
     checkFastingAlert(),
+    checkWeighReminder(today),
+    checkPharmacie(today),
+    checkWeatherAlert(today),
   ])
 }

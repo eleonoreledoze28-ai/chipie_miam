@@ -1,13 +1,33 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useProfil } from '../../hooks/useProfil'
+import { useTilt } from '../../hooks/useTilt'
 import { getActiveProfileId } from '../../hooks/useProfiles'
 import { assetUrl } from '../../utils/assetUrl'
+import { getStatut, loadStock } from '../../utils/stock'
+import { haptic } from '../../services/haptics'
+import { startPurr } from '../../services/sfx'
+import { getCachedWeather } from '../../services/weather'
+import PetHearts from '../PetHearts/PetHearts'
 import styles from './ChipieParle.module.css'
 
 const DEFAULT_AVATAR = `${import.meta.env.BASE_URL}chipie-avatar.jpeg`
+const WEIGH_REMINDER_DAYS = 30
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10)
+}
+
+// Jours écoulés depuis la dernière pesée du profil actif (null si aucune pesée)
+function daysSinceLastWeight(): number | null {
+  try {
+    const raw = localStorage.getItem(`chipie_weights_${getActiveProfileId()}`)
+    const weights: { date: string }[] = raw ? JSON.parse(raw) : []
+    if (weights.length === 0) return null
+    const last = weights.reduce((max, w) => (w.date > max ? w.date : max), '')
+    return Math.floor((Date.now() - new Date(last + 'T00:00:00').getTime()) / 86_400_000)
+  } catch {
+    return null
+  }
 }
 
 function buildMessages(nom: string): string[] {
@@ -20,6 +40,28 @@ function buildMessages(nom: string): string[] {
   else if (h >= 12 && h < 18) msgs.push(`Coucou ! ☀️ ${nom} pense à toi.`)
   else if (h >= 18 && h < 22) msgs.push(`Bonsoir ! 🌆 ${nom} attend son repas du soir.`)
   else msgs.push(`Il est tard… 🌙 ${nom} dort (enfin, essaie).`)
+
+  // Météo réelle (si l'utilisateur l'a activée)
+  const weather = getCachedWeather()
+  if (weather) {
+    if (weather.maxC >= 28) msgs.push(`Il fait ${Math.round(weather.maxC)} °C aujourd'hui, j'ai trop chaud ! 🥵 De l'eau fraîche, s'il te plaît 💧`)
+    else if (weather.minC <= 0) msgs.push(`Il gèle dehors ! 🥶 Un abri bien sec pour moi, et de l'eau pas gelée.`)
+    if (weather.kind === 'rain' || weather.kind === 'drizzle') msgs.push(`Il pleut ☔ Un petit câlin au chaud, ça te dit ?`)
+    else if (weather.kind === 'storm') msgs.push(`L'orage gronde ⛈️ Reste près de moi, j'ai un peu peur…`)
+    else if (weather.kind === 'snow') msgs.push(`Il neige ❄️ Je regarde les flocons depuis ma cage !`)
+  }
+
+  // Pharmacie : articles périmés, épuisés ou en stock bas
+  try {
+    const todo = loadStock(getActiveProfileId()).filter(i => getStatut(i, today, 7) !== 'ok').length
+    if (todo > 0) msgs.push(`Ma pharmacie a besoin d'un petit tour : ${todo} article${todo > 1 ? 's' : ''} à vérifier 💊`)
+  } catch { /* ignore */ }
+
+  // Pesée en retard
+  const sinceWeight = daysSinceLastWeight()
+  if (sinceWeight !== null && sinceWeight >= WEIGH_REMINDER_DAYS) {
+    msgs.push(`On ne m'a pas pesé(e) depuis ${sinceWeight} jours ⚖️`)
+  }
 
   // Journal check
   try {
@@ -81,6 +123,8 @@ export default function ChipieParle() {
   const [messages, setMessages] = useState<string[]>([])
   const [index, setIndex] = useState(0)
   const [visible, setVisible] = useState(false)
+  const [pets, setPets] = useState(0)
+  const tiltRef = useTilt<HTMLDivElement>({ max: 18, enabled: visible && !dismissed })
 
   useEffect(() => {
     if (dismissed) return
@@ -104,6 +148,13 @@ export default function ChipieParle() {
     setIndex(i => (i + 1) % messages.length)
   }, [messages.length])
 
+  // Toucher Chipie : cœurs, petite vibration et ronronnement
+  const pet = useCallback(() => {
+    setPets(n => n + 1)
+    haptic('soft')
+    startPurr(1400)
+  }, [])
+
   const dismiss = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     setVisible(false)
@@ -125,9 +176,10 @@ export default function ChipieParle() {
         <p className={styles.text}>{messages[index]}</p>
         <button className={styles.close} onClick={dismiss}>✕</button>
       </div>
-      <div className={styles.avatarWrap}>
+      <div ref={tiltRef} className={styles.avatarWrap} onClick={pet}>
         <img src={avatarSrc} alt={profil.nom} className={styles.avatar}
           style={profil.couleur ? { borderColor: profil.couleur } as React.CSSProperties : undefined} />
+        <PetHearts burst={pets} />
       </div>
     </div>
   )

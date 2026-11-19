@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import { useProfil } from '../../hooks/useProfil'
 import { useProfiles, getActiveProfileId } from '../../hooks/useProfiles'
 import { useJournal } from '../../hooks/useJournal'
+import { useTilt } from '../../hooks/useTilt'
+import { haptic } from '../../services/haptics'
+import { startPurr } from '../../services/sfx'
 import { VEGETAUX, CATEGORIES } from '../../data/vegetaux'
 import { assetUrl } from '../../utils/assetUrl'
 import styles from './ProfilPage.module.css'
@@ -94,6 +97,8 @@ export default function ProfilPage() {
   const [showNewForm, setShowNewForm] = useState(false)
   const [newName, setNewName] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
+  const avatarTiltRef = useTilt<HTMLDivElement>({ max: 14 })
+  const petAvatar = useCallback(() => { haptic('soft'); startPurr(1400) }, [])
 
   const startEdit = () => { setDraft(profil); setEditing(true) }
   const saveEdit = () => {
@@ -202,7 +207,11 @@ export default function ProfilPage() {
       )}
 
       {/* Avatar */}
-      <div className={`${styles.avatar} ${editing ? styles.avatarEditing : ''}`} onClick={editing ? () => fileRef.current?.click() : undefined}>
+      <div
+        ref={avatarTiltRef}
+        className={`${styles.avatar} ${editing ? styles.avatarEditing : ''}`}
+        onClick={editing ? () => fileRef.current?.click() : petAvatar}
+      >
         <img src={avatarSrc} alt={profil.nom} className={styles.avatarImg} />
         {costumeEmoji && !editing && (
           <span className={styles.costumePin}>{costumeEmoji}</span>

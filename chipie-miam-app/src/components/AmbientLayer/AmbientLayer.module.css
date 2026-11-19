@@ -1,0 +1,133 @@
+/* Au-dessus du contenu, sous la mascotte et la barre de navigation (z-index 200) */
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── Moment de la journée ───────────────────────────────────────── */
+.tint {
+  position: absolute;
+  inset: 0;
+  transition: background 2s ease;
+}
+
+.night { background: linear-gradient(180deg, rgba(40, 50, 130, 0.16), rgba(20, 20, 60, 0.07) 55%, transparent); }
+.dawn  { background: linear-gradient(180deg, rgba(255, 170, 120, 0.10), transparent 45%); }
+.dusk  { background: linear-gradient(180deg, rgba(255, 130, 70, 0.10), rgba(120, 60, 160, 0.06) 60%, transparent); }
+.day   { background: transparent; }
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.7;
+  animation: twinkle 3.5s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; }
+  50%      { opacity: 0.85; }
+}
+
+/* ── Météo ──────────────────────────────────────────────────────── */
+.sun {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 100% 0%, rgba(255, 200, 80, 0.20), transparent 55%);
+  animation: glow 6s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.75; }
+  50%      { opacity: 1; }
+}
+
+.clouds {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(160, 170, 190, 0.10), transparent);
+}
+
+.fog {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(220, 225, 235, 0.14), rgba(220, 225, 235, 0.04) 60%, transparent);
+  animation: drift 14s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from { transform: translateX(-3%); }
+  to   { transform: translateX(3%); }
+}
+
+.hot  { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255, 110, 30, 0.07), transparent 70%); }
+.cold { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(120, 180, 255, 0.08), transparent 70%); }
+
+.drop {
+  position: absolute;
+  top: -30px;
+  width: 1.5px;
+  background: linear-gradient(180deg, transparent, rgba(170, 200, 255, 0.55));
+  transform: rotate(8deg);
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(8deg); }
+}
+
+.flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.14);
+  opacity: 0;
+  animation: lightning 8s infinite;
+}
+
+@keyframes lightning {
+  0%, 92%, 100% { opacity: 0; }
+  93%           { opacity: 1; }
+  95%           { opacity: 0; }
+  96%           { opacity: 0.7; }
+  98%           { opacity: 0; }
+}
+
+/* Saisons : pétales au printemps, feuilles à l'automne */
+.drift {
+  position: absolute;
+  top: -24px;
+  opacity: 0.75;
+  animation: leafFall linear infinite;
+}
+
+@keyframes leafFall {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  25%  { transform: translate(22px, 28vh) rotate(90deg); }
+  50%  { transform: translate(-14px, 55vh) rotate(180deg); }
+  75%  { transform: translate(20px, 82vh) rotate(270deg); }
+  100% { transform: translate(-6px, 110vh) rotate(360deg); }
+}
+
+.flake {
+  position: absolute;
+  top: -10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  animation: snowfall linear infinite;
+}
+
+@keyframes snowfall {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(14px, 55vh); }
+  100% { transform: translate(-8px, 110vh); }
+}
+
+/* Pas d'animation pour les personnes qui les ont désactivées dans leur système */
+@media (prefers-reduced-motion: reduce) {
+  .star, .sun, .fog, .drop, .flash, .flake, .drift { animation: none; }
+  .drop, .flake, .flash, .drift { display: none; }
+}

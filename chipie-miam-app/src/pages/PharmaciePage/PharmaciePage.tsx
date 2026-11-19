@@ -1,27 +1,13 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getActiveProfileId } from '../../hooks/useProfiles'
-import { todayStr, addDays } from '../../utils/dates'
+import { todayStr } from '../../utils/dates'
+import { EXPIRY_WARNING_DAYS, getStatut, loadStock } from '../../utils/stock'
+import type { Statut, StockItem, TypeStock } from '../../utils/stock'
+import { haptic } from '../../services/haptics'
 import styles from './PharmaciePage.module.css'
 
 // ── Types ────────────────────────────────────────────────────────────────────
-type TypeStock = 'medicament' | 'soin' | 'aliment' | 'litiere' | 'autre'
-
-interface StockItem {
-  id: string
-  nom: string
-  type: TypeStock
-  quantite: number
-  unite: string
-  seuil: number          // alerte quand quantite <= seuil
-  peremption: string     // YYYY-MM-DD, '' si non applicable
-  notes: string
-}
-
-type Statut = 'perime' | 'rupture' | 'bientot' | 'bas' | 'ok'
-
-const EXPIRY_WARNING_DAYS = 30
-
 const TYPE_INFO: Record<TypeStock, { label: string; emoji: string; unite: string }> = {
   medicament: { label: 'Médicament', emoji: '💊', unite: 'dose' },
   soin:       { label: 'Soin',       emoji: '🩹', unite: 'unité' },
@@ -44,10 +30,7 @@ const STATUT_INFO: Record<Statut, { label: string; order: number }> = {
 function storageKey() { return `chipie-pharmacie-${getActiveProfileId()}` }
 
 function loadItems(): StockItem[] {
-  try {
-    const raw = localStorage.getItem(storageKey())
-    return raw ? JSON.parse(raw) as StockItem[] : []
-  } catch { return [] }
+  return loadStock(getActiveProfileId())
 }
 
 function saveItems(list: StockItem[]) {
@@ -55,14 +38,6 @@ function saveItems(list: StockItem[]) {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function getStatut(item: StockItem, today: string): Statut {
-  if (item.peremption && item.peremption < today) return 'perime'
-  if (item.quantite <= 0) return 'rupture'
-  if (item.peremption && item.peremption <= addDays(today, EXPIRY_WARNING_DAYS)) return 'bientot'
-  if (item.seuil > 0 && item.quantite <= item.seuil) return 'bas'
-  return 'ok'
-}
-
 function formatDate(dateStr: string): string {
   return dateStr.split('-').reverse().join('/')
 }
@@ -189,6 +164,7 @@ export default function PharmaciePage() {
   }, [formValid, form, quantite, seuil, editingId, update])
 
   const adjust = useCallback((id: string, delta: number) => {
+    haptic('tap')
     update(prev => prev.map(i =>
       i.id === id ? { ...i, quantite: Math.max(0, Math.round((i.quantite + delta) * 100) / 100) } : i,
     ))

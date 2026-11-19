@@ -7,9 +7,50 @@ import {
   getSettings,
   saveSettings,
   checkAndFirePending,
+  HEAT_ALERT_C,
+  WEIGH_EVERY_DAYS,
   type NotifSettings,
 } from '../../services/notifications'
+import { setFx, useFx } from '../../services/fxSettings'
+import { disableWeather, enableWeather, KIND_LABEL, useWeather } from '../../services/weather'
+import type { EnableResult } from '../../services/weather'
+import { haptic } from '../../services/haptics'
+import { playSfx } from '../../services/sfx'
 import styles from './SettingsPage.module.css'
+
+interface ToggleRowProps {
+  label: string
+  desc: string
+  on: boolean
+  onChange: (next: boolean) => void
+  disabled?: boolean
+}
+
+function ToggleRow({ label, desc, on, onChange, disabled }: ToggleRowProps) {
+  return (
+    <div className={styles.notifRow}>
+      <div className={styles.notifRowInfo}>
+        <span className={styles.notifRowLabel}>{label}</span>
+        <span className={styles.notifRowDesc}>{desc}</span>
+      </div>
+      <button
+        className={`${styles.toggle} ${on ? styles.toggleOn : ''}`}
+        onClick={() => onChange(!on)}
+        aria-label={label}
+        aria-pressed={on}
+        disabled={disabled}
+      >
+        <span className={styles.toggleThumb} />
+      </button>
+    </div>
+  )
+}
+
+const WEATHER_ERRORS: Record<Exclude<EnableResult, 'ok'>, string> = {
+  denied: 'Position refusée. Autorise-la dans les paramètres du site de ton navigateur pour activer la météo.',
+  unsupported: 'Ce navigateur ne sait pas donner ta position.',
+  error: 'Impossible de récupérer la météo pour le moment. Réessaie un peu plus tard.',
+}
 
 // Collect all profile-related keys dynamically
 function getAllStorageKeys(): string[] {
@@ -55,6 +96,26 @@ export default function SettingsPage() {
   // Notification state
   const [permission, setPermission] = useState<NotificationPermission>(getPermission)
   const [notifSettings, setNotifSettings] = useState<NotifSettings>(getSettings)
+
+  // Effets : sons, vibrations, ambiance, météo
+  const fx = useFx()
+  const weather = useWeather()
+  const [weatherBusy, setWeatherBusy] = useState(false)
+  const [weatherMsg, setWeatherMsg] = useState<string | null>(null)
+
+  async function handleWeatherToggle(on: boolean) {
+    if (!on) {
+      disableWeather()
+      setWeatherMsg(null)
+      return
+    }
+    setWeatherBusy(true)
+    setWeatherMsg('Recherche de ta position…')
+    const result = await enableWeather()
+    setWeatherBusy(false)
+    setWeatherMsg(result === 'ok' ? null : WEATHER_ERRORS[result])
+    if (result === 'ok') void checkAndFirePending()
+  }
 
   useEffect(() => {
     setPermission(getPermission())
@@ -115,8 +176,56 @@ export default function SettingsPage() {
 
       <h1 className={styles.title}>Paramètres</h1>
       <p className={styles.subtitle}>
-        Notifications, sauvegarde et restauration des données.
+        Ambiance, notifications, sauvegarde et restauration des données.
       </p>
+
+      {/* ===== Ambiance & effets ===== */}
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Ambiance &amp; effets</div>
+
+        <ToggleRow
+          label="🔊 Sons"
+          desc="Ronronnement, croc-croc et bruitages des jeux"
+          on={fx.sounds}
+          onChange={on => { setFx({ sounds: on }); if (on) playSfx('pop') }}
+        />
+        <ToggleRow
+          label="📳 Vibrations"
+          desc="Petites vibrations du téléphone (caresses, jeux)"
+          on={fx.haptics}
+          onChange={on => { setFx({ haptics: on }); if (on) haptic('success') }}
+        />
+        <ToggleRow
+          label="🌙 Ambiance visuelle"
+          desc="L'écran change avec l'heure de la journée (nuit étoilée, soleil couchant…)"
+          on={fx.ambient}
+          onChange={on => setFx({ ambient: on })}
+        />
+        <ToggleRow
+          label="🌦️ Météo réelle"
+          desc="Pluie, neige, soleil… comme dehors. Utilise ta position approximative."
+          on={fx.weather}
+          onChange={on => { void handleWeatherToggle(on) }}
+          disabled={weatherBusy}
+        />
+
+        {weatherMsg && <p className={styles.notifRowDesc}>{weatherMsg}</p>}
+
+        {fx.weather && weather && (
+          <div className={styles.notifInfo}>
+            <span>{KIND_LABEL[weather.kind].emoji}</span>
+            <span>
+              {KIND_LABEL[weather.kind].label}, {Math.round(weather.tempC)} °C
+              (de {Math.round(weather.minC)} à {Math.round(weather.maxC)} °C aujourd'hui).
+            </span>
+          </div>
+        )}
+
+        <p className={styles.notifRowDesc}>
+          Seule ta position approximative (à ~10 km près) est envoyée à open-meteo.com pour obtenir la météo.
+          Elle reste enregistrée sur cet appareil et s'efface quand tu désactives la météo.
+        </p>
+      </div>
 
       {/* ===== Notifications ===== */}
       <div className={styles.section}>
@@ -181,10 +290,32 @@ export default function SettingsPage() {
               </div>
             )}
 
+            <ToggleRow
+              label="⚖️ Rappel de pesée"
+              desc={`Si ${rabbitName} n'a pas été pesé(e) depuis ${WEIGH_EVERY_DAYS} jours`}
+              on={notifSettings.weighEnabled}
+              onChange={on => updateNotifSettings({ weighEnabled: on })}
+            />
+            <ToggleRow
+              label="💊 Pharmacie"
+              desc="Médicaments périmés ou bientôt périmés, stock bas"
+              on={notifSettings.pharmacieEnabled}
+              onChange={on => updateNotifSettings({ pharmacieEnabled: on })}
+            />
+            <ToggleRow
+              label="🌡️ Chaleur et gel"
+              desc={fx.weather
+                ? `Alerte dès ${HEAT_ALERT_C} °C ou en cas de gel`
+                : 'Demande d’activer la météo réelle ci-dessus'}
+              on={notifSettings.weatherAlertEnabled && fx.weather}
+              onChange={on => updateNotifSettings({ weatherAlertEnabled: on })}
+              disabled={!fx.weather}
+            />
+
             {/* Carnet santé info */}
             <div className={styles.notifInfo}>
               <span>🩺</span>
-              <span>Les rappels du Carnet santé s'affichent automatiquement à la date prévue.</span>
+              <span>Les rappels du Carnet santé s'affichent à la date prévue. Les notifications apparaissent quand tu ouvres l'app ou que tu y reviens (l'app ne tourne pas en arrière-plan).</span>
             </div>
           </div>
         )}

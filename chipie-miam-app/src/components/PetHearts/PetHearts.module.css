@@ -1,0 +1,19 @@
+.heart {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  font-size: 1rem;
+  pointer-events: none;
+  opacity: 0;
+  animation: floatHeart 1.2s ease-out forwards;
+}
+
+@keyframes floatHeart {
+  0%   { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), -56px) scale(1.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heart { animation-duration: 0.01s; }
+}

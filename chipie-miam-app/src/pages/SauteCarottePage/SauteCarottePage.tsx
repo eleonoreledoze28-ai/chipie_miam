@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import GameShell, { GameResult } from '../../components/GameShell/GameShell'
 import { useBestScore } from '../../hooks/useBestScore'
+import { haptic } from '../../services/haptics'
+import { playSfx } from '../../services/sfx'
 import styles from './SauteCarottePage.module.css'
 
 type Phase = 'ready' | 'playing' | 'over'
@@ -84,7 +86,11 @@ export default function SauteCarottePage() {
   const jump = useCallback(() => {
     if (phaseRef.current === 'ready') { start(); return }
     const w = worldRef.current
-    if (phaseRef.current === 'playing' && w.playerY >= GROUND) w.vy = JUMP_SPEED
+    if (phaseRef.current === 'playing' && w.playerY >= GROUND) {
+      w.vy = JUMP_SPEED
+      playSfx('jump')
+      haptic('soft')
+    }
   }, [start])
 
   // Clavier
@@ -164,13 +170,21 @@ export default function SauteCarottePage() {
         // collisions
         const player = { x: PLAYER_X, y: w.playerY - PLAYER_SIZE, w: PLAYER_SIZE, h: PLAYER_SIZE }
         w.carrots.forEach(c => {
-          if (!c.taken && overlaps(player, c, 2)) { c.taken = true; w.carrotCount++ }
+          if (!c.taken && overlaps(player, c, 2)) {
+            c.taken = true
+            w.carrotCount++
+            playSfx('collect')
+            haptic('tap')
+          }
         })
         if (w.obstacles.some(o => overlaps(player, o, 6))) {
           const finalScore = scoreOf(w)
           setScore(finalScore)
           setCarrots(w.carrotCount)
-          setIsRecord(submit(finalScore))
+          const record = submit(finalScore)
+          setIsRecord(record)
+          playSfx('hit')
+          haptic(record ? 'win' : 'error')
           setPhaseBoth('over')
           draw()
           return

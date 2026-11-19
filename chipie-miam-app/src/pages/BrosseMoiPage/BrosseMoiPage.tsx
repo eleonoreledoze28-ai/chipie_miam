@@ -1,7 +1,9 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import GameShell, { GameResult } from '../../components/GameShell/GameShell'
 import { useBestScore } from '../../hooks/useBestScore'
 import { useProfil } from '../../hooks/useProfil'
+import { haptic } from '../../services/haptics'
+import { playSfx, startPurr } from '../../services/sfx'
 import styles from './BrosseMoiPage.module.css'
 
 interface Tuft { id: number; x: number; y: number; size: number; rot: number } // x, y en % de la zone
@@ -42,12 +44,31 @@ export default function BrosseMoiPage() {
   const zoneRef = useRef<HTMLDivElement>(null)
   const startRef = useRef<number | null>(null)
   const brushedRef = useRef<Set<number>>(new Set())
+  const stopPurrRef = useRef<(() => void) | null>(null)
+  const purrTimerRef = useRef<number | null>(null)
+
+  const stopPurring = useCallback(() => {
+    if (purrTimerRef.current !== null) window.clearTimeout(purrTimerRef.current)
+    purrTimerRef.current = null
+    stopPurrRef.current?.()
+    stopPurrRef.current = null
+  }, [])
+
+  // Chipie ronronne tant qu'on la brosse, puis se tait quand on s'arrête
+  const keepPurring = useCallback(() => {
+    if (!stopPurrRef.current) stopPurrRef.current = startPurr(60_000)
+    if (purrTimerRef.current !== null) window.clearTimeout(purrTimerRef.current)
+    purrTimerRef.current = window.setTimeout(stopPurring, 900)
+  }, [stopPurring])
+
+  useEffect(() => stopPurring, [stopPurring])
 
   const done = seconds !== null
   const progress = brushed.size / TUFT_COUNT
   const message = MESSAGES[Math.min(MESSAGES.length - 1, Math.floor(progress * MESSAGES.length))]
 
   const restart = useCallback(() => {
+    stopPurring()
     setTufts(makeTufts())
     brushedRef.current = new Set()
     setBrushed(new Set())
@@ -55,7 +76,7 @@ export default function BrosseMoiPage() {
     setSeconds(null)
     setIsRecord(false)
     startRef.current = null
-  }, [])
+  }, [stopPurring])
 
   const handleMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     const zone = zoneRef.current
@@ -79,15 +100,23 @@ export default function BrosseMoiPage() {
 
     brushedRef.current = next
     setBrushed(next)
+    haptic('soft')
+    playSfx('brush')
 
     if (next.size === TUFT_COUNT) {
       const elapsed = Math.max(1, Math.round((Date.now() - (startRef.current ?? Date.now())) / 1000))
       const finalScore = Math.max(10, 100 - elapsed * 2)
       setSeconds(elapsed)
       setScore(finalScore)
-      setIsRecord(submit(finalScore))
+      const record = submit(finalScore)
+      setIsRecord(record)
+      stopPurring()
+      playSfx('chime')
+      haptic(record ? 'win' : 'success')
+    } else {
+      keepPurring()
     }
-  }, [tufts, done, submit])
+  }, [tufts, done, submit, keepPurring, stopPurring])
 
   return (
     <GameShell

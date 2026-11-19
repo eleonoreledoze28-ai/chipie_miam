@@ -104,6 +104,20 @@ function App() {
     return () => { navigator.serviceWorker?.removeEventListener('message', handler) }
   }, [navigate])
 
+  // Les rappels (pesée, pharmacie, météo…) sont revérifiés quand on revient dans l'app,
+  // au plus une fois toutes les 10 minutes
+  useEffect(() => {
+    let lastCheck = Date.now()
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return
+      if (Date.now() - lastCheck < 10 * 60 * 1000) return
+      lastCheck = Date.now()
+      void checkAndFirePending()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [])
+
   return (
     <>
       <UpdatePrompt />

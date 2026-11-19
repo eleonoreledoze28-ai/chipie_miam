@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import GameShell, { GameResult } from '../../components/GameShell/GameShell'
 import { useBestScore } from '../../hooks/useBestScore'
 import { useProfil } from '../../hooks/useProfil'
+import { haptic } from '../../services/haptics'
+import { playSfx } from '../../services/sfx'
 import styles from './TaupinierePage.module.css'
 
 type Kind = 'awake' | 'sleep'
@@ -111,7 +113,10 @@ export default function TaupinierePage() {
 
   // Fin de partie : record
   useEffect(() => {
-    if (phase === 'over') setIsRecord(submit(scoreRef.current))
+    if (phase !== 'over') return
+    const record = submit(scoreRef.current)
+    setIsRecord(record)
+    if (record) { playSfx('chime'); haptic('win') }
   }, [phase, submit])
 
   const flash = useCallback((index: number, kind: Exclude<Fx, null>) => {
@@ -132,10 +137,14 @@ export default function TaupinierePage() {
       scoreRef.current += POINTS
       setCaresses(c => c + 1)
       flash(index, 'good')
+      playSfx('pop')
+      haptic('tap')
     } else {
       scoreRef.current = Math.max(0, scoreRef.current - POINTS)
       setWakeUps(w => w + 1)
       flash(index, 'bad')
+      playSfx('error')
+      haptic('error')
     }
     setScore(scoreRef.current)
   }, [phase, writeHoles, flash])
