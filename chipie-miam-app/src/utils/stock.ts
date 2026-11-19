@@ -11,6 +11,7 @@ export interface StockItem {
   seuil: number          // alerte quand quantite <= seuil
   peremption: string     // YYYY-MM-DD, '' si non applicable
   notes: string
+  code?: string          // code-barres scanné (pour réapprovisionner en un scan)
 }
 
 export type Statut = 'perime' | 'rupture' | 'bientot' | 'bas' | 'ok'

@@ -1,10 +1,13 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getActiveProfileId } from '../../hooks/useProfiles'
 import { todayStr } from '../../utils/dates'
 import { EXPIRY_WARNING_DAYS, getStatut, loadStock } from '../../utils/stock'
 import type { Statut, StockItem, TypeStock } from '../../utils/stock'
 import { haptic } from '../../services/haptics'
+import { playSfx } from '../../services/sfx'
+import { lookupProduct, rememberProduct } from '../../services/barcode'
+import BarcodeScanner from '../../components/BarcodeScanner/BarcodeScanner'
 import styles from './PharmaciePage.module.css'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -58,11 +61,12 @@ interface FormState {
   seuil: string
   peremption: string
   notes: string
+  code: string   // code-barres scanné ('' si aucun)
 }
 
 const EMPTY_FORM: FormState = {
   nom: '', type: 'medicament', quantite: '', unite: TYPE_INFO.medicament.unite,
-  seuil: '', peremption: '', notes: '',
+  seuil: '', peremption: '', notes: '', code: '',
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -73,6 +77,10 @@ export default function PharmaciePage() {
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
+  const [scanning, setScanning] = useState(false)
+  const [lookingUp, setLookingUp] = useState(false)
+  const [notice, setNotice] = useState<string | null>(null)
+  const noticeTimer = useRef<number | null>(null)
 
   const today = todayStr()
 
@@ -123,6 +131,7 @@ export default function PharmaciePage() {
       seuil: item.seuil ? String(item.seuil) : '',
       peremption: item.peremption,
       notes: item.notes,
+      code: item.code ?? '',
     })
     setShowForm(true)
   }, [])
@@ -154,7 +163,10 @@ export default function PharmaciePage() {
       seuil,
       peremption: form.peremption,
       notes: form.notes.trim(),
+      code: form.code || undefined,
     }
+    // Le prochain scan de ce code reconnaîtra le produit tout de suite, même sans réseau
+    if (data.code) rememberProduct(data.code, { nom: data.nom, type: data.type, unite: data.unite })
     if (editingId) {
       update(prev => prev.map(i => i.id === editingId ? { ...i, ...data } : i))
     } else {
@@ -176,6 +188,46 @@ export default function PharmaciePage() {
     setShowForm(false)
   }, [update])
 
+  const showNotice = useCallback((message: string) => {
+    setNotice(message)
+    if (noticeTimer.current !== null) window.clearTimeout(noticeTimer.current)
+    noticeTimer.current = window.setTimeout(() => setNotice(null), 5000)
+  }, [])
+
+  // Un code a été scanné (ou saisi) : réapprovisionne l'article connu, sinon prépare un nouvel article
+  const handleCode = useCallback(async (code: string) => {
+    setScanning(false)
+    const existing = items.find(i => i.code === code)
+    if (existing) {
+      const quantite = Math.round((existing.quantite + 1) * 100) / 100
+      update(prev => prev.map(i => i.id === existing.id ? { ...i, quantite } : i))
+      haptic('success')
+      playSfx('chime')
+      showNotice(`✅ ${existing.nom} : +1 (stock : ${formatQty(quantite)} ${existing.unite})`)
+      return
+    }
+
+    setLookingUp(true)
+    const product = await lookupProduct(code)
+    setLookingUp(false)
+
+    const type = product?.type ?? 'medicament'
+    setEditingId(null)
+    setForm({
+      ...EMPTY_FORM,
+      nom: product?.nom ?? '',
+      type,
+      quantite: product?.quantite !== undefined ? String(product.quantite) : '1',
+      unite: product?.unite ?? TYPE_INFO[type].unite,
+      code,
+    })
+    setShowForm(true)
+    haptic(product ? 'success' : 'soft')
+    showNotice(product
+      ? `Trouvé : ${product.nom}. Vérifie les informations avant d'enregistrer.`
+      : 'Produit inconnu : saisis son nom. Il sera reconnu au prochain scan.')
+  }, [items, update, showNotice])
+
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
@@ -183,8 +235,15 @@ export default function PharmaciePage() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="18" height="18"><path d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
           Retour
         </button>
-        <button className={styles.addBtn} onClick={openAdd}>+ Ajouter</button>
+        <div className={styles.topActions}>
+          <button className={styles.scanBtn} onClick={() => setScanning(true)} disabled={lookingUp}>
+            {lookingUp ? 'Recherche…' : '📷 Scanner'}
+          </button>
+          <button className={styles.addBtn} onClick={openAdd}>+ Ajouter</button>
+        </div>
       </div>
+
+      {notice && <div className={styles.notice} role="status">{notice}</div>}
 
       <div className={styles.header}>
         <span className={styles.headerEmoji}>💊</span>
@@ -378,6 +437,13 @@ export default function PharmaciePage() {
               onChange={e => setField('notes', e.target.value)}
             />
 
+            {form.code && (
+              <div className={styles.codeRow}>
+                <span>📷 Code-barres : {form.code}</span>
+                <button className={styles.codeRemove} onClick={() => setField('code', '')}>Retirer</button>
+              </div>
+            )}
+
             <button className={styles.submitBtn} onClick={submit} disabled={!formValid}>
               Enregistrer
             </button>
@@ -388,6 +454,10 @@ export default function PharmaciePage() {
             )}
           </div>
         </div>
+      )}
+
+      {scanning && (
+        <BarcodeScanner onCode={code => { void handleCode(code) }} onClose={() => setScanning(false)} />
       )}
     </div>
   )
