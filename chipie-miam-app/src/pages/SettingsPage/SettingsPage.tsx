@@ -15,6 +15,14 @@ import { setFx, useFx } from '../../services/fxSettings'
 import { disableWeather, enableWeather, KIND_LABEL, useWeather } from '../../services/weather'
 import type { EnableResult } from '../../services/weather'
 import { haptic } from '../../services/haptics'
+import {
+  BackupError,
+  downloadBackup,
+  formatBytes,
+  getLastBackupDate,
+  parseBackup,
+  restoreBackup,
+} from '../../services/backup'
 import { playSfx } from '../../services/sfx'
 import styles from './SettingsPage.module.css'
 
@@ -52,44 +60,11 @@ const WEATHER_ERRORS: Record<Exclude<EnableResult, 'ok'>, string> = {
   error: 'Impossible de récupérer la météo pour le moment. Réessaie un peu plus tard.',
 }
 
-// Collect all profile-related keys dynamically
-function getAllStorageKeys(): string[] {
-  const keys: string[] = ['chipie_profiles_meta', 'chipie_collapsed_categories', 'chipie_theme']
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (key && (
-      key.startsWith('chipie_profil_') ||
-      key.startsWith('chipie_journal_') ||
-      key.startsWith('chipie_custom_images_')
-    )) {
-      keys.push(key)
-    }
-  }
-  return keys
-}
-
-function exportData() {
-  const keys = getAllStorageKeys()
-  const data: Record<string, unknown> = {}
-  for (const key of keys) {
-    const raw = localStorage.getItem(key)
-    if (raw) {
-      try { data[key] = JSON.parse(raw) } catch { data[key] = raw }
-    }
-  }
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `chipie-miam-backup-${new Date().toISOString().slice(0, 10)}.json`
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
 export default function SettingsPage() {
   const navigate = useNavigate()
   const fileRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<{ msg: string; error?: boolean } | null>(null)
+  const [lastBackup, setLastBackup] = useState<string | null>(getLastBackupDate)
   const { profil } = useProfil()
   const rabbitName = profil.nom || 'votre lapin'
 
@@ -122,31 +97,42 @@ export default function SettingsPage() {
   }, [])
 
   function handleExport() {
-    exportData()
-    setStatus({ msg: 'Sauvegarde téléchargée !' })
+    const { count, bytes } = downloadBackup()
+    setLastBackup(getLastBackupDate())
+    setStatus({ msg: `Sauvegarde téléchargée : ${count} éléments (${formatBytes(bytes)}).` })
   }
 
   function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
+    e.target.value = ''
     if (!file) return
 
     const reader = new FileReader()
+    reader.onerror = () => setStatus({ msg: 'Impossible de lire ce fichier.', error: true })
     reader.onload = () => {
       try {
-        const data = JSON.parse(reader.result as string)
-        for (const [key, value] of Object.entries(data)) {
-          if (key.startsWith('chipie_')) {
-            localStorage.setItem(key, JSON.stringify(value))
-          }
+        const entries = parseBackup(String(reader.result))
+        const total = Object.keys(entries).length
+        if (!window.confirm(
+          `Restaurer ${total} éléments depuis cette sauvegarde ?\n`
+          + 'Les données actuelles portant le même nom seront remplacées.',
+        )) return
+
+        const { restored, failed } = restoreBackup(entries)
+        if (failed.length > 0) {
+          setStatus({
+            msg: `${restored} éléments restaurés, ${failed.length} n'ont pas pu l'être (stockage plein, souvent à cause des photos).`,
+            error: true,
+          })
+          return
         }
-        setStatus({ msg: 'Données restaurées ! Rechargement...' })
-        setTimeout(() => window.location.reload(), 1000)
-      } catch {
-        setStatus({ msg: 'Fichier invalide.', error: true })
+        setStatus({ msg: `${restored} éléments restaurés ! Rechargement…` })
+        setTimeout(() => window.location.reload(), 1200)
+      } catch (err) {
+        setStatus({ msg: err instanceof BackupError ? err.message : 'Fichier invalide.', error: true })
       }
     }
     reader.readAsText(file)
-    e.target.value = ''
   }
 
   async function handleRequestPermission() {
@@ -325,7 +311,14 @@ export default function SettingsPage() {
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Sauvegarde</div>
         <p className={styles.sectionDesc}>
-          Télécharge un fichier JSON contenant tous vos profils, journaux et préférences.
+          Télécharge un fichier contenant toutes vos données : profils, journal, pesées, pharmacie, galerie photos,
+          dépenses, carnet de santé, Tamagotchi, meilleurs scores et préférences.
+          La position utilisée pour la météo n'en fait pas partie.
+        </p>
+        <p className={styles.notifRowDesc}>
+          {lastBackup
+            ? `Dernière sauvegarde : ${new Date(lastBackup).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`
+            : 'Aucune sauvegarde faite pour le moment.'}
         </p>
         <button className={`${styles.btn} ${styles.btnExport}`} onClick={handleExport}>
           Sauvegarder mes données
@@ -335,7 +328,7 @@ export default function SettingsPage() {
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Restauration</div>
         <p className={styles.sectionDesc}>
-          Importez un fichier de sauvegarde pour restaurer vos données.
+          Importez un fichier de sauvegarde (les anciennes sauvegardes fonctionnent aussi) pour restaurer vos données.
         </p>
         <button className={`${styles.btn} ${styles.btnImport}`} onClick={() => fileRef.current?.click()}>
           Restaurer une sauvegarde
