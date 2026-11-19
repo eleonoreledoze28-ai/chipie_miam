@@ -724,3 +724,38 @@
   font-weight: 700;
   color: var(--text-muted);
 }
+
+/* Calendrier en pastilles : la couleur dépend de la variété du jour */
+.lvl0 { background: transparent; }
+.lvl1 { background: rgba(76, 217, 100, 0.16); }
+.lvl2 { background: rgba(76, 217, 100, 0.36); }
+.lvl3 { background: rgba(76, 217, 100, 0.66); color: #06210d; }
+.monthDay { border-radius: 12px; min-height: 42px; }
+.monthDaySelected { box-shadow: inset 0 0 0 2px var(--accent-orange); }
+
+.monthCount {
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px 0;
+  font-size: 0.66rem;
+  color: var(--text-muted);
+}
+.legend span { display: inline-flex; align-items: center; gap: 4px; }
+.legendNote { margin-left: auto; }
+.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 4px; }
+
+.streak {
+  margin: 8px 16px 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+}

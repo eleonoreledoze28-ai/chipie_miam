@@ -13,6 +13,7 @@ import {
 import styles from './JournalPage.module.css'
 import VegetalImage from '../../components/VegetalImage/VegetalImage'
 import ChipieCharacter from '../../components/ChipieCharacter/ChipieCharacter'
+import AssietteDuJour from '../../components/AssietteDuJour/AssietteDuJour'
 
 type ViewMode = 'day' | 'week' | 'month'
 
@@ -44,6 +45,26 @@ export default function JournalPage() {
     entries.forEach((e) => set.add(e.date))
     return set
   }, [entries])
+
+  // Variété par jour (nombre d'aliments différents) : sert à colorer le calendrier du mois
+  const varietyByDate = useMemo(() => {
+    const sets = new Map<string, Set<string>>()
+    entries.forEach((e) => {
+      const s = sets.get(e.date) ?? new Set<string>()
+      s.add(e.vegetalId)
+      sets.set(e.date, s)
+    })
+    return new Map([...sets].map(([d, s]) => [d, s.size]))
+  }, [entries])
+
+  // Série en cours : jours consécutifs avec au moins un aliment (on part d'hier si aujourd'hui est vide)
+  const streak = useMemo(() => {
+    let d = todayStr()
+    if (!datesWithEntries.has(d)) d = addDays(d, -1)
+    let n = 0
+    while (datesWithEntries.has(d)) { n++; d = addDays(d, -1) }
+    return n
+  }, [datesWithEntries])
 
   // Week category breakdown
   const weekBreakdown = useMemo(() => {
@@ -251,20 +272,31 @@ export default function JournalPage() {
               const isToday = day === todayStr()
               const isSelected = day === selectedDate
               const isCurrentMonth = day.slice(0, 7) === selectedMonth
-              const hasEntries = datesWithEntries.has(day)
+              const variety = varietyByDate.get(day) ?? 0
+              const level = variety === 0 ? 0 : variety <= 2 ? 1 : variety <= 4 ? 2 : 3
               return (
                 <button
                   key={day}
-                  className={`${styles.monthDay} ${isSelected ? styles.monthDaySelected : ''} ${isToday ? styles.monthDayToday : ''} ${!isCurrentMonth ? styles.monthDayOutside : ''}`}
+                  className={`${styles.monthDay} ${styles[`lvl${level}`]} ${isSelected ? styles.monthDaySelected : ''} ${isToday ? styles.monthDayToday : ''} ${!isCurrentMonth ? styles.monthDayOutside : ''}`}
                   onClick={() => setSelectedDate(day)}
                 >
                   <span>{new Date(day + 'T00:00:00').getDate()}</span>
-                  {hasEntries && <span className={styles.monthDot} />}
+                  {variety > 0 && <span className={styles.monthCount}>{variety}</span>}
                 </button>
               )
             })}
           </div>
+          <div className={styles.legend} aria-label="Légende">
+            <span><i className={`${styles.swatch} ${styles.lvl1}`} /> 1-2</span>
+            <span><i className={`${styles.swatch} ${styles.lvl2}`} /> 3-4</span>
+            <span><i className={`${styles.swatch} ${styles.lvl3}`} /> 5 et +</span>
+            <span className={styles.legendNote}>aliments différents par jour</span>
+          </div>
         </>
+      )}
+
+      {streak >= 2 && (
+        <p className={styles.streak}>🔥 {streak} jours de suite avec le journal rempli</p>
       )}
 
       {/* Date title */}
@@ -287,6 +319,8 @@ export default function JournalPage() {
           )}
         </div>
       )}
+
+      <AssietteDuJour entries={dayEntries} vegetaux={vegetauxMap} />
 
       {/* Alerts */}
       {alerts.map((alert, i) => (
